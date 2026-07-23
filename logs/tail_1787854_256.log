@@ -1,0 +1,107 @@
+PASS E0a floor_trunc(1/3,10) 
+PASS E0b ceil_trunc(1/3,10) 
+PASS E0c floor_trunc exact 
+PASS E0d ceil_trunc exact 
+PASS P1 Lambda(1875) = t0 + y0^2/2 = 1680/10^4 + 39/2000 == 1875/10^4 == 3/16 EXACT (terminating decimal 0.1875; floor truncation = exact value) 
+PASS P2 admissibility: y0^2 + 2 t0 = 3/8 <= 1 and 0 < y0^2 <= 1 - 2 t0 = 664/1000 = 83/125 EXACT (ymax^2 = full hypothesis-(ii) ceiling) 
+PASS P3 improvement ladder: 3/16 < 1891/10^4 < 393/2000 < 197/1000 strict; gap to 1891-record EXACTLY 16/10^4 = 1/625 = 0.0016 
+PASS P4 scope honesty (producer A7 re-derived): the blocked 0.18634552 target 1727/10^4 + (413/2500)^2/2 == 2329319/12500000 EXACT sits 14431/12500000 = 0.00115448 EXACT BELOW 3/16 
+PASS P5 hypothesis (i): X/2 = 6000000185827/2 <= T_PT, margin EXACTLY 350479773/2 (the assemblies' ONLY RH input) 
+PASS P6 (iii) joints: (33/200)^2 = 1089/40000 <= y0^2 margin 471/40000 EXACT; 1 - y0^2 = 961/1000 <= 1; q(0) = y0^2 + 2 t0 = 3/8 <= 1; dq/dt = -2 < 0 structural; t0 = 0.1680 <= 0.1809 slab/site_glue t-ceiling 
+PASS P7 (ii-a) tile joint: t0 = 1680/10^4 is the LEFT ENDPOINT of the closed lwin2_compose tile k=8 [1680/10^4, 1685/10^4]; block bottom Nc = 690988 == N0 (no uncovered sub-block); N-range [690988, 2745000] covers [N0, Nmid] exactly 
+PASS P8 (ii-a) banked composite floor re-gate: lwin2_compose tile k=8 literal 134320455/10^10 > 0 EXACT; FLOOR10 string reproduced by my truncator 
+PASS P9 split joint: tile k=8 N-top == 2745000 == the LIVE tail leg cutoff N1' (integer N = Nmid covered by BOTH legs; no gap) 
+PASS P10 tail-leg hull containment EXACT: (19748/10^5)^2 = 389983504/10^10 < 39/1000 < (19750/10^5)^2 = 390062500/10^10 (y-hull straddles y0); (8149/10^4)^2 = 66406201/10^8 >= 664/1000 = 1 - 2*t_lo >= 1-2t on the band (ext top dominates sqrt(1-2t) for every band t); box top <= ext top; box top inside y-range at worst t: (19750/10^5)^2 <= 1 - 2*(1696/10^4) 
+PASS P11 tail band contains t0 as LEFT ENDPOINT (closed): 1680/10^4 in [1680/10^4, 1696/10^4] 
+PASS Q1 Lambda(1891) = 1696/10^4 + 39/2000 == 1891/10^4 EXACT (terminating decimal 0.1891); gap to 0.1965-record EXACTLY 37/5000 = 0.0074 
+PASS Q2 admissibility: y0^2 + 2 t0 = 1891/5000 <= 1; 1 - 2 t0 = 6608/10^4 = 413/625 EXACT; q(0) = 1891/5000 <= 1; t0 = 0.1696 <= 0.1809 
+PASS Q3 scope honesty (producer A7/H re-derived): Lambda(1891) is 34431/12500000 = 0.00275448 EXACT ABOVE the blocked 0.18634552 target; (413/2500)^2 = 170569/6250000 < 39/1000 EXACT (the target's design height lies strictly below y0: the s34/s35 gate-R2 residual rectangle y in [413/2500, sqrt(39/1000)) x N in [690988, 2745000) is NONEMPTY) 
+PASS Q4 (ii) leg hulls contain t0 with stated endpoint types: lresid_compose [1695/10^4, 1760/10^4] (interior), WYBOX [1696/10^4, 1770/10^4] (LEFT ENDPOINT, closed), down1690 [1690/10^4, 1700/10^4] (interior) 
+PASS Q5 (ii) staircase joints EXACT: lresid N-top == WYBOX N-start == 2745000 == Nmid; WYBOX N-top == down1690 window start == 5000000 == N1 (each split integer covered by BOTH adjacent legs; no gap) 
+PASS Q6 banked slot literals re-gated EXACT-rational > 0 and FLOOR10 strings reproduced by my truncator: lresid_compose 110533245/10^10 (0.0110533245), finwin_ybind composite 2669533163/10^13 (0.0002669533), down1690 slack 279753143/10^10 (0.0279753143) 
+PASS Q7 (ii)/(iii) y-joints at t0 = 0.1696: WYBOX/down1690 y-floor (33/200)^2 <= y0^2; ceiling 6608/10^4 EXACT == 1 - 2 t0 (the FULL hypothesis-(ii) ceiling) 
+PASS W0 identity + directions: 4pi(N^2 - t/16) == 4piN^2 - pi t/4 (structural); d ws/dt = -pi/4 < 0 (t-extremes extremal); d ws/dN = 8 pi N > 0 (windows ordered/tiled) 
+PASS W1 site_glue leg 1: X - ws(N0, t=0) > 0, FLOOR4 string == banked site_glue literal 5377392.8789 (my line, rung-(a) anchor regime) my FLOOR4 5377392.8789
+PASS W2 site_glue leg 2: ws(N0+1, tmax=0.1809) - (X+1) > 0, FLOOR4 string == banked site_glue literal 11989041.1415 (hence N(x) = N0 on [X, X+1] for ALL t in [0, 0.1809], superset of both t0) my FLOOR4 11989041.1415
+PASS W3 assembly_1875 F2b at THIS t0 = 0.1680: X - ws(N0,t0) > 0, my FLOOR4 == producer machine-derived 5377393.0108 my FLOOR4 5377393.0108
+PASS W4 assembly_1891 F2b at THIS t0 = 0.1696: X - ws(N0,t0) > 0, my FLOOR4 == producer machine-derived 5377393.0121 my FLOOR4 5377393.0121
+PASS W5 assembly_1891 F3b: window N1 nonempty, ws(N1+1,t0) - ws(N1,t0) = 4pi(2 N1 + 1) > 0, my FLOOR4 == producer machine-derived 125663718.7099 my FLOOR4 125663718.7099
+PASS V0 P1113 vector: 11 divisors, lam_1 = 1, sum|lam| exact 9918746/10^6 
+-- building log table to 153814 ...
+-- T1875: LIVE tail leg, cutoff N1' = Nmid = 2745000, band [0.1680, 0.1696], y-box [0.19748, 0.19750], ext top 0.8149, M = 50000 ...
+  [T1875] D_ub CEIL10 0.9845628509  flow_lo FLOOR10 0.0097134705  err_ub CEIL18 0.000000013676434983  slack FLOOR10 0.0097134569  (3.1s)
+PASS [T1875] GNbc_sigma1 all routed caps (ext hull): sigma'lna(lnN1-lna)>1 and (s1-1)(lnN1-lna)>1 per divisor [(1, True, True), (2, True, True), (3, True, True), (4, True, True), (5, True, True), (6, True, True), (7, True, True), (10, True, True), (11, True, True), (13, True, True), (14, True, True)]
+PASS [T1875] OVW overshoot block containment: N1 >= d(d+1) for all d in S (floor(N1/d) >= N1/(d+1)); N-decrease of both endpoints via SC3 sigma > 1 
+PASS [T1875] GNbc_sigma2 B-cap gates (ext hull) 
+PASS [T1875] SC1 sigma1 > (t/2)lnN1 on box+ext hulls 
+PASS [T1875] SC2 sigma2 > (t/2)lnN1 on box+ext hulls 
+PASS [T1875] SC3 sigma1,sigma2 > 1 on ext hull (GN-c/GN-d premise) 
+PASS [T1875] YL1 y-coefficients of sigma1/sigma2 declared exact rationals +1/2 / -1/2 (structural linearity) 
+PASS [T1875] YM1 YG1 = 0.02 - L1/2 + lnN1/2 < 0 (G1-carrying terms fall in y, all n <= N1) YG1<=-7.392645
+PASS [T1875] YM2 0.02 - lnN/2 - ln(1-t/16N^2)/2 < 0 at N1 (moving cap endpoint n = N covered for all N >= N1) 
+PASS [T1875] DEC1 D_MINE < 1 (box hull, my upper endpoint) D_ub CEIL10 0.9845628509
+PASS [T1875] DEC2 flow_MINE > err_MINE > 0 (my endpoints, exact-rational) flow FLOOR10 0.0097134705 err CEIL18 0.000000013676434983
+PASS T-W grain law (banked s28 rule, mechanized): pre-collapse head-sum width at the T1875 run < my decisive margin 1 - D_ub, machine-compared width CEIL30 0.000000000000000000000000000001 margin FLOOR10 0.0154371491
+PASS T-IMP-D my D_ub <= producer 0.9854851520 (their D-bound holds on my line, strictly sharpened) my CEIL10 0.9845628509
+PASS T-GAP-D 0 <= producer - my D_ub <= 0.002 (never cruder, gap attributed to their routed caps vs my exact convolution) gap 0.0009223012
+PASS T-IMP-flow my flow_lo >= producer 0.0091331338 (their |f| floor holds on my line) my FLOOR10 0.0097134705
+PASS T-GAP-flow 0 <= my flow_lo - producer <= 0.002 gap 0.0005803368
+PASS T-IMP-err my err_ub <= producer 0.000000013676437397 (their err cap holds on my line) my CEIL18 0.000000013676434983
+PASS T-IMP-slack my flow_lo - my err_ub >= producer final slack 0.0091331201 (their headline tail slack holds on my line, strictly sharpened): the hypothesis-(ii) tail leg of assembly_1875 is RE-PROVED independently my slack FLOOR10 0.0097134569
+PASS T-XE err < 1e-7 on my line (producer's T4 cap holds) 
+PASS T-YG1 consistency: my YG1 upper endpoint <= -7.39 (same monotonicity sign and magnitude class as the producer's CEIL6 -7.392645; my gate YM1 is the decisive one on my line) 
+-- TRI178785400SAFE: tail-only candidate, cutoff Nmid = 3840000, t-box [161250000/1000000000, 161250001/1000000000], M = 153814 ...
+  [TRI178785400SAFE] D_ub CEIL10 0.9997209094  flow_lo FLOOR10 0.0001735326  err_ub CEIL18 0.000000011671602590  slack FLOOR10 0.0001735209  (9.7s)
+PASS [TRI178785400SAFE] GNbc_sigma1 all routed caps (ext hull): sigma'lna(lnN1-lna)>1 and (s1-1)(lnN1-lna)>1 per divisor [(1, True, True), (2, True, True), (3, True, True), (4, True, True), (5, True, True), (6, True, True), (7, True, True), (10, True, True), (11, True, True), (13, True, True), (14, True, True)]
+PASS [TRI178785400SAFE] OVW overshoot block containment: N1 >= d(d+1) for all d in S (floor(N1/d) >= N1/(d+1)); N-decrease of both endpoints via SC3 sigma > 1 
+PASS [TRI178785400SAFE] GNbc_sigma2 B-cap gates (ext hull) 
+PASS [TRI178785400SAFE] SC1 sigma1 > (t/2)lnN1 on box+ext hulls 
+PASS [TRI178785400SAFE] SC2 sigma2 > (t/2)lnN1 on box+ext hulls 
+PASS [TRI178785400SAFE] SC3 sigma1,sigma2 > 1 on ext hull (GN-c/GN-d premise) 
+PASS [TRI178785400SAFE] YL1 y-coefficients of sigma1/sigma2 declared exact rationals +1/2 / -1/2 (structural linearity) 
+PASS [TRI178785400SAFE] YM1 YG1 = 0.02 - L1/2 + lnN1/2 < 0 (G1-carrying terms fall in y, all n <= N1) YG1<=-7.560491
+PASS [TRI178785400SAFE] YM2 0.02 - lnN/2 - ln(1-t/16N^2)/2 < 0 at N1 (moving cap endpoint n = N covered for all N >= N1) 
+PASS [TRI178785400SAFE] DEC1 D_MINE < 1 (box hull, my upper endpoint) D_ub CEIL10 0.9997209094
+PASS [TRI178785400SAFE] DEC2 flow_MINE > err_MINE > 0 (my endpoints, exact-rational) flow FLOOR10 0.0001735326 err CEIL18 0.000000011671602590
+PASS TRI178785400SAFE-B exact tail-row identity B = 893927/5000000
+PASS TRI178785400SAFE-cutoff is a closed integer tail start tail domain is every integer N >= 3840000
+PASS TRI178785400SAFE-W interval grain is smaller than 1-D width CEIL30 0.000000000000000000000000000001 margin FLOOR15 0.000279090620060
+PASS TRI178785400SAFE-D upper bound is below one D_ub CEIL15 0.999720909379940
+PASS TRI178785400SAFE-final flow exceeds error flow FLOOR15 0.000173532614415 err CEIL20 0.00000001167160258919 slack FLOOR15 0.000173520942813
+PASS TRI178785400SAFE-hulls contain y0 and minimally cover sqrt(1-2t) 
+TRI178785400SAFE COMPONENTS: P_ub=0.170228023677303 TR_ub=0.262901330124671 OV_ub=0.039242681210159 Mmax_ub=1.608289144954141 AB_ub=0.327894319266108 eAB_ub=0.00000000000049380789 eC0_ub=0.00000001167110878131
+-- A20 banked regime (band [0.1760, 0.1810], M = 20000, N1 = 5e6) ...
+  [A20] D_ub CEIL10 0.7300496479  flow_lo FLOOR10 0.1770245403  err_ub CEIL18 0.000000003148056802  slack FLOOR10 0.1770245372  (10.6s)
+PASS [A20] GNbc_sigma1 all routed caps (ext hull): sigma'lna(lnN1-lna)>1 and (s1-1)(lnN1-lna)>1 per divisor [(1, True, True), (2, True, True), (3, True, True), (4, True, True), (5, True, True), (6, True, True), (7, True, True), (10, True, True), (11, True, True), (13, True, True), (14, True, True)]
+PASS [A20] OVW overshoot block containment: N1 >= d(d+1) for all d in S (floor(N1/d) >= N1/(d+1)); N-decrease of both endpoints via SC3 sigma > 1 
+PASS [A20] GNbc_sigma2 B-cap gates (ext hull) 
+PASS [A20] SC1 sigma1 > (t/2)lnN1 on box+ext hulls 
+PASS [A20] SC2 sigma2 > (t/2)lnN1 on box+ext hulls 
+PASS [A20] SC3 sigma1,sigma2 > 1 on ext hull (GN-c/GN-d premise) 
+PASS [A20] YL1 y-coefficients of sigma1/sigma2 declared exact rationals +1/2 / -1/2 (structural linearity) 
+PASS [A20] YM1 YG1 = 0.02 - L1/2 + lnN1/2 < 0 (G1-carrying terms fall in y, all n <= N1) YG1<=-7.692474
+PASS [A20] YM2 0.02 - lnN/2 - ln(1-t/16N^2)/2 < 0 at N1 (moving cap endpoint n = N covered for all N >= N1) 
+PASS [A20] DEC1 D_MINE < 1 (box hull, my upper endpoint) D_ub CEIL10 0.7300496479
+PASS [A20] DEC2 flow_MINE > err_MINE > 0 (my endpoints, exact-rational) flow FLOOR10 0.1770245403 err CEIL18 0.000000003148056802
+-- A1690 banked regime (band [0.1690, 0.1700], M = 50000, N1 = 5e6) ...
+  [A1690] D_ub CEIL10 0.9518188906  flow_lo FLOOR10 0.0308415302  err_ub CEIL18 0.000000005396660776  slack FLOOR10 0.0308415248  (12.7s)
+PASS [A1690] GNbc_sigma1 all routed caps (ext hull): sigma'lna(lnN1-lna)>1 and (s1-1)(lnN1-lna)>1 per divisor [(1, True, True), (2, True, True), (3, True, True), (4, True, True), (5, True, True), (6, True, True), (7, True, True), (10, True, True), (11, True, True), (13, True, True), (14, True, True)]
+PASS [A1690] OVW overshoot block containment: N1 >= d(d+1) for all d in S (floor(N1/d) >= N1/(d+1)); N-decrease of both endpoints via SC3 sigma > 1 
+PASS [A1690] GNbc_sigma2 B-cap gates (ext hull) 
+PASS [A1690] SC1 sigma1 > (t/2)lnN1 on box+ext hulls 
+PASS [A1690] SC2 sigma2 > (t/2)lnN1 on box+ext hulls 
+PASS [A1690] SC3 sigma1,sigma2 > 1 on ext hull (GN-c/GN-d premise) 
+PASS [A1690] YL1 y-coefficients of sigma1/sigma2 declared exact rationals +1/2 / -1/2 (structural linearity) 
+PASS [A1690] YM1 YG1 = 0.02 - L1/2 + lnN1/2 < 0 (G1-carrying terms fall in y, all n <= N1) YG1<=-7.692474
+PASS [A1690] YM2 0.02 - lnN/2 - ln(1-t/16N^2)/2 < 0 at N1 (moving cap endpoint n = N covered for all N >= N1) 
+PASS [A1690] DEC1 D_MINE < 1 (box hull, my upper endpoint) D_ub CEIL10 0.9518188906
+PASS [A1690] DEC2 flow_MINE > err_MINE > 0 (my endpoints, exact-rational) flow FLOOR10 0.0308415302 err CEIL18 0.000000005396660776
+PASS ANC1 A20 reproduces my banked s31 literals exactly (D_ub CEIL10 0.7300496479, flow_lo FLOOR10 0.1770245403) got 0.7300496479 / 0.1770245403
+PASS ANC2 A1690 reproduces my banked s31 literals exactly (D_ub CEIL10 0.9518188906, flow_lo FLOOR10 0.0308415302, err_ub CEIL18 0.000000005396660776) got 0.9518188906 / 0.0308415302
+PASS ANC3 cutoff-descent ordering on my line: my D_ub(A20, N1=5e6, deep band) < my D_ub(A1690, N1=5e6) < my D_ub(T1875, N1'=2745000) < 1 (descending the cutoff to Nmid costs D but stays decisively closed) 
+PASS G1 assembly_1875 second-lined: exact composition arithmetic (P1-P11) + window geometry (W1-W3) re-derived; the ONLY live leg (hypothesis-(ii) tail N >= 2745000) RE-PROVED on my zero-shared-code line (T-block); cited banked slots re-gated. Lambda <= 3/16 = 0.1875 EXACT stands on two independent lines 
+PASS G2 assembly_1891 second-lined: exact composition arithmetic (Q1-Q7) + window geometry (W4-W5) re-derived; all three (ii)-legs' hull membership, joints and banked floors re-gated. Lambda <= 0.1891 EXACT citation-arithmetic stands on two independent lines 
+TOTAL CHECKS RUN: 93
+failures: 0
+RESULT: ALL PASS
+elapsed 12.7 s

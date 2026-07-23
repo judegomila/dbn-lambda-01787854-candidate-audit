@@ -1,0 +1,25 @@
+PASS A1 symbolic: 1/2 + i*z(s)/2 == s
+PASS A2 symbolic: Re z = 2T
+PASS A3 symbolic: Im z = 1 - 2 sigma
+PASS A4 critical line maps to y=0
+PASS A5 numeric: |H0(2*gamma1)| < 1e-30 and |H0(2*gamma1+0.5)| > 1e-6 * scale
+PASS B1 Lambda = t0 + y0^2/2 = 0.19999966445 exactly
+PASS B2 Lambda < 0.2
+PASS B3 X/2 = 2500000097429 exactly and <= T_PT
+PASS B4 margin T_PT - X/2 = 500175235371
+PASS B5 canopy validity y0^2 + 2 t0 <= 1
+PASS B6 (ii)-range nonempty y0^2 <= 1 - 2 t0
+PASS B7 region (eq. `region`): 0 < t0 <= 1/2, X >= 200
+PASS B8 slab superset: sqrt(1-y0^2) <= 1 i.e. y0^2 >= 0
+PASS B9 N constant = 630783 on slab (interval arithmetic)
+PASS C1 Cor3.1 Lambda = 0.197262405 exactly
+PASS C2 Cor3.1 X'/2 = 3000000092913.5 <= T_PT, margin 175239886.5
+PASS C3 Cor3.1 validity: y0'^2 + 2 t0' = 0.39452481 <= 1 and y0'^2 <= 1 - 2 t0'
+PASS C4 Cor3.2 Lambda = 0.197 exactly
+PASS C5 Cor3.2 validity: y0''^2 + 2 t0'' = 0.394 <= 1 and y0''^2 <= 1 - 2 t0''
+PASS C6 region containment: 0.039 >= 0.1809^2 and 0.1775 <= 0.1809
+PASS C7 admissibility ceiling: X' <= 2*T_PT = 6000350665600
+PASS D1 0.19-row needs T >= X/2 = 10000000065626 > T_PT
+PASS D2 ratio in (3.33313, 3.33314)
+
+ALL CHECKS PASSED (criterion_theorem package)

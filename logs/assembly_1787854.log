@@ -1,0 +1,52 @@
+--- A: exact row
+[PASS] A1 exact B identity
+[PASS] A2 exact decimal
+[PASS] A3 strict improvement over 0.1796360187
+[PASS] A4 strict improvement over 0.179640000
+[PASS] A5 t and y domain
+[PASS] A6 criterion quantity is admissible
+--- B: verified height
+[PASS] B1 campaign X is odd
+[PASS] B2 X/2 <= Platt--Trudgian height
+[PASS] B3 exact height margin
+--- C: winding/site interfaces
+[PASS] C1 y-floor enters the winding slab
+[PASS] C2 exact y-slab margin
+[PASS] C3 t lies inside the site/winding slab
+[PASS] C4 q(0)=y0^2+2t0 stays below one
+[PASS] C5 required x-width is at most one
+[PASS] C6 site window contains X uniformly
+[PASS] C7 deposited site anchor strings
+--- D: finite/direct-Triangle interface
+[PASS] D1 exact finite row count
+[PASS] D2 finite endpoints
+[PASS] D3 binding stored T floor is positive
+[PASS] D4 effective error is positive
+[PASS] D5 corrected selection-unit binding floor is positive
+[PASS] D6 mollifier joints are consecutive
+[PASS] D7 exact finite leg row counts
+[PASS] D8 direct-Dini pattern counts
+[PASS] D9 worst certified Dini ratio is strict
+[PASS] D10 correction logarithmic rate is strict
+--- T: analytic tail
+[PASS] T1 exact y-box straddles y0
+[PASS] T2 minimal extended grid covers sqrt(1-2t)
+[PASS] T3 small y-box remains inside the full range
+[PASS] T4 selected exact-convolution head
+[PASS] T5 contraction D is below one
+[PASS] T6 directed flow exceeds directed error
+[PASS] T7 independently displayed slack is positive
+[PASS] T8 interval grain is below 1-D
+--- F: closed weld
+[PASS] F1 finite and tail overlap at Nmid
+[PASS] F2 tail begins at the exact finite endpoint
+[PASS] F3 finite and tail sources share the exact t-point
+[PASS] F4 finite and tail sources share the exact y-floor
+[DOCUMENTARY] F5 height, nonvanishing, and winding are criterion interfaces requiring theorem-level review
+--- G: conditional conclusion
+[PASS] G1 assembled functional is the exact candidate
+[DOCUMENTARY] G2 package states that the direct theorem bypasses the invalid standard-shape seam
+[DOCUMENTARY] G3 winding, native-functional, site, error, and criterion bindings remain open to external review
+TOTAL CHECKS RUN: 39
+RESULT: ALL PASS
+CONDITIONAL CONCLUSION: accepting the direct native-functional identification and the cited winding, site, effective-approximation, and criterion bindings, Lambda <= 893927/5000000 = 0.1787854.

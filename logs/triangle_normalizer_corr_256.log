@@ -1,0 +1,11 @@
+PASS S1 h_y<0 on full N/y domain; sigma slope >=1/2
+PASS C1 worst-corner correction log-rate Xi(N0,y0)<0 Xi=[-1.3631121547576400423589522875967657300943872934719933440777628515908407394885546, -1.3631121547576400423589522875967657300943872934719933440777628515908407394879328]
+PASS C2 d_N[g+.5logN]<0
+PASS C3 d_N[k(N)logN]<0
+PASS C4 logN0>1/2 (closed-form monotonicity premise)
+PASS M-P11 M>=1 and D^+M<0 on leg
+PASS M-P7 M>=1 and D^+M<0 on leg
+PASS M-P5 M>=1 and D^+M<0 on leg
+PASS M-P23 M>=1 and D^+M<0 on leg
+ATOM u/(1-exp(-u)) <= 1+u for u>0 follows from 1+u<=exp(u); after u=k*y*log(m), correction term rate <=g+1/y+k*log(N)+.5*log(N).
+RESULT ALL PASS precision 256

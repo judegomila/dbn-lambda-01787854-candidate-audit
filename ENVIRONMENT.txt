@@ -1,0 +1,29 @@
+Standalone review environment
+Prepared: 2026-07-23
+
+Portable build:
+  Root Dockerfile
+  Base: Ubuntu 24.04
+  Base manifest digest:
+    sha256:4fbb8e6a8395de5a7550b33509421a2bafbc0aab6c06ba2cef9ebffbc7092d90
+  Compiler: Ubuntu 24.04 GCC
+  FLINT/Arb: Ubuntu 24.04 libflint-dev (FLINT 3.0.1)
+  Python: Ubuntu 24.04 Python 3.12
+  mpmath: 1.4.1, locked with PyPI SHA-256 hashes in requirements.txt
+  SymPy: 1.12, locked with PyPI SHA-256 hashes in requirements.txt
+  System Python also has Ubuntu's mpmath/SymPy packages for pristine
+    upstream scripts that explicitly invoke /usr/bin/python3.
+
+Historical sealed-run environment:
+  Docker tag: dbn21a-flint
+  Image ID:
+    sha256:bedf7303c0be0d35d658d3893cf9f8424aab9f55bc4167644ddf3df564a16538
+  OS/toolchain: Ubuntu 24.04, GCC 13.3.0
+  FLINT/Arb: FLINT 3.0.1
+  Python inside image: 3.12.3
+
+Host-side Python interval logs in this candidate were generated/replayed with:
+  mpmath 1.4.1
+
+The historical image ID is platform-specific.  Use the root Dockerfile for a
+portable rebuild and compare the directed result strings and sealed Arb logs.

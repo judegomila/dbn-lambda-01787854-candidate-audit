@@ -1,0 +1,28 @@
+[ok] script md5 pinned: 9229ffcfbe5c6c476462ca63e07da25a
+========================================================================
+Re s_*(X+1, y0) in [1.7920637771720e+0, 1.7920637771721e+0] (FLOOR/CEIL 14 digits)
+[PASS] F1 direct Re s_* >= sigma_min (res-bound freeze direction holds) gap >= 3.97703e-8 (FLOOR)
+|1 - beta_2|(X+1, y0) in [7.27771658129e-1, 7.27771658130e-1]
+[PASS] F2 pointwise |1-beta_2| <= C_my (cap not violated) slack >= 5.67209e-1 (FLOOR)
+[PASS] F3 pointwise |1-beta_2| >= 1 - b2^t 2^{-sigma_pt} (two-sided sanity) 
+
+TOTAL GATES RUN: 35
+RESULT: ALL PASS
+
+CERTIFIED (second line, this certificate's code only):
+  * exact assembly: Lambda <= 197/1000 given (i) PT2021, (ii) binding,
+    (iii) slab containments -- all re-checked above in exact rationals;
+  * R1 algebra: phase cancellation + b-exponent + rearrangement identity
+    verified independently (sympy polynomial + exact rationals);
+  * R2: |1-beta_2| <= C_my <= 1.2949811496 (CEIL) and |f_t0| >= m_min
+    >= 0.0231663603 (FLOOR) uniformly on {N>=N0, x in window N, y in
+    [y0,1]}, via my own (res-bound) freeze chain (M1)-(M2);
+  * R3: my own global budget E_my <= 1.04593e-7 (CEIL): e_C0 part
+    digit-matches the producer (1.04589e-7 CEIL); eAB part uses an
+    independent, cruder majorant (integral tail) -- both valid uppers;
+  * R4: m_min - E_my >= 0.0231662557 (FLOOR) > 0 on MY constants --
+    the same 10-digit floor the producer printed: two-line value match.
+  RH-height dependency: NONE above; the assembled record consumes RH
+  to T = X/2 unconditionally via PT2021 (gate A2).
+[ok] 35/35 gates, all four cross-line digit matches PASS
+VERIFY OK

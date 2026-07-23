@@ -1,0 +1,25 @@
+PASS C0a extraction exact-bracket of 1/3 (0 < gaps < 2^-248)
+PASS C0b extraction of exactly representable X is exact
+U1 uniform margin X - sup_t ws(N0,t) >= 5377392.8789 (FLOOR truncation of exact endpoint rational)
+PASS U1 window-N0 start < X uniformly in t0 in [0,0.1809], margin >= 5377392.8789
+U2 uniform margin inf_t ws(N0+1,t) - (X+1) >= 11989041.1415 (FLOOR truncation of exact endpoint rational)
+PASS U2 window-(N0+1) start > X+1 uniformly in t0 in [0,0.1809], margin >= 11989041.1415
+PASS U3 printed digit strings EQUAL certified thresholds (no transcription drift)
+PASS S1 N(x,t) = 690988 constant on slab [X,X+1] x [0,0.1809] (pinned earlier, re-asserted)
+PASS S2 N(ws(N0,t)+1, t) = N0 at t = 0
+PASS S2 N(ws(N0,t)+1, t) = N0 at t = 1809/10000
+PASS R1 0.1965-row functional arithmetic t0 + y0^2/2 = 1965/10000 EXACTLY
+PASS R2 0.1965-row criterion validity y0^2 + 2 t0 = 393/1000 <= 1
+PASS R3 0.1965-row range condition y0^2 <= 1 - 2 t0
+PASS R4 0.1965-row slab containment: y0^2 >= (1809/10000)^2 and t0 <= 1809/10000
+PASS R5 admissibility X/2 <= T_PT exactly (PT2021)
+R6 point margin X - ws(N0, 0.1770) >= 5377393.0179 (FLOOR truncation of exact endpoint rational)
+PASS R6 0.1965-row window-N0 start < X, margin >= 5377393.0179
+R7 point margin ws(N0+1, 0.1770) - (X+1) >= 11989041.1446 (FLOOR truncation of exact endpoint rational)
+PASS R7 0.1965-row window-(N0+1) start > X+1, margin >= 11989041.1446
+PASS R8 printed digit strings EQUAL certified thresholds (no transcription drift)
+PASS G rung t0 = 81/500 lies in [0, 1809/10000] (uniform U1/U2 + S1 apply)
+PASS G rung t0 = 161/1000 lies in [0, 1809/10000] (uniform U1/U2 + S1 apply)
+PASS G rung t0 = 4/25 lies in [0, 1809/10000] (uniform U1/U2 + S1 apply)
+TOTAL CHECKS RUN: 19
+RESULT: ALL PASS

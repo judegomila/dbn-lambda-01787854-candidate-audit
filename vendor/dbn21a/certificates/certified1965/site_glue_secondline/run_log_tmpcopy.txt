@@ -1,0 +1,6 @@
+import audit OK: ['fractions', 'math']
+
+TOTAL CHECKS RUN: 30
+PASS: 30  FAIL: 0
+RESULT: ALL PASS
+VERIFY OK: siteglue second line reproduces (30/30, pinned literals machine-derived)

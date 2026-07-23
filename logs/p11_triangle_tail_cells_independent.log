@@ -1,0 +1,18 @@
+COMMAND:
+python3 /private/tmp/tail_frontier_below_017964_20260723/p11_triangle_tail_cells_iv.py --nlo 690988 --nhi 3840000 --tlo-num 129 --tlo-den 800 --thi-num 129 --thi-den 800 --ylo-num 187271994 --ylo-den 1000000000 --yhi-num 823103882 --yhi-den 1000000000 --cutoff 6000 --prec 160 --max-depth 34 --max-cells 2000000
+
+RESULT ALL PASS
+initial_cells 243
+checked 932073
+passed_leaves 466158
+splits 465915
+max_depth 23
+max_ratio_upper 0.99999930392965626022906970937873589340412302695
+max_ratio_cell Cell(gcdpat=165, active=(11, 15, 33, 55, 165), nlo=Fraction(8207788605535019, 3906250000), nhi=Fraction(4159253504480941, 1953125000), rlo=Fraction(4298882766193, 500000000000), rhi=Fraction(8812239788847, 1000000000000), ylo=Fraction(93635997, 500000000), yhi=Fraction(788827469, 4000000000), depth=18)
+
+SCOPE:
+The stronger all-P11 tail sign gate n>6000, every real N in
+[690988,3840000], and the full closed y interval enclosed by the stated
+decimal rational endpoints.  This implementation uses the more
+conservative Dini bound |u'|, independently of the sharper signed-gamma
+bound used by verify_triangle_y_dini_arb.c.

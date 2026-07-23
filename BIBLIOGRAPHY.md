@@ -1,0 +1,19 @@
+# Primary references
+
+1. D.H.J. Polymath, *Effective approximation of heat flow evolution of
+   the Riemann \(\xi\) function, and a new upper bound for the
+   de Bruijn--Newman constant*, arXiv:1904.12438v2 (2019),
+   <https://arxiv.org/abs/1904.12438v2>.
+
+2. Dave Platt and Tim Trudgian, *The Riemann hypothesis is true up to
+   \(3\cdot10^{12}\)*, Bulletin of the London Mathematical Society,
+   DOI <https://doi.org/10.1112/blms.12460>; arXiv:2004.09765v1,
+   <https://arxiv.org/abs/2004.09765v1>.
+
+3. Mosaic Intelligence, *A certified unconditional upper bound
+   \(\Lambda\le0.1875\) for the de Bruijn--Newman constant*, versioned
+   Zenodo record, DOI <https://doi.org/10.5281/zenodo.21175533>.
+   The record's PDF is included as `references/dbn21a-main.pdf`.
+
+The repository includes transcribed theorem and audit notes for review
+convenience.  The cited papers remain the authoritative mathematical sources.

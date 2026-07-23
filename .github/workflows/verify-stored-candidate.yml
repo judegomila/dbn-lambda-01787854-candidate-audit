@@ -1,0 +1,25 @@
+name: Verify stored candidate
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  stored-certificate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out sealed review package
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Install the locked Python dependency
+        run: python3 -m pip install --require-hashes -r requirements.txt
+
+      - name: Verify hashes, evidence, upstream subset, and assembly
+        env:
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: ./verify.sh
