@@ -31,6 +31,8 @@ FILES = (
 
 ROW = re.compile(r"N ([0-9]+) L12 ([0-9.]+) GT089 ([01])")
 UNCERT = re.compile(r"N ([0-9]+) UNCERT GT089 ([01])")
+TBOX = re.compile(r"TBOX [0-9]+/[0-9]+ [0-9]+/[0-9]+")
+TIMING = re.compile(r"TIMING [0-9.]+ [0-9]+")
 
 
 def rows(stream, label):
@@ -44,6 +46,28 @@ def rows(stream, label):
             raise AssertionError(f"{label}:{line_number}: UNCERT")
     if not result:
         raise AssertionError(f"{label}: no rows")
+    return result
+
+
+def canonical_lines(stream, label):
+    """Retain every deterministic line and reject unknown producer output."""
+    result = []
+    for line_number, raw in enumerate(stream, 1):
+        line = raw.strip()
+        if not line:
+            continue
+        if UNCERT.fullmatch(line):
+            raise AssertionError(f"{label}:{line_number}: UNCERT")
+        if line == "WEIGHT TRIANGLE" or TIMING.fullmatch(line):
+            continue
+        if TBOX.fullmatch(line) or ROW.fullmatch(line):
+            result.append(line)
+            continue
+        raise AssertionError(
+            f"{label}:{line_number}: unrecognized producer output {line!r}"
+        )
+    if not result:
+        raise AssertionError(f"{label}: no canonical lines")
     return result
 
 
@@ -68,6 +92,23 @@ for name in FILES:
         raise AssertionError(
             f"{name}: row-count mismatch {len(actual)} != {len(expected)}"
         )
+    with gzip.open(stored_path, "rt", encoding="utf-8") as stream:
+        expected_lines = canonical_lines(stream, stored_path.name)
+    with replay_path.open("rt", encoding="utf-8") as stream:
+        actual_lines = canonical_lines(stream, replay_path.name)
+    if actual_lines != expected_lines:
+        for index, (left, right) in enumerate(
+            zip(actual_lines, expected_lines)
+        ):
+            if left != right:
+                raise AssertionError(
+                    f"{name}: canonical line mismatch at {index}: "
+                    f"{left!r} != {right!r}"
+                )
+        raise AssertionError(
+            f"{name}: canonical line-count mismatch "
+            f"{len(actual_lines)} != {len(expected_lines)}"
+        )
     first = int(actual[0][0])
     last = int(actual[-1][0])
     if previous is not None and first != previous + 1:
@@ -79,6 +120,6 @@ for name in FILES:
 if total != 3_149_013 or previous != 3_840_000:
     raise AssertionError(f"global replay totals {total}, endpoint {previous}")
 print(
-    "RESULT PASS: fresh sweep matches all 3149013 sealed rows "
-    "N=690988..3840000"
+    "RESULT PASS: fresh sweep matches every canonical line and all "
+    "3149013 sealed rows N=690988..3840000"
 )

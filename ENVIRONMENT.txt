@@ -14,6 +14,18 @@ Portable build:
   System Python also has Ubuntu's mpmath/SymPy packages for pristine
     upstream scripts that explicitly invoke /usr/bin/python3.
 
+Preparation-host portable image build:
+  Tag: dbn-lambda-01787854-review
+  Platform: linux/arm64
+  Image ID:
+    sha256:8da4b264d3ca9c4630782d99c806886332987a5e7f882c09b7afdb2ba7214ef8
+  GCC: 13.3.0-6ubuntu2~24.04.1
+  libc6-dev: 2.39-0ubuntu8.7
+  libflint-dev: 3.0.1-3.1build1
+  libgmp-dev: 2:6.3.0+dfsg-2ubuntu6.1
+  libmpfr-dev: 4.2.1-1build1.1
+  pari-gp: 2.15.4-2.1build1
+
 Historical sealed-run environment:
   Docker tag: dbn21a-flint
   Image ID:
@@ -24,6 +36,27 @@ Historical sealed-run environment:
 
 Host-side Python interval logs in this candidate were generated/replayed with:
   mpmath 1.4.1
+
+Independent preparation-host replays:
+  OS/architecture: macOS arm64
+  Compiler: Apple clang 21.0.0
+  FLINT/Arb: Homebrew FLINT 3.6.0
+  GMP: 6.3.0
+  MPFR: 4.2.2
+  Python: 3.14.6
+  The portable runner discovers these paths without embedding them in any
+    sealed source or evidence file.
+  Complete barrier transcript:
+    barrier/certificates/barrier_target_closed_macos_arm64_flint36.log
+  Its final CPU-profiler field is a non-mathematical platform artifact;
+    certificate verification ignores timing fields.
+
+Canonical portable barrier replay:
+  OS/architecture: Ubuntu 24.04 linux/arm64
+  Compiler: GCC 13.3.0
+  FLINT/Arb: FLINT 3.0.1
+  Complete barrier transcript:
+    barrier/certificates/barrier_target_closed.log
 
 The historical image ID is platform-specific.  Use the root Dockerfile for a
 portable rebuild and compare the directed result strings and sealed Arb logs.

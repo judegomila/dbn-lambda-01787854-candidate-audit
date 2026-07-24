@@ -7,6 +7,9 @@
 certificates/*.gz binary
 logs/*.log text eol=lf
 logs/** -whitespace
+barrier/certificates/barrier_target_closed*.log -whitespace
+barrier/src/StoredSumSinglemat_interval.c -whitespace
+barrier/src/TloopSinglemat_closed_cert.c -whitespace
 vendor/** -whitespace
 vendor/dbn21a/certificates/certified1875/windslab165_v2/tloop binary
 references/*.pdf binary

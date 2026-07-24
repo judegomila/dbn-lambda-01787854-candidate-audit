@@ -4,11 +4,15 @@
    the Riemann \(\xi\) function, and a new upper bound for the
    de Bruijn--Newman constant*, arXiv:1904.12438v2 (2019),
    <https://arxiv.org/abs/1904.12438v2>.
+   The exact reviewed PDF is included as
+   `references/polymath-1904.12438v2.pdf`.
 
 2. Dave Platt and Tim Trudgian, *The Riemann hypothesis is true up to
    \(3\cdot10^{12}\)*, Bulletin of the London Mathematical Society,
    DOI <https://doi.org/10.1112/blms.12460>; arXiv:2004.09765v1,
    <https://arxiv.org/abs/2004.09765v1>.
+   The exact reviewed preprint is included as
+   `references/platt-trudgian-2004.09765v1.pdf`.
 
 3. Mosaic Intelligence, *A certified unconditional upper bound
    \(\Lambda\le0.1875\) for the de Bruijn--Newman constant*, versioned

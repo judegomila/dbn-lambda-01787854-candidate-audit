@@ -1,8 +1,25 @@
 # Tail verifier provenance
 
-The target tail files are not independent new engines.  They are the deposited
-Mosaic Intelligence second-line engine for the 0.1875/0.1891 assemblies plus
-one explicitly delimited target block.
+The target tail proof has two implementation lines.
+
+The primary line is the standalone FLINT/Arb verifier
+`verifiers/verify_tail_arb.c`, accompanied by `TAIL_LEMMA.md`.  It reads no
+cached numerical input, rebuilds all 153,814 exact convolution coefficients,
+uses exact rational candidate parameters, covers every \(N\ge3{,}840{,}000\)
+and the full required \(y\)-range, and refuses precision below 256 bits.
+The sealed 256- and 512-bit logs are parsed fail-closed by
+`verifiers/verify_tail_arb_logs.py`.
+
+Run a fresh primary replay with:
+
+```sh
+./scripts/run_tail_arb.sh replay/tail_arb
+```
+
+The older Python interval files are supplementary regression and provenance
+checks.  They are the deposited Mosaic Intelligence second-line engine for
+the 0.1875/0.1891 assemblies plus one explicitly delimited target block; they
+are not the sole logical support for the target tail.
 
 The pristine source is:
 
@@ -25,5 +42,6 @@ python3 verifiers/verify_tail_patch_provenance.py
 ```
 
 The script reverses exactly those transformations and requires byte-for-byte
-identity with the deposited source.  This establishes source lineage; it does
-not replace mathematical review of the generic `run_band` tail argument.
+identity with the deposited source.  This establishes the supplementary
+line's source lineage; it does not replace mathematical review of either the
+standalone Arb theorem or the generic `run_band` argument.

@@ -1,13 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+unset PYTHONOPTIMIZE PYTHONPATH PYTHONHOME
+export PYTHONDONTWRITEBYTECODE=1
+
 root=$(cd "$(dirname "$0")/.." && pwd)
 cd "$root"
 
-./verify.sh
+if [[ -n ${REVIEW_OUTPUT:-} ]]; then
+  scratch=$(python3 "$root/scripts/replay_guard.py" prepare \
+    "$root" "$REVIEW_OUTPUT")
+else
+  scratch=$(mktemp -d)
+  trap 'rm -rf "$scratch"' EXIT
+fi
 
-scratch=$(mktemp -d)
-trap 'rm -rf "$scratch"' EXIT
+./verify.sh
 
 for precision in 180 256; do
   gcc -O2 -DPREC="$precision" \
@@ -37,5 +45,9 @@ grep -q "TOTAL CHECKS RUN: 93" "$scratch/tail_160.log"
 grep -q "TOTAL CHECKS RUN: 93" "$scratch/tail_256.log"
 grep -q "RESULT: ALL PASS" "$scratch/tail_160.log"
 grep -q "RESULT: ALL PASS" "$scratch/tail_256.log"
+
+RUN_SANITIZERS=1 ./scripts/run_tail_arb.sh "$scratch/tail_arb"
+./scripts/run_direct_singletons.sh "$scratch/direct_singletons"
+./scripts/run_barrier_replay.sh "$scratch/barrier"
 
 echo "RESULT: CONTAINER REVIEW PASS"

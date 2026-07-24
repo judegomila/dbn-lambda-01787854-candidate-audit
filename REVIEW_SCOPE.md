@@ -2,26 +2,35 @@
 
 ## Review status
 
-This repository is a private referee package for the unreviewed,
-computer-assisted candidate
+This is a private referee package for the **unreviewed computer-assisted
+unconditional proof candidate**
 
 \[
 \Lambda\le\frac{893927}{5000000}=0.1787854.
 \]
 
-It is not an announcement of an established theorem.  The stored numerical
-evidence and fresh interval replay pass, but several theorem-level interfaces
-remain deliberately open for external review.  In particular, a green script
-does not settle the questions in `OPEN_REVIEW_QUESTIONS.md`.
+It is not an established theorem, has not been peer reviewed, and should not
+be described as a public result. The package is called “unconditional”
+because its candidate proof assumes no unproved conjecture; that description
+does not prejudge whether the new proof is correct.
+
+The requested review has two separate parts:
+
+1. verify the mathematics and the proof-to-code correspondence; and
+2. reproduce the decisive computations in an independent environment.
+
+A green replay answers the second question only relative to the encoded
+predicates. It does not substitute for the first.
 
 ## Ten-minute orientation
 
-Read, in order:
+Read:
 
-1. `README.md` for the claim and evidence map.
-2. `PROOF_NOTE.md` for the conditional implication.
-3. `OPEN_REVIEW_QUESTIONS.md` for the known pressure points.
-4. `CANDIDATE_PARAMETERS.md` for the exact row and all closed boxes.
+1. `README.md` for the claim and package map;
+2. `PROOF_NOTE.md` for the complete theorem chain;
+3. `OPEN_REVIEW_QUESTIONS.md` for the requested referee decisions;
+4. `CANDIDATE_PARAMETERS.md` for exact domains and margins; and
+5. `BIBLIOGRAPHY.md` for the two published theorem inputs.
 
 Then run:
 
@@ -32,124 +41,223 @@ python3 -m pip install --require-hashes -r requirements.txt
 ./verify.sh
 ```
 
-The final line must be:
+The assembly portion must report:
 
 ```text
-RESULT: STORED CANDIDATE PASS
+RESULT: UNCONDITIONAL CANDIDATE ASSEMBLY PASS
+CONCLUSION: Lambda <= 893927/5000000 = 0.1787854.
+STATUS: unreviewed computer-assisted unconditional proof candidate; not an established theorem.
 ```
 
-That command checks the repository seal, the exact provenance of the patched
-tail engine, the vendored upstream subset, every stored finite row, decisive
-interval logs, and the exact target assembly.
+The status line is as important as the numerical conclusion.
 
-## Container replay
+## Recommended mathematical audit order
 
-The repository includes a buildable Ubuntu 24.04/FLINT 3 environment:
+### 1. Canonical criterion and verified height
+
+Read:
+
+- Polymath Theorem 1.2 in arXiv:1904.12438v2;
+- `PROOF_NOTE.md` sections 1--3 and 7;
+- `vendor/dbn21a/certificates/record/criterion_theorem/`; and
+- Platt--Trudgian's finite RH-verification theorem.
+
+Confirm the \(x=2T\) normalization and the exact matching of the three
+Theorem 1.2 hypotheses:
+
+- (i) verified zeta height;
+- (ii) final-time right-half-line nonvanishing; and
+- (iii) intermediate-time curved barrier.
+
+The exact height margin is \(350479773/2\).
+
+### 2. Closed intermediate-time barrier
+
+Read:
+
+- `DERIVATIVE_BOX_LEMMA.md`;
+- `BARRIER_CERTIFICATE.md`;
+- `barrier/src/TloopSinglemat_closed_cert.c`;
+- `barrier/src/StoredSumSinglemat_interval.c`;
+- `barrier/src/StoredSumTaylorTail_cert.c`;
+- `barrier/src/verify_uniform_error_01787854.c`; and
+- `verifiers/verify_barrier_binding.py`.
+
+Audit the complete-box derivative envelopes, exact-head/decreasing-tail
+sum bound, holomorphic quadrature callbacks, midpoint-disk interpolation
+lemma, complete-prism \(t\)-derivative bound, winding/argument-principle
+step, \(B_t\ne0\) normalization, Theorem 1.3 limit at \(t=0\), and
+coefficient/Taylor provenance.
+
+This target proof consumes the new 883-prism fail-closed certificate. It does
+not consume the historical midpoint-printed winding or site-glue artifacts
+under `vendor/`.
+
+### 3. Finite final-time lane
+
+Read:
+
+- `NATIVE_BINDING.md`;
+- `WINDOW_FREEZE_THEOREM.md`;
+- `provenance/TRIANGLE_Y_DINI_THEOREM.independent.md`;
+- `provenance/TRIANGLE_NORMALIZER_CORR_MONOTONICITY.md`;
+- `src/lemma_sweep_p235711.c`; and
+- the corresponding verifiers under `verifiers/`.
+
+The core obligations are:
+
+- the exact real-coefficient Euler convolutions, including
+  \(\overline E C_0\);
+- the sign used to replace \(|E|\) by \(M_N\);
+- the upper-Dini argument at coefficient zeros and the passage to global
+  monotonicity;
+- monotonicity of the native normalizer and correction;
+- the conservative directions of the \(x\)-window freeze; and
+- the half-open window convention at every endpoint.
+
+The target effective-error path uses the paper's \(x-12\) denominator in
+equation (24). A historical \(x-6.66\) substitution is not consumed.
+
+### 4. Infinite final-time lane
+
+Read:
+
+- `TAIL_LEMMA.md`;
+- `verifiers/verify_tail_arb.c`;
+- `verifiers/verify_tail_arb_logs.py`;
+- `TAIL_PROVENANCE.md`; and
+- the older Python interval tail scripts as corroboration.
+
+Audit the endpoint-cap lemma, exact convolution partition, harmless
+nonnegative `OV` padding, all-\(N\) monotonicity gates, full-height transfer,
+complete \(t\)-box evaluation, and exact error formulas.
+
+The primary target certificates are independent FLINT/Arb runs at 256 and
+512 bits. The result is not dependent only on two precisions of the same
+`mpmath.iv` program.
+
+### 5. Site coverage and final weld
+
+Return to:
+
+- `WINDOW_FREEZE_THEOREM.md`;
+- `verifiers/verify_window_freeze.py`;
+- `verifiers/verify_assembly_1787854.py`; and
+- `PROOF_NOTE.md` sections 4--7.
+
+Confirm:
+
+- \(X+\sqrt{1-y_0^2}\) is strictly inside \(W_{690988}\);
+- the finite windows cover through \(x_{3840001}\) with the stated
+  half-open convention;
+- the tail starts at \(x_{3840000}\), producing a complete overlap;
+- the closed rectangle contains the full curved barrier; and
+- no theorem hypothesis has been renamed, swapped, or silently weakened.
+
+## Computational replay levels
+
+### Level A: stored fail-closed verification
+
+Run:
+
+```sh
+./verify.sh
+```
+
+This checks the repository seal, exact source provenance, all stored finite
+rows, decisive interval logs, new theorem-source contracts, and the final
+assembly.
+
+### Level B: portable clean container
+
+Run:
 
 ```sh
 docker build -t dbn-lambda-01787854-review .
-docker run --rm \
-  -v "$PWD:/work" -w /work \
-  dbn-lambda-01787854-review
+mkdir -p replay/container-review
+docker run --rm --network none --read-only \
+  --user "$(id -u):$(id -g)" \
+  --tmpfs /tmp:rw,exec,nosuid,size=4g \
+  -e REVIEW_OUTPUT=/review-output/evidence \
+  -v "$PWD:/work:ro" \
+  -v "$PWD/replay/container-review:/review-output" \
+  -w /work dbn-lambda-01787854-review
 ```
 
-The container recompiles the direct Arb verifier at 180 and 256 bits,
-compares its output byte-for-byte with the sealed logs, compiles the finite
-producer, and freshly reruns the normalizer and tail verifiers.  It must end:
+The container recompiles and reruns the bounded-cost verifiers. It should
+finish with:
 
 ```text
 RESULT: CONTAINER REVIEW PASS
 ```
 
-The historical image used for the sealed runs is separately recorded in
-`ENVIRONMENT.txt`.  Its image ID is platform-specific; the repository
-Dockerfile is the portable review route.
+### Level C: fresh closed barrier
 
-## Mathematical review layers
-
-### 1. Criterion, height, winding, and site
-
-- `vendor/dbn21a/certificates/record/criterion_theorem/`
-- `vendor/dbn21a/certificates/certified1875/windslab165_v2/`
-- `vendor/dbn21a/certificates/certified1875/windslab165_corner_secondline/`
-- `vendor/dbn21a/certificates/certified1965/site_glue/`
-- `vendor/dbn21a/certificates/certified1965/site_glue_secondline/`
-- `PROOF_NOTE.md` sections 1, 2, and 8
-
-The winding material is included so that the inherited claim can be reviewed
-locally.  Its inclusion is not an endorsement of its rigor; the open coverage
-and interval-output questions are listed explicitly in
-`OPEN_REVIEW_QUESTIONS.md`.
-
-### 2. Fixed-height finite evidence
-
-- `src/lemma_sweep_p235711.c`
-- `certificates/`
-- `verifiers/verify_finite_and_binding.py`
-- `scripts/run_full_sweep.sh`
-
-The stored path parses all 3,149,013 rows.  The full producer replay is the
-expensive optional step:
+Run:
 
 ```sh
-mkdir replay/full_sweep
-IMAGE=dbn-lambda-01787854-review ALLOW_UNPINNED_IMAGE=1 \
+./scripts/run_barrier_replay.sh replay/barrier
+```
+
+This independently regenerates all \(7,688\) stored coefficient components,
+checks their containment, recomputes the factorial Taylor tail and uniform
+Theorem 1.3 error, and certifies all 883 closed time prisms.
+
+### Level D: fresh standalone Arb tail
+
+Run:
+
+```sh
+./scripts/run_tail_arb.sh replay/tail_arb
+```
+
+This compiles and runs the standalone fixed-domain tail checker at 256 and
+512 bits and subjects both transcripts to the strict parser.
+
+### Level E: complete finite regeneration
+
+Run:
+
+```sh
+docker build -t dbn-lambda-01787854-review .
+review_image_id=$(docker image inspect --format '{{.Id}}' \
+  dbn-lambda-01787854-review)
+IMAGE=dbn-lambda-01787854-review \
+EXPECTED_IMAGE_ID="$review_image_id" \
   ./scripts/run_full_sweep.sh replay/full_sweep
 ```
 
-It is CPU-intensive and machine-dependent; allow hours rather than minutes
-and at least 1 GB of free working space.  It was not rerun as part of this
-repository-preparation pass.
+The runner requires a fresh, nonexistent output path and the locked
+image ID unless an unpinned image is explicitly authorized. It regenerates
+every one of the \(3,149,013\) finite rows and compares the canonical tuples
+with all 15 sealed shards. See `MAXIMUM_CHECKS.md` for the completed
+pre-handoff replay and direct-boundary stress checks.
 
-### 3. Direct all-height Triangle theorem
+## Evidence hierarchy
 
-- `provenance/TRIANGLE_Y_DINI_THEOREM.independent.md`
-- `verifiers/verify_triangle_y_dini_arb.c`
-- `provenance/verify_triangle_y_monotonicity_independent.py`
-- `provenance/p11_triangle_tail_cells_iv.py`
+For each component, distinguish:
 
-The key issue is whether the branch-free Dini bound and finite cell reduction
-really imply global monotonicity on the stated closed domain.
+1. the mathematical statement;
+2. its proof or reduction;
+3. the implementation of the reduction;
+4. the directed interval output;
+5. the parser and final assembly; and
+6. the integrity seal binding those files.
 
-### 4. Native normalization and effective error
+Agreement at levels 4--6 cannot repair an error at levels 1--3. Conversely,
+a mathematically correct reduction still needs a faithful, fail-closed
+implementation.
 
-- `provenance/TRIANGLE_NORMALIZER_CORR_MONOTONICITY.md`
-- `verifiers/verify_triangle_normalizer_corr_iv.py`
-- `provenance/ERROR_TERMS_AUDIT.upstream.md`
-- `vendor/dbn21a/certificates/record/error_terms_audit/`
+## What is not claimed
 
-The target implication depends on the native Triangle functional being the
-correct lower bound for \(|f_t|\) after its built-in normalization and
-correction.  This is a theorem-level review item, not something established
-merely by the numerical gates.
+The repository does not claim:
 
-### 5. Infinite tail
+- that the result has passed independent review;
+- that the Polymath or Platt--Trudgian papers have been re-proved here;
+- that a finite set of software replays excludes every toolchain fault;
+- that the result establishes RH;
+- priority, novelty, or suitability for public announcement.
 
-- `TAIL_PROVENANCE.md`
-- `vendor/deposited/assembly1875_1891_secondline.py`
-- `verifiers/verify_tail_patch_provenance.py`
-- `verifiers/verify_tail_1787854_160.py`
-- `verifiers/verify_tail_1787854_256.py`
-
-The provenance checker proves that each target is the deposited engine plus
-the declared precision/head changes and one delimited candidate block.
-
-### 6. Closed weld and conclusion
-
-- `verifiers/verify_assembly_1787854.py`
-- `logs/assembly_1787854.log`
-- `PROOF_NOTE.md` section 8
-
-The assembly checks exact arithmetic and source-level parameter agreement.
-Documentary theorem interfaces are printed as documentary assertions, not as
-numerical `PASS` gates.
-
-## What the automated checks do not establish
-
-- correctness of the cited analytic theorems;
-- rigor of midpoint-printed or fail-open upstream winding output;
-- independence of two runs of the same `mpmath.iv` implementation;
-- the native Triangle-to-\(|f_t|\) theorem-level binding;
-- peer review, priority, novelty, or suitability for public announcement.
-
-Use `REVIEWER_REPORT_TEMPLATE.md` for a concise referee response.
+The desired referee report should identify any fatal gap, required repair,
+or independently accepted component. `REVIEWER_REPORT_TEMPLATE.md` may be
+used for a concise response.

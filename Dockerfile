@@ -24,7 +24,11 @@ RUN python3 -m venv /opt/dbn-review \
     && /opt/dbn-review/bin/pip install --no-cache-dir --require-hashes \
        -r /tmp/review-requirements.txt
 
-ENV PATH="/opt/dbn-review/bin:${PATH}"
+ENV PATH="/opt/dbn-review/bin:${PATH}" \
+    LC_ALL=C.UTF-8 \
+    LANG=C.UTF-8 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONHASHSEED=0
 WORKDIR /work
 
 CMD ["./scripts/run_container_review.sh"]

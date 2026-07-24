@@ -166,6 +166,8 @@ static void Wcompute(arb_t W, ulong n, ulong Ncut, ulong Nstart,
     ulong Nref = n/dmin; if(Nref < Nstart) Nref = Nstart;
     gamma_at(ga, Nref, t, y, pi, c002y, prec);
 #ifdef TRIANGLE_WEIGHT
+    (void) ge;
+    (void) ce;
     /* Direct standard-majorant (upstream Triangle-bound) weight:
          |b| + gamma(N) |a0| <= |b| + gamma(Nref) |a0|,
        since gamma decreases with N and Nref <= N.  For a singleton
@@ -214,6 +216,10 @@ int main(int argc, char *argv[]){
     char mode = argv[12][0];
     ulong stride = (argc>13)? strtoul(argv[13],NULL,10) : 1;
     if(thinum < tlonum){ printf("need thi >= tlo\n"); return 2; }
+    if(mtype < 1 || mtype > 6){
+        printf("mtype 1/2/3/4/5/6 only\n");
+        return 2;
+    }
 
     arb_t t, y, a0e, amy, pi, ln4pi, c002y, hw;
     arb_init(t); arb_init(y); arb_init(a0e); arb_init(amy); arb_init(pi); arb_init(ln4pi); arb_init(c002y); arb_init(hw);
@@ -302,7 +308,6 @@ int main(int argc, char *argv[]){
                     arb_neg(ms.moll[mask],ms.moll[mask]); arb_add(ms.lnd[mask],ms.lnd[mask],ln11,prec); }
             }
         }
-        else if(mtype!=1){ printf("mtype 1/2/3/4/5/6 only\n"); return 2; }
         for(int i=0;i<4;i++) ms.dvec[i] = (mtype==3)? DVEC3[i] : ms.dvec[i];
         arb_clear(b2); arb_clear(b3); arb_clear(b5); arb_clear(b7); arb_clear(b11);
         arb_clear(ln2); arb_clear(ln3); arb_clear(ln5); arb_clear(ln7); arb_clear(ln11);
@@ -340,6 +345,7 @@ int main(int argc, char *argv[]){
 
     clock_t tstart = clock();
     ulong npts = 0;
+    int exit_code = 0;
 
     for(ulong N = Nstart; N <= Nend; N += stride){
         arb_set_ui(N_a, N);
@@ -355,7 +361,13 @@ int main(int argc, char *argv[]){
             arb_mul_ui(inner, y, 3, prec); arb_neg(inner, inner); arb_add_ui(inner, inner, 1, prec);
             arb_add(inner, inner, tmp, prec);
             if(arb_is_negative(inner)) arb_zero(inner);
-            else if(!arb_is_positive(inner)){ printf("inner sign uncertified\n"); return 3; }
+            else if(!arb_is_positive(inner)){
+                printf("inner sign uncertified\n");
+                arb_clear(inner);
+                arb_clear(x2);
+                exit_code = 3;
+                goto cleanup;
+            }
             arb_mul(tmp, t, inner, prec);
             arb_mul_2exp_si(x2, x2, 1); arb_div(tmp, tmp, x2, prec);
             arb_sub(p, p, tmp, prec);
@@ -529,10 +541,70 @@ int main(int argc, char *argv[]){
             printf("%s GT089 %d\n", buf, gt);
         } else printf("N %lu UNCERT GT089 %d\n", N, gt);
         (void)mode;
-        if(getenv("LEMMA_DEBUG")){ printf("DBG N %lu lbound = %s\n", N, arb_get_str(lbound, 25, 0)); }
+        if(getenv("LEMMA_DEBUG")){
+            char *debug_value = arb_get_str(lbound, 25, 0);
+            printf("DBG N %lu lbound = %s\n", N, debug_value);
+            flint_free(debug_value);
+        }
         npts++;
     }
     printf("TIMING %.3f %lu\n", (double)(clock()-tstart)/CLOCKS_PER_SEC, npts);
+
+cleanup:
+    fmpz_clear(sc);
+    fmpz_clear(zlo);
+    fmpz_clear(zhi);
+    arf_clear(flo);
+    arf_clear(fhi);
+
+    arb_clear(N_a);
+    arb_clear(xN);
+    arb_clear(lnx4pi);
+    arb_clear(p);
+    arb_clear(sigma);
+    arb_clear(d_);
+    arb_clear(modK);
+    arb_clear(modgamma);
+    arb_clear(modmoll);
+    arb_clear(lnN);
+
+    arb_clear(tmp);
+    arb_clear(tmp2);
+    arb_clear(W);
+    arb_clear(Wold);
+    arb_clear(hW);
+    arb_clear(hC);
+    arb_clear(R);
+    arb_clear(absd);
+    arb_clear(fac);
+    arb_clear(L);
+    arb_clear(Ssum);
+    arb_clear(corr);
+    arb_clear(lbound);
+    arb_clear(thr);
+    arb_clear(btN);
+    arb_clear(cnow);
+
+    arb_clear(pc);
+    _arb_vec_clear(MW, K + 1);
+    _arb_vec_clear(MC, K + 1);
+    arb_clear(ge);
+    arb_clear(ce);
+
+    for(int i=0; i<MAXD; i++){
+        arb_clear(ms.moll[i]);
+        arb_clear(ms.lnd[i]);
+    }
+
+    arb_clear(t);
+    arb_clear(y);
+    arb_clear(a0e);
+    arb_clear(amy);
+    arb_clear(pi);
+    arb_clear(ln4pi);
+    arb_clear(c002y);
+    arb_clear(hw);
+
     flint_cleanup();
-    return 0;
+    return exit_code;
 }

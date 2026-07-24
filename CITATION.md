@@ -4,7 +4,7 @@ This private repository should not yet be cited as an established result.
 Until authorship, external review, and public-release terms are settled,
 refer to it descriptively as:
 
-> Unreviewed computer-assisted candidate for
+> Unreviewed computer-assisted unconditional proof candidate for
 > \(\Lambda\le893927/5000000=0.1787854\), private review snapshot,
 > 2026-07-23, identified by its Git commit SHA.
 

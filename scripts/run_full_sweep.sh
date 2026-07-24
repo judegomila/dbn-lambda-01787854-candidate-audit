@@ -1,24 +1,36 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+unset PYTHONOPTIMIZE PYTHONPATH PYTHONHOME
+export PYTHONDONTWRITEBYTECODE=1
+
 if [[ $# -ne 1 ]]; then
   echo "usage: $0 EMPTY_OUTPUT_DIRECTORY" >&2
   exit 2
 fi
 
-root=$(cd "$(dirname "$0")/.." && pwd)
+root=$(cd "$(dirname "$0")/.." && pwd -P)
 source_file=$root/src/lemma_sweep_p235711.c
 compare=$root/scripts/compare_full_sweep.py
-output=$1
+requested_output=$1
 image=${IMAGE:-dbn21a-flint}
-expected=sha256:bedf7303c0be0d35d658d3893cf9f8424aab9f55bc4167644ddf3df564a16538
+expected=${EXPECTED_IMAGE_ID:-sha256:bedf7303c0be0d35d658d3893cf9f8424aab9f55bc4167644ddf3df564a16538}
 
-mkdir -p "$output"
-if [[ -n $(find "$output" -mindepth 1 -maxdepth 1 -print -quit) ]]; then
-  echo "error: output directory must be empty: $output" >&2
+python3 "$root/scripts/replay_guard.py" require "$root" \
+  src/lemma_sweep_p235711.c scripts/compare_full_sweep.py
+
+repository_dirty=false
+if git -C "$root" rev-parse --is-inside-work-tree >/dev/null 2>&1 \
+    && [[ -n $(git -C "$root" status --porcelain --untracked-files=all) ]]; then
+  repository_dirty=true
+fi
+if [[ $repository_dirty == true && ${ALLOW_DIRTY_REPO:-0} != 1 ]]; then
+  echo "error: refusing a complete replay from a dirty repository" >&2
   exit 2
 fi
-output=$(cd "$output" && pwd)
+
+output=$(python3 "$root/scripts/replay_guard.py" prepare \
+  "$root" "$requested_output")
 
 actual=$(docker image inspect --format '{{.Id}}' "$image")
 if [[ $actual != "$expected" && ${ALLOW_UNPINNED_IMAGE:-0} != 1 ]]; then
@@ -26,9 +38,34 @@ if [[ $actual != "$expected" && ${ALLOW_UNPINNED_IMAGE:-0} != 1 ]]; then
   exit 2
 fi
 
+if command -v sha256sum >/dev/null 2>&1; then
+  source_sha=$(sha256sum "$source_file" | awk '{print $1}')
+else
+  source_sha=$(shasum -a 256 "$source_file" | awk '{print $1}')
+fi
+started=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+commit=$(git -C "$root" rev-parse HEAD 2>/dev/null || printf 'unavailable')
+platform=$(docker image inspect --format '{{.Os}}/{{.Architecture}}' "$image")
+{
+  echo "purpose=complete finite Triangle replay"
+  echo "started_utc=$started"
+  echo "repository_commit=$commit"
+  echo "repository_dirty=$repository_dirty"
+  echo "producer_sha256=$source_sha"
+  echo "command=IMAGE=$image EXPECTED_IMAGE_ID=$expected ./scripts/run_full_sweep.sh $output"
+  echo "container_image=$image"
+  echo "container_image_id=$actual"
+  echo "container_platform=$platform"
+  docker run --rm --network none --read-only \
+    --tmpfs /tmp:rw,exec,nosuid,size=256m \
+    "$image" bash -lc \
+    'gcc --version | head -n 1; dpkg-query -W libflint-dev libgmp-dev libmpfr-dev 2>/dev/null || true'
+} > "$output/REPLAY_METADATA.txt"
+
 # Refuse to spend compute unless this exact bind mount is host-visible.
 probe=.triangle_bind_mount_probe
-docker run --rm --volume "$output:/out" "$image" \
+docker run --rm --network none --read-only \
+  --volume "$output:/out" "$image" \
   bash -lc "printf '%s\\n' visible > /out/$probe"
 if [[ ! -f "$output/$probe" ]] \
     || [[ $(<"$output/$probe") != visible ]]; then
@@ -37,7 +74,8 @@ if [[ ! -f "$output/$probe" ]] \
 fi
 rm -f "$output/$probe"
 
-docker run --rm \
+docker run --rm --network none --read-only \
+  --tmpfs /tmp:rw,exec,nosuid,size=2g \
   --volume "$source_file:/work/producer.c:ro" \
   --volume "$output:/out" \
   "$image" bash -lc '
@@ -125,3 +163,18 @@ wait "$p23_pid"
 '
 
 python3 "$compare" "$output"
+
+finished=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+echo "finished_utc=$finished" >> "$output/REPLAY_METADATA.txt"
+if command -v sha256sum >/dev/null 2>&1; then
+  (
+    cd "$output"
+    sha256sum ./*.log ./REPLAY_METADATA.txt
+  ) > "$output/REPLAY_SHA256SUMS"
+else
+  (
+    cd "$output"
+    shasum -a 256 ./*.log ./REPLAY_METADATA.txt
+  ) > "$output/REPLAY_SHA256SUMS"
+fi
+echo "RESULT: FULL SWEEP REPLAY AND METADATA PASS"

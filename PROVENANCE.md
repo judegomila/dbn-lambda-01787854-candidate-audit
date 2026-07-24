@@ -31,15 +31,11 @@ workspace directory after discovering that Docker Desktop/Colima maps a
 VM-private `/private/tmp` silently.  Both replay scripts now perform a
 write/read bind-mount preflight before starting expensive work.
 
-## New direct theorem
+## Direct finite theorem
 
 The primary verifier in this package is
-`verifiers/verify_triangle_y_dini_arb.c`.  Before sealing, its SHA-256
-was independently reported as:
-
-```text
-7163fc8a6c13cca63e60e7d5cada22ba2a3b786fd5fc42be379db3e09c487a42
-```
+`verifiers/verify_triangle_y_dini_arb.c`.  Its final source hash is recorded
+by the root package seal.
 
 It was independently compiled at 180 and 256 bits in the pinned image.
 The two runs have identical pattern, rectangle, and split counts.
@@ -57,12 +53,45 @@ The stale prototype that omitted the composite-divisor
 
 ## Tail source lineage
 
+The primary target tail is the standalone theorem and FLINT/Arb implementation
+in `TAIL_LEMMA.md` and `verifiers/verify_tail_arb.c`.  It reconstructs its
+153,814 exact coefficients rather than loading deposited tail values, and its
+256- and 512-bit outputs are independently parsed by
+`verifiers/verify_tail_arb_logs.py`.
+
 The pristine deposited second-line engine is stored at
 `vendor/deposited/assembly1875_1891_secondline.py`.  The target 160- and
 256-bit files alter only their precision, maximum exact-convolution head, and
 one delimited candidate block.  `verifiers/verify_tail_patch_provenance.py`
 reverses those changes and requires byte-for-byte equality with the deposited
 source.  See `TAIL_PROVENANCE.md`.
+
+## Closed-barrier lineage
+
+The target closed-barrier implementation is
+`barrier/src/TloopSinglemat_closed_cert.c`, a modified LGPL Polymath source.
+Its paired stored-sum generator is
+`barrier/src/StoredSumSinglemat_interval.c`.  The target repair adds
+fail-closed quadrature, interval minima, exact closed time-prism coverage,
+Taylor and approximation errors, a complete spatial derivative envelope, and
+explicit winding gates.  `BARRIER_CERTIFICATE.md` and
+`DERIVATIVE_BOX_LEMMA.md` state the mathematical interface; the fresh replay
+regenerates all 7,688 stored-sum components and checks all 883 prisms.  The
+historical vendored winding binary and its success marker are not consumed.
+The archived matrix input retains its header and all 62 numerical rows but
+omits the upstream program's non-mathematical `cpu/wall` profiler footer.
+
+The canonical stored barrier evidence is the complete
+Linux/GCC/FLINT 3.0.1 transcript
+`barrier/certificates/barrier_target_closed.log` (SHA-256
+`2d010f70902dca1627f40ddcd68f3954b37fd9596f7840787415eeafb20805f4`).
+The complete independent macOS/Clang/FLINT 3.6.0 replay is retained at
+`barrier/certificates/barrier_target_closed_macos_arm64_flint36.log`
+(SHA-256
+`4d5ec355fb51b834b99ec48662eae200ecb125297e62b757d7d7f1b3737378f4`).
+The assembly strict-parses both.  The macOS transcript's anomalous final
+`cpu` profiler field is a non-mathematical platform artifact and is ignored;
+the certificate parser consumes neither timing field.
 
 ## Inherited analytic sources
 
@@ -99,8 +128,15 @@ context and are not target `PASS` gates.
 
 ## Scope
 
-The SHA-256 manifest seals every stable file except the manifest itself
-and disposable `replay/` output.  A green replay establishes artifact
-integrity and local implementation consistency; it is not a substitute
-for independent review of the mathematical theorem bindings.  Known open
-questions are listed in `OPEN_REVIEW_QUESTIONS.md`.
+`scripts/seal.py` defines the stable inventory, rejects symlinks and extra or
+missing stable files, and verifies `SHA256SUMS`.  It excludes the manifest
+itself; the repository-local transient roots `.git/`, `.venv/`, `replay/`,
+and `tmp/`; and Python cache directories named `__pycache__/`.  Everything
+else is sealed, and common stray editor, bytecode, object, and output files
+are rejected rather than silently excluded.  The final Git commit binds the
+manifest.
+
+A green replay establishes artifact integrity and local implementation
+consistency; it is not a substitute for independent review of the
+mathematical theorem bindings.  The questions a referee should actively
+challenge are listed in `OPEN_REVIEW_QUESTIONS.md`.

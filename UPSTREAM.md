@@ -48,12 +48,15 @@ Run:
 ./scripts/verify_upstream_subset.sh
 ```
 
-This checks provenance and reruns the consumed upstream arithmetic packages.
+This checks provenance and reruns the selected historical packages for
+regression context.  The target criterion assembly does not consume the old
+site-glue or winding-slab success markers: its finite/right-region,
+standalone-tail, and repaired closed-barrier certificates are all in the
+root target path.
 The corner second line is provenance-checked but deliberately not promoted to
 a target-green gate: it samples only five corners, and its original wrapper
 rewrites deterministic combined JSON outputs.  Passing output establishes
-artifact identity and internal replay only.  It does not settle the
-winding-rigor questions in `OPEN_REVIEW_QUESTIONS.md`.
+artifact identity and internal replay only.
 
 ## Full archive
 

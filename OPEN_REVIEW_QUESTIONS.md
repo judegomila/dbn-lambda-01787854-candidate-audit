@@ -1,100 +1,198 @@
 # Open mathematical review questions
 
-These are known questions, not hidden caveats.  A reviewer is specifically
-asked to decide whether each item is valid, repairable, or fatal to the
-candidate implication.
+These are the questions on which an external referee is asked to make an
+independent judgment. They are not a list of acknowledged missing
+hypotheses. The repository presently contains a candidate proof of each
+item, but an adverse answer to any load-bearing question may invalidate the
+conclusion.
 
-## Priority 1: native Triangle binding
+The package's status remains: **unreviewed computer-assisted unconditional
+proof candidate**, not an established or peer-reviewed theorem.
 
-`provenance/TRIANGLE_NORMALIZER_CORR_MONOTONICITY.md` sections 3--4 claims
-that
+## Priority 1: canonical Theorem 1.2 weld
 
-\[
-L_N(y)=\frac{1-\mathcal F_N(y)}{M_N(y)}-K_N(y)
-\]
+Please compare `PROOF_NOTE.md` directly with Theorem 1.2 of
+arXiv:1904.12438v2.
 
-is the producer's native lower bound for \(|f_t|\), so that the final finite
-gate is \(T_{\min}-E_{\max}>0\), with no second Euler conversion factor.
+- Is hypothesis (i) exactly the zeta zero-free region consumed by the
+  Platt--Trudgian height, with the correct \(x=2T\) normalization?
+- Is hypothesis (ii) exactly the final-time right region, with lower endpoint
+  \(X+\sqrt{1-y_0^2}\) and the stated closed \(y\)-range?
+- Is hypothesis (iii) exactly the curved intermediate-time barrier, including
+  both endpoints \(t=0,t_0\)?
+- Do these hypotheses yield
+  \(\Lambda\le t_0+y_0^2/2\) with no additional premise?
 
-Please check this directly against the definitions and error terms in
-arXiv:1904.12438v2 and the finite producer.  The package's numerical checks
-do not by themselves prove that this functional is bound to the paper's
-\(f_t\) in the asserted units.
+Please check the cited theorem itself rather than relying solely on the
+transcribed upstream criterion note.
 
-## Priority 2: winding slab rigor
+## Priority 2: closed barrier certificate
 
-The consumed upstream slab is vendored at
-`vendor/dbn21a/certificates/certified1875/windslab165_v2/`.
-Its stored region contains the target point, but its producer/log interface
-needs theorem-level scrutiny:
+Please audit `BARRIER_CERTIFICATE.md` and
+`barrier/src/TloopSinglemat_closed_cert.c`, with the derivative theorem in
+`DERIVATIVE_BOX_LEMMA.md`.
 
-- key quantities are printed as midpoint decimal values rather than complete
-  interval endpoints;
-- the production C path contains comparisons whose failure behavior should be
-  checked for fail-closed semantics;
-- the argument from the recorded rectangles to a closed real \(t\)-prism
-  should be verified, not inferred from sample points;
-- the corner second line spot-checks only part of the 492-rectangle chain and
-  is not a complete independent proof of the slab.
+1. Do the endpoint-separated factors and strict monotonicity gates turn
+   pointwise Polymath Lemma 8.4 into uniform \(D_z,D_t\) bounds on the
+   complete closed box?
+2. Does the exact 16-term head plus decreasing-tail integral rigorously
+   majorize each discrete Lemma 8.4 sum, and do the complex analytic
+   callbacks satisfy FLINT's quadrature contract?
+3. Does the nearer-endpoint convex-disk argument on each half-subedge
+   justify the spatial term \(D_z/[2(\mathrm{num}-1)]\) for the complete
+   zero-avoiding polygon homotopy?
+4. Is \(D_t\) interval-evaluated on each complete closed proposed prism, and
+   does the strict prism inequality give a zero-avoiding homotopy for every
+   intermediate time?
+5. Do zero-free endpoint balls, argument increments in \((-\pi,\pi)\), and a
+   winding enclosure inside \((-1/4,1/4)\) rigorously force winding number
+   zero?
+6. Are the exact dyadic seams consecutive and is every failure or
+   indeterminate interval comparison fatal?
+7. Is the passage from the polygon for \(f_t\) to \(H_t/B_t\), followed by
+   the argument principle, valid on the closed rectangle?
+8. Is the proof that \(B_t\ne0\) on this domain complete?
+9. Is the compact continuity argument extending Theorem 1.3 to \(t=0\)
+   valid, including continuity of the fixed-window \(f_t\) and its error
+   majorant?
 
-Please determine whether the primary stored certificate is nevertheless
-rigorous, and if not, specify the smallest interval-output or coverage repair.
+The target uses this new 883-prism certificate. The historical winding
+artifacts in `vendor/` are provenance only and should not be mistaken for a
+premise of the new certificate.
 
-## Priority 3: direct Dini reduction
+## Priority 3: barrier coefficient and error provenance
 
-Check the proof in
-`provenance/TRIANGLE_Y_DINI_THEOREM.independent.md`, especially:
+Please check:
 
-- the upper-right Dini derivative at zeros of \(A_{N,n}\);
-- retention of the negative \(\gamma g|A|\) term;
-- the composite-divisor factor
-  \(\sum_{p\mid d}\log^2p\);
-- exhaustion of all active divisor patterns by \(3^{|P|}\) cells;
-- one-sided replacement of \(N\) by the smallest feasible value;
-- padded binary64 endpoints and the passage from pointwise upper-Dini
-  inequalities to global monotonicity.
+- whether adding
+  \(10^{-20}\max(1,|\text{component}|)\) to each printed component safely
+  restores the 20-decimal coefficient matrix;
+- whether all \(7,688\) regenerated Arb components are derived from the
+  intended source formula and contained in those restored balls;
+- whether the factorial Taylor-tail estimate is complete and its
+  \(10^{-20}\) allowance is propagated into every value;
+- whether equations (20)--(24) are evaluated on the entire closed barrier
+  box;
+- whether the proof of the uniform \(|\gamma|n^y\) bound is valid for every
+  \(1\le n\le N\); and
+- whether \(0.00125\) is therefore a valid common approximation allowance.
 
-The earlier multi-prime `standard-majorant` route is invalid and is not
-consumed.
+The target path uses \(x-6.66\) in equation (23) and \(x-12\) in equation
+(24). The old denominator-transcription question is not open in the target
+implementation; the review task is to verify the corrected formulas.
 
-## Priority 4: error-term transcription
+## Priority 4: native Triangle-to-\(|f_t|\) lemma
 
-`provenance/ERROR_TERMS_AUDIT.upstream.md` section 4 records an
-`x-6.66` implementation denominator where Proposition 6.6(vi) displays
-`x-12`.  The stored audit argues that the discrepancy is numerically
-negligible and absorbed by later slack.  Please check the direction and the
-claimed absorption from the paper, preferably by rerunning the target bound
-with `x-12` throughout.
+Please check `NATIVE_BINDING.md` against equation (14) and the definitions in
+Polymath Theorem 1.3.
 
-## Priority 5: tail theorem and implementation
+- Are the two exact convolution identities correct, particularly
+  \(\overline E C_0=\sum A_{N,n}n^{-\overline{s_*}}\)?
+- Are all mollifier coefficients real in every producer branch?
+- Does the complex-\(\kappa\) estimate
+  \(|m^{-\kappa}-1|\le m^{|\kappa|}-1\) supply exactly the implemented
+  correction?
+- Does positivity of \(L_N\) imply \(Q_N>0\), rule out \(E=0\), and give the
+  correct inequality direction when \(1/|E|\) is replaced by \(1/M_N\)?
+- Does the source-to-formula map account for every term and sign in
+  `src/lemma_sweep_p235711.c`?
+- Are the stored \(T_N\) values consequently in the same normalized units as
+  the additive Theorem 1.3 error, with no further Euler factor?
 
-The target tail block is a patch to a deposited 0.1875/0.1891 engine.
-`verifiers/verify_tail_patch_provenance.py` proves the source transformation,
-but a reviewer should still check that the generic `run_band` theorem applies
-at \(N_{\rm mid}=3840000\), \(M=153814\), the target \(t\)-box, and the full
-extended \(y\)-box.
+This is now an explicit theorem and stress-tested source contract, not an
+assumed interface. It nevertheless remains load-bearing mathematics for the
+referee to validate.
 
-## Priority 6: interval independence
+## Priority 5: complete finite height and window transfer
 
-The decisive tail, effective-error, and normalizer checks use `mpmath.iv`.
-Changing precision within the same implementation is not an independent
-interval library.  An Arb/FLINT or MPFI reproduction of the smallest decisive
-margins would materially strengthen the result.
+Please audit both the all-\(y\) and all-\(x\) reductions.
 
-## Priority 7: finite producer spot checks
+For the direct Dini proof:
 
-The complete stored sweep is structurally checked and sealed.  Please add or
-request direct non-amortized producer checks at:
+- Is the upper-right Dini derivative handled correctly at zeros of
+  \(A_{N,n}\)?
+- Is the negative \(\gamma g|A|\) term retained with the correct sign?
+- Is the composite-divisor factor
+  \(\sum_{p\mid d}\log^2p\) correct?
+- Do the \(3^{|\mathcal P|}\) cells exhaust every active sign pattern?
+- Are the padded binary64 cell endpoints one-sided in the required
+  direction?
+- Does local Lipschitz continuity justify passage from pointwise upper-Dini
+  bounds to global monotonicity?
+- Are the normalizer and \(\kappa\)-correction monotonicity arguments
+  sufficient to transfer \(L_N(y_0)\) to the full height range?
 
-- the weakest row \(N=690988\);
-- every prime-set joint;
-- every compressed-shard boundary;
-- the finite/tail overlap \(N=3840000\).
+For the window freeze:
 
-The first P11 row is expensive and is not part of the quick container path.
+- Are \(G\) and \(K\) decreasing and \(\Sigma\) increasing in \(x\), including
+  the positive-part kink?
+- Is \(x_*=X+\sqrt{1-y_0^2}\) rigorously inside \(W_{690988}\)?
+- Does the convention \(W_N=[x_N,x_{N+1})\) cover every endpoint exactly
+  once, and do the constants reset conservatively?
+- Does the finite/tail overlap at \(N=3840000\) eliminate the final endpoint
+  risk?
 
-## Priority 8: criterion weld
+The invalid historical multi-prime `standard-majorant` route,
+`seam_ytransfer`, and exponent-inflation seam are not consumed.
 
-Finally, check that the verified-height, full right-half-line nonvanishing,
-winding, endpoint, and site hypotheses match Theorem 1.2 of
-arXiv:1904.12438v2 with no swapped hypothesis labels or open-endpoint gaps.
+## Priority 6: standalone all-\(N\) tail theorem
+
+Please audit `TAIL_LEMMA.md` and `verifiers/verify_tail_arb.c`.
+
+- Does the endpoint-cap lemma bound every routed sum under its checked
+  monotonicity condition?
+- Is equation (4.3) a disjoint and exhaustive convolution partition?
+- Is `OV` genuinely optional nonnegative padding rather than a missing or
+  double-counted term needed for the identity?
+- Do the cap-derivative gates prove decrease for every \(N\ge3840000\), not
+  merely sampled \(N\)?
+- Is the moving-cap argument, including floors and \(N/(d+1)\), valid?
+- Do the \(y\)-monotonicity gates cover
+  \(y_0\le y\le\sqrt{1-2t}\), and is the complete \(t\)-interval evaluated
+  without assuming monotonicity in \(t\)?
+- Are the exact error definitions (71)--(72) and equation (24) bounded with
+  the claimed all-\(N\) directions?
+- Does
+  \[
+  |M_\lambda(s_*)f_t-1|\le D<1
+  \]
+  together with the \(M_{\max}\) bound yield the stated normalized
+  post-error margin?
+- Does nonvanishing of \(B_t\) complete the passage to \(H_t\)?
+
+The independent FLINT/Arb 256- and 512-bit certificates are primary. The
+older 160/256/384-bit Python interval runs are corroboration and source
+lineage evidence, not the sole justification.
+
+## Priority 7: implementation independence and reproducibility
+
+Please reproduce at least the decisive small margins in a different build
+environment. Ideally:
+
+- rerun the barrier coefficient generator and all 883 prisms;
+- compile the tail verifier with an independently built FLINT/Arb;
+- rerun direct non-amortized finite checks at the weakest row, every
+  prime-set joint, every compressed-shard joint, and \(N=3840000\);
+- run the Dini and producer paths under sanitizers; and
+- perform the complete finite regeneration or independently sample and
+  recompute its canonical tuples.
+
+`MAXIMUM_CHECKS.md` records the checks already performed. Agreement is strong
+evidence of reproducibility but cannot establish the analytic reductions by
+itself.
+
+## Priority 8: final theorem assessment
+
+After auditing the components, please state explicitly:
+
+1. whether hypotheses (i), (ii), and (iii) of Polymath Theorem 1.2 are each
+   established on the exact closed domains;
+2. whether any step still relies on an unproved conjecture;
+3. whether any software check is circular with the claim it is intended to
+   validate;
+4. whether a correction is local or invalidates the target bound; and
+5. whether the package may properly advance beyond “unreviewed
+   computer-assisted unconditional proof candidate.”
+
+Until that review exists, automated `PASS` output must not be described as
+peer acceptance.

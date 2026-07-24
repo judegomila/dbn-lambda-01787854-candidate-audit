@@ -24,12 +24,14 @@ and container checks passed.
 For each layer, record `valid`, `needs repair`, `invalid`, or `not reviewed`,
 with exact file/line references:
 
-1. criterion, verified height, winding, and site;
-2. finite producer and stored sweep;
-3. direct all-height Triangle theorem;
+1. exact Polymath Theorem 1.2 statement and Platt--Trudgian height input;
+2. finite producer, all 3,149,013 stored rows, and direct singleton checks;
+3. direct all-height Triangle theorem and continuous window freeze;
 4. native normalization and effective-error binding;
-5. infinite tail;
-6. closed endpoint weld and final implication.
+5. standalone infinite-tail theorem;
+6. repaired 883-prism closed barrier, including the full spatial derivative
+   envelope and \(t=0\) endpoint;
+7. the three-hypothesis criterion weld and final exact substitution.
 
 ## Decisive objections or repairs
 

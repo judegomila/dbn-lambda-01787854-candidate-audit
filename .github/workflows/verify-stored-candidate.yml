@@ -2,24 +2,77 @@ name: Verify stored candidate
 
 on:
   push:
+    branches:
+      - main
   pull_request:
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: verify-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  stored-certificate:
+  full-review:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 60
     steps:
       - name: Check out sealed review package
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
 
-      - name: Install the locked Python dependency
-        run: python3 -m pip install --require-hashes -r requirements.txt
+      - name: Build the versioned review container
+        run: docker build -t dbn-lambda-01787854-review .
 
-      - name: Verify hashes, evidence, upstream subset, and assembly
+      - name: Verify stored evidence and freshly replay critical C/Arb lanes
+        run: |
+          set -o pipefail
+          mkdir -p replay/github-full-review
+          docker run --rm --network none --read-only \
+            --user "$(id -u):$(id -g)" \
+            --tmpfs /tmp:rw,exec,nosuid,size=4g \
+            -e REVIEW_OUTPUT=/review-output/evidence \
+            -v "$GITHUB_WORKSPACE:/work:ro" \
+            -v "$GITHUB_WORKSPACE/replay/github-full-review:/review-output" \
+            -w /work dbn-lambda-01787854-review \
+            2>&1 | tee replay/github-full-review/container-review.log
+
+      - name: Upload full-review transcripts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: full-review-${{ github.sha }}
+          path: replay/github-full-review/
+          if-no-files-found: error
+
+  complete-finite-replay:
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Check out sealed review package
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Build the versioned review container
+        run: |
+          docker build -t dbn-lambda-01787854-review .
+          image_id=$(docker image inspect --format '{{.Id}}' dbn-lambda-01787854-review)
+          echo "EXPECTED_IMAGE_ID=$image_id" >> "$GITHUB_ENV"
+
+      - name: Regenerate and compare all 3,149,013 finite rows
         env:
-          PYTHONDONTWRITEBYTECODE: "1"
-        run: ./verify.sh
+          IMAGE: dbn-lambda-01787854-review
+        run: ./scripts/run_full_sweep.sh replay/github-full-sweep
+
+      - name: Upload complete finite replay
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: complete-finite-replay-${{ github.sha }}
+          path: replay/github-full-sweep/
+          if-no-files-found: error

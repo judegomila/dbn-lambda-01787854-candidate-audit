@@ -1,5 +1,5 @@
 COMMAND:
-python3 /private/tmp/tail_frontier_below_017964_20260723/p11_triangle_tail_cells_iv.py --nlo 690988 --nhi 3840000 --tlo-num 129 --tlo-den 800 --thi-num 129 --thi-den 800 --ylo-num 187271994 --ylo-den 1000000000 --yhi-num 823103882 --yhi-den 1000000000 --cutoff 6000 --prec 160 --max-depth 34 --max-cells 2000000
+python3 provenance/p11_triangle_tail_cells_iv.py --nlo 690988 --nhi 3840000 --tlo-num 129 --tlo-den 800 --thi-num 129 --thi-den 800 --ylo-num 187271994 --ylo-den 1000000000 --yhi-num 823103882 --yhi-den 1000000000 --cutoff 6000 --prec 160 --max-depth 34 --max-cells 2000000
 
 RESULT ALL PASS
 initial_cells 243

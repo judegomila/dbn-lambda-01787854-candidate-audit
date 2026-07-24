@@ -1,52 +1,50 @@
---- A: exact row
-[PASS] A1 exact B identity
-[PASS] A2 exact decimal
-[PASS] A3 strict improvement over 0.1796360187
-[PASS] A4 strict improvement over 0.179640000
-[PASS] A5 t and y domain
-[PASS] A6 criterion quantity is admissible
---- B: verified height
-[PASS] B1 campaign X is odd
-[PASS] B2 X/2 <= Platt--Trudgian height
-[PASS] B3 exact height margin
---- C: winding/site interfaces
-[PASS] C1 y-floor enters the winding slab
-[PASS] C2 exact y-slab margin
-[PASS] C3 t lies inside the site/winding slab
-[PASS] C4 q(0)=y0^2+2t0 stays below one
-[PASS] C5 required x-width is at most one
-[PASS] C6 site window contains X uniformly
-[PASS] C7 deposited site anchor strings
---- D: finite/direct-Triangle interface
-[PASS] D1 exact finite row count
-[PASS] D2 finite endpoints
-[PASS] D3 binding stored T floor is positive
-[PASS] D4 effective error is positive
-[PASS] D5 corrected selection-unit binding floor is positive
-[PASS] D6 mollifier joints are consecutive
-[PASS] D7 exact finite leg row counts
-[PASS] D8 direct-Dini pattern counts
-[PASS] D9 worst certified Dini ratio is strict
-[PASS] D10 correction logarithmic rate is strict
---- T: analytic tail
-[PASS] T1 exact y-box straddles y0
-[PASS] T2 minimal extended grid covers sqrt(1-2t)
-[PASS] T3 small y-box remains inside the full range
-[PASS] T4 selected exact-convolution head
-[PASS] T5 contraction D is below one
-[PASS] T6 directed flow exceeds directed error
-[PASS] T7 independently displayed slack is positive
-[PASS] T8 interval grain is below 1-D
---- F: closed weld
-[PASS] F1 finite and tail overlap at Nmid
-[PASS] F2 tail begins at the exact finite endpoint
-[PASS] F3 finite and tail sources share the exact t-point
-[PASS] F4 finite and tail sources share the exact y-floor
-[DOCUMENTARY] F5 height, nonvanishing, and winding are criterion interfaces requiring theorem-level review
---- G: conditional conclusion
-[PASS] G1 assembled functional is the exact candidate
-[DOCUMENTARY] G2 package states that the direct theorem bypasses the invalid standard-shape seam
-[DOCUMENTARY] G3 winding, native-functional, site, error, and criterion bindings remain open to external review
-TOTAL CHECKS RUN: 39
-RESULT: ALL PASS
-CONDITIONAL CONCLUSION: accepting the direct native-functional identification and the cited winding, site, effective-approximation, and criterion bindings, Lambda <= 893927/5000000 = 0.1787854.
+--- P: executed prerequisite certificates
+[PASS] P1 stored interval logs  exit=0; RESULT: STORED INTERVAL LOGS PASS
+[PASS] P2 all 3,149,013 finite rows and corrected error units  exit=0; RESULT PASS: full finite Triangle weld B=893927/5000000 rows=3149013 N=690988..3840000 gaps=0 overlaps=0 UNCERT=0 T_floor=0.000000791366 Emax=0.000000233494905212335514 binding_floor=0.000000557871094787
+[PASS] P3 30 direct non-amortized finite singleton rows  exit=0; RESULT: DIRECT SINGLETON CERTIFICATES PASS
+[PASS] P4 native Triangle-to-|f_t| binding  exit=0; RESULT: ALL PASS
+[PASS] P5 continuous window-freeze and finite/tail site seam  exit=0; RESULT: ALL PASS; CERTIFIED WINDOW-FREEZE CONCLUSION: at t0=129/800, for every integer N in [690988,3840000] and every x in [x_N(t0),x_(N+1)(t0)), the producer's frozen gamma and kappa values are upper bounds and its frozen sigma value is a lower bound, uniformly for y in [sqrt(87677/2500000),sqrt(271/400)]. The criterion start X+sqrt(1-y0^2) lies strictly inside W_N0, so the finite windows cover from that closed start through x_(Nmid+1) with only the final right endpoint excluded.
+[PASS] P6 native normalizer/correction at 180 bits  exit=0; RESULT ALL PASS precision 180
+[PASS] P7 native normalizer/correction at 256 bits  exit=0; RESULT ALL PASS precision 256
+[PASS] P8 target tail source-patch provenance  exit=0; RESULT: TAIL PATCH PROVENANCE PASS
+[PASS] P9 independent Python interval tail at 160 bits  exit=0; RESULT: ALL PASS
+[PASS] P10 independent Python interval tail at 256 bits  exit=0; RESULT: ALL PASS
+[PASS] P11 standalone 256/512-bit FLINT/Arb tail certificates  exit=0; RESULT: SEALED INDEPENDENT ARB TAIL CERTIFICATES PASS
+[PASS] P12 portable Linux/GCC/FLINT 3.0.1 883-prism barrier certificate  exit=0; RESULT: ALL PASS; BARRIER CONCLUSION: H_t is zero-free on the complete closed slab [X,X+1] x [0.1809,1] x [0,0.16125].
+[PASS] P13 macOS/Clang/FLINT 3.6.0 883-prism cross-check  exit=0; RESULT: ALL PASS; BARRIER CONCLUSION: H_t is zero-free on the complete closed slab [X,X+1] x [0.1809,1] x [0,0.16125].
+[PASS] P14 exact H0-to-zeta symmetry/sign map  exit=0; RESULT: CRITERION SIGN MAP PASS
+--- A: exact candidate and criterion domain
+[PASS] A1 exact candidate identity
+[PASS] A2 exact decimal is 0.1787854
+[PASS] A3 theorem time domain
+[PASS] A4 final-height interval is nonempty
+[PASS] A5 curved barrier edges are correctly ordered
+[PASS] A6 theorem abscissa domain
+--- I: Theorem 1.2 hypothesis (i), verified zeta height
+[CITED THEOREM INPUT] Platt--Trudgian Theorem 1 verifies RH through T_PT=3000175332800.
+[CITED CLASSICAL INPUT] zeta has no real zero in [(1+y0)/2,1]; s=1 is a pole, not a zero.
+[PASS] I1 X/2 is within the verified height
+[PASS] I2 exact verified-height margin
+--- II: Theorem 1.2 hypothesis (ii), final-time right half-line
+[PASS] II1 finite row count
+[PASS] II2 finite t-boxes contain the exact t0
+[PASS] II3 tail lower box strictly straddles y0
+[PASS] II4 tail extended box minimally covers the final height
+[PASS] II5 finite and tail share the complete N=3840000 window  finite=[x*,x_3840001), tail=[x_3840000,infinity)
+[PASS] II6 the half-open/closed-left union has no endpoint gap  x_3840001 belongs to the tail lane
+--- III: Theorem 1.2 hypothesis (iii), closed barrier
+[PASS] III1 barrier floor lies strictly below y0
+[PASS] III2 exact barrier-floor squared margin
+[PASS] III3 required horizontal width lies in the closed unit strip
+[PASS] III4 barrier time top is exactly t0
+[PASS] III5 the whole curved vertical interval is inside [0.1809,1]
+--- W: canonical criterion weld
+[CITED THEOREM INPUT] Polymath Theorem 1.2: hypotheses (i), (ii), and (iii) imply Lambda <= t0+y0^2/2.
+[PASS] W1 hypothesis (i) exact domain and height predicates
+[PASS] W2 hypothesis (ii) finite+tail certificates and coverage predicates
+[PASS] W3 hypothesis (iii) dual barrier certificates and containment predicates
+[PASS] W4 final rational substitution
+TOTAL CHECKS RUN: 37
+RESULT: UNCONDITIONAL CANDIDATE ASSEMBLY PASS
+CONCLUSION: Lambda <= 893927/5000000 = 0.1787854.
+STATUS: unreviewed computer-assisted unconditional proof candidate; not an established theorem.

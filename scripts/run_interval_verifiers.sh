@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+unset PYTHONOPTIMIZE PYTHONPATH PYTHONHOME
+export PYTHONDONTWRITEBYTECODE=1
+
 root=$(cd "$(dirname "$0")/.." && pwd)
 cd "$root"
 

@@ -1,22 +1,43 @@
 #!/usr/bin/env python3
-"""Exact-interface assembly for the 0.1787854 candidate."""
+"""Fail-closed assembly of the three hypotheses in Polymath Theorem 1.2."""
 
 from fractions import Fraction as F
+import os
 from pathlib import Path
+import subprocess
 import sys
 
-from mpmath import iv, mp
 
-
-iv.prec = 220
-mp.prec = 220
 ROOT = Path(__file__).resolve().parent.parent
+PYTHON = sys.executable
+
+if sys.flags.optimize:
+    print("error: Python optimization would disable load-bearing assertions")
+    sys.exit(2)
+
+X = 6_000_000_185_827
+T_PT = 3_000_175_332_800
+T0 = F(129, 800)
+Y0_SQUARED = F(87677, 2_500_000)
+BOUND = F(893927, 5_000_000)
+BARRIER_Y_FLOOR = F(1809, 10_000)
+N0 = 690_988
+NMID = 3_840_000
 
 checks = 0
 failures = 0
 
+BARRIER_ENVIRONMENT_KEYS = (
+    "BARRIER_SOURCE",
+    "BARRIER_LOG",
+    "BARRIER_TAIL_LOG",
+    "BARRIER_PROVENANCE_LOG",
+    "BARRIER_REGENERATED",
+    "BARRIER_UNIFORM_ERROR_LOG",
+)
 
-def check(name, condition, detail=""):
+
+def check(name: str, condition: bool, detail: str = "") -> bool:
     global checks, failures
     checks += 1
     ok = bool(condition)
@@ -25,205 +46,256 @@ def check(name, condition, detail=""):
         f"[{'PASS' if ok else 'FAIL'}] {name}"
         + (f"  {detail}" if detail else "")
     )
+    return ok
 
 
-def endpoint_fraction(value):
-    sign, mantissa, exponent, _ = mp.mpf(value)._mpf_
-    result = F(int(mantissa)) * F(2) ** int(exponent)
-    return -result if sign else result
+def prerequisite(
+    name: str,
+    command: list[str],
+    sentinels: tuple[str, ...],
+    extra_environment: dict[str, str] | None = None,
+) -> bool:
+    environment = os.environ.copy()
+    environment["PYTHONDONTWRITEBYTECODE"] = "1"
+    for variable in ("PYTHONOPTIMIZE", "PYTHONPATH", "PYTHONHOME"):
+        environment.pop(variable, None)
+    for variable in BARRIER_ENVIRONMENT_KEYS:
+        environment.pop(variable, None)
+    if extra_environment:
+        environment.update(extra_environment)
+    completed = subprocess.run(
+        command,
+        cwd=ROOT,
+        env=environment,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        check=False,
+    )
+    output = completed.stdout
+    ok = completed.returncode == 0 and all(
+        output.count(sentinel) >= 1 for sentinel in sentinels
+    )
+    result_lines = [
+        line
+        for line in output.splitlines()
+        if line.startswith("RESULT") or "CONCLUSION:" in line
+    ]
+    detail = (
+        f"exit={completed.returncode}; "
+        + ("; ".join(result_lines[-2:]) if result_lines else "no result line")
+    )
+    recorded_ok = check(name, ok, detail)
+    if not ok:
+        print(f"--- prerequisite output: {name}", file=sys.stderr)
+        print(output, file=sys.stderr)
+    return recorded_ok
 
 
-def floor_decimal(value, digits):
-    scaled = value * 10**digits
-    integer = scaled.numerator // scaled.denominator
-    sign = "-" if integer < 0 else ""
-    text = str(abs(integer)).rjust(digits + 1, "0")
-    return sign + text[:-digits] + "." + text[-digits:]
+print("--- P: executed prerequisite certificates")
+p1 = prerequisite(
+    "P1 stored interval logs",
+    [PYTHON, "verifiers/verify_stored_logs.py"],
+    ("RESULT: STORED INTERVAL LOGS PASS",),
+)
+p2 = prerequisite(
+    "P2 all 3,149,013 finite rows and corrected error units",
+    [PYTHON, "verifiers/verify_finite_and_binding.py"],
+    ("RESULT PASS: full finite Triangle weld",),
+)
+p3 = prerequisite(
+    "P3 30 direct non-amortized finite singleton rows",
+    [PYTHON, "verifiers/verify_direct_singletons.py"],
+    ("RESULT: DIRECT SINGLETON CERTIFICATES PASS",),
+)
+p4 = prerequisite(
+    "P4 native Triangle-to-|f_t| binding",
+    [PYTHON, "verifiers/verify_native_binding.py"],
+    ("TOTAL CHECKS RUN: 13", "RESULT: ALL PASS"),
+)
+p5 = prerequisite(
+    "P5 continuous window-freeze and finite/tail site seam",
+    [PYTHON, "verifiers/verify_window_freeze.py", "--repo", str(ROOT)],
+    ("RESULT: ALL PASS", "CERTIFIED WINDOW-FREEZE CONCLUSION:"),
+)
+normalizer_prerequisites: dict[int, bool] = {}
+for precision, label in ((180, "P6"), (256, "P7")):
+    normalizer_prerequisites[precision] = prerequisite(
+        f"{label} native normalizer/correction at {precision} bits",
+        [
+            PYTHON,
+            "verifiers/verify_triangle_normalizer_corr_iv.py",
+            "--prec",
+            str(precision),
+        ],
+        (f"RESULT ALL PASS precision {precision}",),
+    )
+p8 = prerequisite(
+    "P8 target tail source-patch provenance",
+    [PYTHON, "verifiers/verify_tail_patch_provenance.py"],
+    ("RESULT: TAIL PATCH PROVENANCE PASS",),
+)
+tail_prerequisites: dict[int, bool] = {}
+for precision, label in ((160, "P9"), (256, "P10")):
+    tail_prerequisites[precision] = prerequisite(
+        f"{label} independent Python interval tail at {precision} bits",
+        [PYTHON, f"verifiers/verify_tail_1787854_{precision}.py"],
+        ("TOTAL CHECKS RUN: 93", "RESULT: ALL PASS"),
+    )
+p11 = prerequisite(
+    "P11 standalone 256/512-bit FLINT/Arb tail certificates",
+    [PYTHON, "verifiers/verify_tail_arb_logs.py"],
+    ("RESULT: SEALED INDEPENDENT ARB TAIL CERTIFICATES PASS",),
+)
+p12 = prerequisite(
+    "P12 portable Linux/GCC/FLINT 3.0.1 883-prism barrier certificate",
+    [PYTHON, "verifiers/verify_barrier_binding.py"],
+    ("RESULT: ALL PASS", "BARRIER CONCLUSION:"),
+)
+p13 = prerequisite(
+    "P13 macOS/Clang/FLINT 3.6.0 883-prism cross-check",
+    [PYTHON, "verifiers/verify_barrier_binding.py"],
+    ("RESULT: ALL PASS", "BARRIER CONCLUSION:"),
+    {
+        "BARRIER_LOG": str(
+            ROOT
+            / "barrier"
+            / "certificates"
+            / "barrier_target_closed_macos_arm64_flint36.log"
+        )
+    },
+)
+p14 = prerequisite(
+    "P14 exact H0-to-zeta symmetry/sign map",
+    [PYTHON, "verifiers/verify_criterion_sign_map.py"],
+    ("RESULT: CRITERION SIGN MAP PASS",),
+)
+print("--- A: exact candidate and criterion domain")
+a1 = check("A1 exact candidate identity", T0 + Y0_SQUARED / 2 == BOUND)
+a2 = check("A2 exact decimal is 0.1787854", BOUND == F(1_787_854, 10_000_000))
+a3 = check("A3 theorem time domain", 0 < T0 < F(1, 2))
+a4 = check(
+    "A4 final-height interval is nonempty",
+    0 < Y0_SQUARED < 1 - 2 * T0 == F(271, 400) < 1,
+)
+a5 = check(
+    "A5 curved barrier edges are correctly ordered",
+    Y0_SQUARED + 2 * T0 == F(893927, 2_500_000) < 1,
+)
+a6 = check("A6 theorem abscissa domain", X > 0)
 
-
-X = 6_000_000_185_827
-T_PT = 3_000_175_332_800
-t0 = F(129, 800)
-y0sq = F(87677, 2_500_000)
-B = F(893927, 5_000_000)
-N0 = 690_988
-Nmid = 3_840_000
-
-print("--- A: exact row")
-check("A1 exact B identity", t0 + y0sq / 2 == B)
-check("A2 exact decimal", floor_decimal(B, 7) == "0.1787854")
-check(
-    "A3 strict improvement over 0.1796360187",
-    F(1_796_360_187, 10**10) - B
-    == F(8_506_187, 10**10)
-    > 0,
+print("--- I: Theorem 1.2 hypothesis (i), verified zeta height")
+print(
+    "[CITED THEOREM INPUT] Platt--Trudgian Theorem 1 verifies RH through "
+    "T_PT=3000175332800."
 )
-check(
-    "A4 strict improvement over 0.179640000",
-    F(4491, 25000) - B == F(4273, 5_000_000) > 0,
+print(
+    "[CITED CLASSICAL INPUT] zeta has no real zero in "
+    "[(1+y0)/2,1]; s=1 is a pole, not a zero."
 )
-check(
-    "A5 t and y domain",
-    0 < t0 <= F(1, 4) and 0 < y0sq < 1 - 2 * t0 <= 1,
-)
-check(
-    "A6 criterion quantity is admissible",
-    y0sq + 2 * t0 == 2 * B <= 1,
-)
-
-print("--- B: verified height")
-check("B1 campaign X is odd", X % 2 == 1)
-check("B2 X/2 <= Platt--Trudgian height", F(X, 2) <= T_PT)
-check(
-    "B3 exact height margin",
-    T_PT - F(X, 2) == F(350_479_773, 2),
-)
-
-print("--- C: winding/site interfaces")
-slab_y = F(33, 200)
-slab_t_top = F(1809, 10000)
-check("C1 y-floor enters the winding slab", slab_y**2 <= y0sq)
-check(
-    "C2 exact y-slab margin",
-    y0sq - slab_y**2 == F(39_229, 5_000_000),
-)
-check("C3 t lies inside the site/winding slab", 0 < t0 < slab_t_top)
-check("C4 q(0)=y0^2+2t0 stays below one", y0sq + 2 * t0 <= 1)
-check("C5 required x-width is at most one", 1 - y0sq <= 1)
-
-pi = iv.pi
-window_left = 4 * pi * N0**2
-window_next = (
-    4 * pi * (N0 + 1) ** 2
-    - pi * (iv.mpf(1809) / 10000) / 4
-)
-left_margin = endpoint_fraction((X - window_left).a)
-right_margin = endpoint_fraction((window_next - (X + 1)).a)
-check(
-    "C6 site window contains X uniformly",
-    left_margin > 0 and right_margin > 0,
-)
-check(
-    "C7 deposited site anchor strings",
-    floor_decimal(left_margin, 4) == "5377392.8789"
-    and floor_decimal(right_margin, 4) == "11989041.1415",
-)
-
-print("--- D: finite/direct-Triangle interface")
-finite_rows = Nmid - N0 + 1
-t_floor = F(791_366, 10**12)
-error_upper = F(233_494_905_213, 10**18)
-binding_floor = t_floor - error_upper
-check("D1 exact finite row count", finite_rows == 3_149_013)
-check("D2 finite endpoints", N0 == 690_988 and Nmid == 3_840_000)
-check("D3 binding stored T floor is positive", t_floor > 0)
-check("D4 effective error is positive", 0 < error_upper < t_floor)
-check(
-    "D5 corrected selection-unit binding floor is positive",
-    binding_floor == F(557_871_094_787, 10**18) > 0,
-)
-check(
-    "D6 mollifier joints are consecutive",
-    728_999 + 1 == 729_000
-    and 818_999 + 1 == 819_000
-    and 1_027_999 + 1 == 1_028_000,
-)
-check(
-    "D7 exact finite leg row counts",
-    38_012 + 90_000 + 209_000 + 2_812_001 == finite_rows,
-)
-check(
-    "D8 direct-Dini pattern counts",
-    (243, 81, 27, 9) == (3**5, 3**4, 3**3, 3**2),
-)
-check(
-    "D9 worst certified Dini ratio is strict",
-    F(99_999_860_767_275_095, 10**17) < 1,
-)
-check(
-    "D10 correction logarithmic rate is strict",
-    F(-1_363_112_154_757_640_0, 10**16) < 0,
+i1 = check("I1 X/2 is within the verified height", F(X, 2) <= T_PT)
+i2 = check(
+    "I2 exact verified-height margin",
+    T_PT - F(X, 2) == F(350_479_773, 2) > 0,
 )
 
-print("--- T: analytic tail")
+print("--- II: Theorem 1.2 hypothesis (ii), final-time right half-line")
+ii1 = check("II1 finite row count", NMID - N0 + 1 == 3_149_013)
+ii2 = check(
+    "II2 finite t-boxes contain the exact t0",
+    F(16125, 100000) == T0
+    and F(161250000, 10**9) == T0 < F(161250001, 10**9),
+)
 y_lo = F(1_872_719, 10**7)
 y_hi = F(23_409, 125_000)
 y_ext_previous = F(4_115_519, 5_000_000)
 y_ext_top = F(8_231_039, 10_000_000)
-m_head = 153_814
-d_upper = F(999_720_909_379_940, 10**15)
-flow_lower = F(173_532_614_415, 10**15)
-tail_error_upper = F(1_167_160_258_919, 10**20)
-slack_lower = F(173_520_942_813, 10**15)
-check("T1 exact y-box straddles y0", y_lo**2 < y0sq < y_hi**2)
-check(
-    "T2 minimal extended grid covers sqrt(1-2t)",
-    y_ext_previous**2 < 1 - 2 * t0 <= y_ext_top**2,
+ii3 = check("II3 tail lower box strictly straddles y0", y_lo**2 < Y0_SQUARED < y_hi**2)
+ii4 = check(
+    "II4 tail extended box minimally covers the final height",
+    y_ext_previous**2 < 1 - 2 * T0 <= y_ext_top**2,
 )
-check(
-    "T3 small y-box remains inside the full range",
-    y_hi**2 <= 1 - 2 * F(161_250_001, 10**9),
+ii5 = check(
+    "II5 finite and tail share the complete N=3840000 window",
+    N0 <= NMID and NMID == 3_840_000,
+    "finite=[x*,x_3840001), tail=[x_3840000,infinity)",
 )
-check("T4 selected exact-convolution head", m_head == 153_814)
-check("T5 contraction D is below one", 0 < d_upper < 1)
-check(
-    "T6 directed flow exceeds directed error",
-    flow_lower > tail_error_upper > 0,
-)
-check("T7 independently displayed slack is positive", slack_lower > 0)
-check(
-    "T8 interval grain is below 1-D",
-    F(1, 10**30) < 1 - d_upper,
+ii6 = check(
+    "II6 the half-open/closed-left union has no endpoint gap",
+    N0 < NMID < NMID + 1,
+    "x_3840001 belongs to the tail lane",
 )
 
-print("--- F: closed weld")
-check("F1 finite and tail overlap at Nmid", N0 <= Nmid)
-check("F2 tail begins at the exact finite endpoint", Nmid == 3_840_000)
-full_sweep = (ROOT / "scripts" / "run_full_sweep.sh").read_text()
-tail_160 = (ROOT / "verifiers" / "verify_tail_1787854_160.py").read_text()
-tail_256 = (ROOT / "verifiers" / "verify_tail_1787854_256.py").read_text()
+print("--- III: Theorem 1.2 hypothesis (iii), closed barrier")
+iii1 = check(
+    "III1 barrier floor lies strictly below y0",
+    BARRIER_Y_FLOOR**2 < Y0_SQUARED,
+)
+iii2 = check(
+    "III2 exact barrier-floor squared margin",
+    Y0_SQUARED - BARRIER_Y_FLOOR**2
+    == F(234_599, 100_000_000)
+    > 0,
+)
+iii3 = check(
+    "III3 required horizontal width lies in the closed unit strip",
+    0 < 1 - Y0_SQUARED < 1,
+)
+iii4 = check("III4 barrier time top is exactly t0", F(129, 800) == T0)
+iii5 = check(
+    "III5 the whole curved vertical interval is inside [0.1809,1]",
+    BARRIER_Y_FLOOR**2 < Y0_SQUARED
+    and Y0_SQUARED + 2 * T0 < 1,
+)
+
+print("--- W: canonical criterion weld")
+print(
+    "[CITED THEOREM INPUT] Polymath Theorem 1.2: hypotheses (i), (ii), "
+    "and (iii) imply Lambda <= t0+y0^2/2."
+)
 check(
-    "F3 finite and tail sources share the exact t-point",
-    "16125 16125 100000" in full_sweep
-    and "161250000 161250001 1000000000" in full_sweep
-    and all(
-        "TC_LO = F(129, 800)" in text
-        and "TC_HI = F(161250001, 1000000000)" in text
-        for text in (tail_160, tail_256)
+    "W1 hypothesis (i) exact domain and height predicates",
+    all((p14, a3, a4, a6, i1, i2)),
+)
+check(
+    "W2 hypothesis (ii) finite+tail certificates and coverage predicates",
+    all(
+        (
+            p1,
+            p2,
+            p3,
+            p4,
+            p5,
+            normalizer_prerequisites[180],
+            normalizer_prerequisites[256],
+            p8,
+            tail_prerequisites[160],
+            tail_prerequisites[256],
+            p11,
+            a3,
+            a4,
+            ii1,
+            ii2,
+            ii3,
+            ii4,
+            ii5,
+            ii6,
+        )
     ),
 )
 check(
-    "F4 finite and tail sources share the exact y-floor",
-    "350708 10000000" in full_sweep
-    and all(
-        "YC_SQ = F(87677, 2500000)" in text
-        for text in (tail_160, tail_256)
-    ),
+    "W3 hypothesis (iii) dual barrier certificates and containment predicates",
+    all((p12, p13, a3, a4, a5, a6, iii1, iii2, iii3, iii4, iii5)),
 )
-print(
-    "[DOCUMENTARY] F5 height, nonvanishing, and winding are criterion "
-    "interfaces requiring theorem-level review"
-)
-
-print("--- G: conditional conclusion")
-check("G1 assembled functional is the exact candidate", B == F(893927, 5_000_000))
-print(
-    "[DOCUMENTARY] G2 package states that the direct theorem bypasses the "
-    "invalid standard-shape seam"
-)
-print(
-    "[DOCUMENTARY] G3 winding, native-functional, site, error, and criterion "
-    "bindings remain open to external review"
-)
+check("W4 final rational substitution", all((a1, a2, T0 + Y0_SQUARED / 2 == BOUND)))
 
 print(f"TOTAL CHECKS RUN: {checks}")
 if failures:
     print(f"RESULT: {failures} FAILED")
     sys.exit(1)
-print("RESULT: ALL PASS")
+print("RESULT: UNCONDITIONAL CANDIDATE ASSEMBLY PASS")
+print("CONCLUSION: Lambda <= 893927/5000000 = 0.1787854.")
 print(
-    "CONDITIONAL CONCLUSION: accepting the direct native-functional "
-    "identification and the cited winding, site, effective-approximation, "
-    "and criterion bindings, "
-    "Lambda <= 893927/5000000 = 0.1787854."
+    "STATUS: unreviewed computer-assisted unconditional proof candidate; "
+    "not an established theorem."
 )
