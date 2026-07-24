@@ -1,10 +1,13 @@
-# Unreviewed computer-assisted unconditional proof candidate at \(0.1787854\)
+# Unreviewed computer-assisted proof candidate for \(\Lambda\le0.1787854\)
 
-> **Status.** This private repository is an **unreviewed
-> computer-assisted unconditional proof candidate**. It is not an established
+> **Status.** This private repository presents an **unreviewed
+> computer-assisted candidate for an unconditional proof**. It is designed to
+> use no unproved conjecture, but its cited-theorem applications, new lemmas,
+> proof-to-code correspondence, and interval computations have not yet been
+> independently validated. Therefore the bound below is not an established
 > theorem, has not been peer reviewed, and is not a public announcement.
 
-The candidate conclusion is
+The proposed conclusion is
 
 \[
 \boxed{\Lambda\le
@@ -26,37 +29,38 @@ t_0+\frac{y_0^2}{2}
 =\frac{893927}{5000000}.
 \]
 
-Here “unconditional” means that the assembled argument does not assume the
-Riemann hypothesis or another unproved conjecture. It uses the published
-Platt--Trudgian finite verification of RH, the published Polymath Theorems
-1.2 and 1.3, and the interval certificates and elementary lemmas in this
-repository. The word does **not** mean that the new argument has already
-been independently checked. If any cited theorem has been misapplied, any
-new lemma is wrong, or any implementation fails to certify its stated
-mathematical predicate, the candidate conclusion does not follow.
+The intended logical form is unconditional: the proposed argument does not
+assume the Riemann hypothesis or another unproved conjecture. It uses the
+published Platt--Trudgian finite verification of RH, the published Polymath
+Theorems 1.2 and 1.3, and the interval certificates and elementary lemmas in
+this repository. If independent review confirms the cited-theorem
+applications, the new lemmas, the proof-to-code correspondence, and the
+computations, the resulting proof would be unconditional. Until then, this
+repository must be described as a **candidate for an unconditional proof**,
+not as an unconditional result.
 
 This positive upper bound is not a proof of RH.
 
 ## Proof architecture
 
-The package supplies the three hypotheses of Polymath Theorem 1.2 in its
-canonical order.
+The package proposes suppliers for the three hypotheses of Polymath Theorem
+1.2 in its canonical order.
 
 1. **Verified-height hypothesis (i).** Platt--Trudgian verify RH through
    \(T_{\rm PT}=3000175332800\). The criterion needs only
    \(X/2=3000000092913.5\), leaving the exact margin
    \(350479773/2\).
-2. **Final-time right-half-line hypothesis (ii).** At \(t=t_0\), the finite
-   Triangle certificates cover all windows
+2. **Final-time right-half-line hypothesis (ii).** The candidate argues that,
+   at \(t=t_0\), the finite Triangle certificates cover all windows
    \(N=690988,\ldots,3840000\), and the standalone tail lemma covers every
    \(N\ge3840000\). The two lanes overlap on the complete
-   \(N=3840000\) window. Together they prove nonvanishing for
+   \(N=3840000\) window. Together they are intended to prove nonvanishing for
    \[
    x\ge X+\sqrt{1-y_0^2},\qquad
    y_0\le y\le\sqrt{1-2t_0}.
    \]
-3. **Intermediate-time barrier hypothesis (iii).** A fail-closed Arb
-   certificate proves
+3. **Intermediate-time barrier hypothesis (iii).** The candidate uses a
+   fail-closed Arb certificate intended to prove
    \[
    H_t(z)\ne0
    \quad\text{on}\quad
@@ -65,8 +69,13 @@ canonical order.
    This closed rectangle contains the complete curved barrier required by
    Theorem 1.2.
 
-The theorem then gives
-\(\Lambda\le t_0+y_0^2/2=0.1787854\).
+If these three suppliers and their theorem weld are validated, Theorem 1.2
+would give \(\Lambda\le t_0+y_0^2/2=0.1787854\).
+
+Some historical notes under `vendor/` state older conditional implications
+that did not themselves certify hypotheses (ii) and (iii). They are retained
+as provenance; the new finite, tail, and barrier arguments are the proposed
+suppliers that require independent review.
 
 ## Decisive certified margins
 
@@ -155,7 +164,9 @@ STATUS: unreviewed computer-assisted unconditional proof candidate; not an estab
 ```
 
 “PASS” means that the encoded predicates were certified; it is not a claim
-of peer review.
+of peer review or proof that the proposed argument is unconditional. The
+phrase `UNCONDITIONAL CANDIDATE` in the machine transcript names the intended
+logical form of the candidate only.
 
 ## Fresh replays
 
@@ -215,5 +226,6 @@ shards.
 - `references/`: the versioned upstream proof record.
 
 The proper description of this repository remains: **an unreviewed
-computer-assisted unconditional proof candidate**, awaiting independent
-mathematical and computational review.
+computer-assisted candidate for an unconditional proof**, awaiting
+independent mathematical and computational review. The proposed bound is not
+an established theorem.
