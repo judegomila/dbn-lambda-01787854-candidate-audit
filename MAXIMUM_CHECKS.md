@@ -8,8 +8,8 @@ raise confidence in reproducibility and catch many classes of implementation
 error. They do not replace mathematical review of the analytic reductions.
 
 The repository's status after every successful check remains:
-**unreviewed computer-assisted unconditional proof candidate**, not an
-established or peer-reviewed theorem.
+**unreviewed computer-assisted candidate for an unconditional proof**, not
+an established or peer-reviewed theorem.
 
 Some expensive finite-replay checks were first completed against sealed
 commit
@@ -23,9 +23,8 @@ were integrated. The only subsequent edit to the finite producer is a
 cleanup/fail-closed patch: it validates the mode before allocation, frees all
 Arb/FLINT objects on every exit, and silences two branch-specific unused
 parameters. Both producer branches and both evaluation modes were checked
-for numerical output invariance under that patch. The final integrated
-commit must nevertheless pass the final-seal checklist at the end of this
-file before handoff.
+for numerical output invariance under that patch. The integrated v1 package
+subsequently passed the release checks recorded in section 9.
 
 ## 1. Complete finite regeneration
 
@@ -58,11 +57,12 @@ Runtime is hardware-dependent and is not part of the certificate.
 
 During integration, a second cleanup-patched run generated all 15 output
 logs and the strict comparator again matched all \(3,149,013\) canonical
-rows. That driver process is deliberately not counted as a release replay:
+rows. That driver process is deliberately not counted as release evidence:
 the shell script was edited while its already-open process was running and
 exited afterward with `691011: command not found`, so it never emitted the
-required terminal success or final metadata. The finalized runner and the
-GitHub `complete-finite-replay` job must execute from the clean final commit.
+required terminal success or final metadata. It was superseded by the clean
+GitHub `complete-finite-replay` result for the sealed v1 commit recorded in
+section 9.
 
 The freshly parsed decisive finite values were
 
@@ -186,7 +186,7 @@ without modifying the byte-preserved upstream package.
 
 ## 6. Standalone tail checks
 
-### Independent FLINT/Arb path
+### Standalone FLINT/Arb path
 
 The standalone tail implementation, which reads no stored numerical data,
 passed all 36 fail-closed gates at both 256 and 512 bits.
@@ -362,48 +362,50 @@ before selecting its two sealed transcripts. Thus ambient shell state
 cannot disable assertion-based inherited checks or silently substitute
 barrier evidence.
 
-## 9. Clean-clone and integrity checks
+## 9. Sealed v1 release evidence
 
-For the original sealed audit commit:
+The first integrated release is immutable:
 
-- a clean local clone had no worktree changes;
-- `SHA256SUMS` covered exactly all 313 files under the declared exclusions;
-  and
-- a read-only clean-clone container review passed in 43.601 seconds.
+```text
+tag: review-01787854-v1
+commit: 737d14f3212d09d1a14c12f57f518fe00418c7f6
+manifest entries: 349
+```
 
-That container run included the stored seal, vendored arithmetic replay,
-complete finite structural scan, regenerated 180/256-bit Dini logs,
-180/256-bit normalizer checks, 160/256-bit tail reruns, and the then-current
-assembly.
+GitHub Actions run
+[`30058731784`](https://github.com/judegomila/dbn-lambda-01787854-candidate-audit/actions/runs/30058731784)
+completed successfully on 24 July 2026 against that exact commit. Both
+release jobs were green:
 
-Because the unconditional-candidate integration adds and changes files, the
-final commit requires a new seal and a new clean-clone container result. The
-old clean-clone result is evidence for the inherited finite package, not a
-substitute for the final integrated check.
+- `full-review` built the versioned portable container, verified the stored
+  evidence, and freshly replayed the critical C/Arb lanes; and
+- `complete-finite-replay` regenerated and compared all \(3,149,013\)
+  finite rows.
 
-## 10. Final-seal checklist
+The earlier 313-file clean-clone result remains evidence for the inherited
+finite package only. It is superseded for the integrated v1 tree by the
+349-entry seal and the two successful jobs above.
 
-Before sharing the repository with the external reviewer:
+## 10. Paper-release revalidation
 
-1. regenerate `SHA256SUMS` from the exact final tree and verify complete
-   coverage under the documented exclusions;
-2. run `./verify.sh` from a clean worktree;
-3. build the portable review image and run
-   `./scripts/run_container_review.sh`;
-4. run `./scripts/run_barrier_replay.sh` from the final integrated sources
-   and compare the decisive semantics with the sealed barrier evidence;
-5. run `./scripts/run_tail_arb.sh` at 256 and 512 bits;
-6. rerun the complete finite sweep from the cleanup-patched producer, or
-   retain a clearly labeled pre-patch full replay together with the
-   output-neutral patch proof;
-7. record the final commit, source hashes, exact container image ID,
-   architecture, compiler/FLINT versions, commands, and start/finish times;
-8. verify that the GitHub repository remains private; and
-9. confirm that the landing page says “unreviewed computer-assisted
-   unconditional proof candidate,” never “established theorem.”
+The release-paper branch adds the referee manuscript, corrects a displayed
+`+` transcription in `WINDOW_FREEZE_THEOREM.md`, adds a verifier guard for
+that text, and clarifies evidence independence. It does not change the
+finite producer, tail arithmetic, barrier arithmetic, or stored numerical
+certificates. Nevertheless, before that branch is handed to a reviewer it
+must:
 
-Only results tied to the final seal should be presented as the final
-handoff state.
+1. regenerate `SHA256SUMS` from the exact branch tree;
+2. pass `./verify.sh` against that seal;
+3. render and visually inspect every page of the PDF;
+4. pass the GitHub `full-review` job; and
+5. pass a manually dispatched `complete-finite-replay` job for the exact
+   branch commit.
+
+The GitHub checks attached to the immutable commit are the authoritative
+record of items 4--5; embedding their future run identifier inside the same
+commit would be self-referential. A new release tag should be created only
+after both jobs are green and the external-review snapshot has been fixed.
 
 ## 11. Remaining human review boundary
 

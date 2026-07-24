@@ -26,7 +26,7 @@ majorants/minorant
 G(x,y)&=e^{y/50}\left(\frac{x}{4\pi}\right)^{-y/2},\\
 K(x,y)&=\frac{t_0y}{2(x-6)},\\
 \Sigma(x,y)&=\frac{1+y}{2}
-{}\frac{t_0}{4}\log\frac{x}{4\pi}
++\frac{t_0}{4}\log\frac{x}{4\pi}
 -\frac{t_0}{2x^2}
  \left(1-3y+\frac{4y(1+y)}{x^2}\right)_+ .
 \end{aligned}
@@ -152,6 +152,6 @@ producer's per-window constants.
 Run:
 
 ```bash
-python3 verify_window_freeze.py
-python3 verify_window_freeze.py --repo /path/to/newman_lambda_01787854_candidate
+python3 verifiers/verify_window_freeze.py
+python3 verifiers/verify_window_freeze.py --repo .
 ```

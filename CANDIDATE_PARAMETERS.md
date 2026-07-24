@@ -124,9 +124,9 @@ I_{\rm ext}=
 \left[\frac{1872719}{10^7},\frac{8231039}{10^7}\right].
 \]
 
-The primary independent tail certificates are at 256 and 512 bits. The
-broader Python interval checks at 160, 256, and 384 bits are corroborating
-replays.
+The primary tail certificate is one standalone FLINT/Arb implementation run
+at 256 and 512 bits and independently parsed. The separate Python interval
+checks at 160, 256, and 384 bits are corroborating replays.
 
 ## Runtime lock
 

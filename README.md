@@ -89,9 +89,11 @@ suppliers that require independent review.
   T_{\min}-E_{\max}
   \ge0.000000557871094787>0.
   \]
-- The independent 256- and 512-bit Arb tail certificates prove
+- One standalone FLINT/Arb implementation, run at both 256 and 512 bits,
+  proves
   \(D<0.999721\) and a normalized post-error margin greater than
-  \(0.00017352\).
+  \(0.00017352\). A separate Python interval implementation supplies
+  cross-implementation corroboration.
 - The barrier uses an approximation allowance \(0.00125\). A separate
   256-bit Arb calculation bounds the complete displayed Theorem 1.3 error
   by
@@ -115,7 +117,7 @@ certificates; the rounded decimals above are for orientation.
 - `WINDOW_FREEZE_THEOREM.md` proves the conservative directions of the
   per-window \(x\)-freeze and the exact half-open endpoint coverage.
 - `TAIL_LEMMA.md` states and proves the all-\(N\), all-\(y\) tail contraction
-  theorem consumed by an independent FLINT/Arb implementation.
+  theorem consumed by a standalone FLINT/Arb implementation.
 - `DERIVATIVE_BOX_LEMMA.md` proves the uniform spatial-envelope,
   discrete-sum, and holomorphic-quadrature contracts behind the barrier
   derivative bounds.
@@ -133,19 +135,41 @@ The target error paths use \(x-6.66\) in equation (23) and the paper's
 
 For mathematical review, read in this order:
 
-1. `PROOF_NOTE.md`
-2. `OPEN_REVIEW_QUESTIONS.md`
-3. `CANDIDATE_PARAMETERS.md`
-4. `NATIVE_BINDING.md`
-5. `WINDOW_FREEZE_THEOREM.md`
-6. `TAIL_LEMMA.md`
-7. `DERIVATIVE_BOX_LEMMA.md`
-8. `BARRIER_CERTIFICATE.md`
-9. the Polymath and Platt--Trudgian papers in `BIBLIOGRAPHY.md`
+1. [Referee manuscript (PDF)](output/pdf/dbn_lambda_01787854_candidate_audit.pdf)
+2. [`PROOF_NOTE.md`](PROOF_NOTE.md)
+3. [`OPEN_REVIEW_QUESTIONS.md`](OPEN_REVIEW_QUESTIONS.md)
+4. [`CANDIDATE_PARAMETERS.md`](CANDIDATE_PARAMETERS.md)
+5. [`NATIVE_BINDING.md`](NATIVE_BINDING.md)
+6. [`WINDOW_FREEZE_THEOREM.md`](WINDOW_FREEZE_THEOREM.md)
+7. [`TAIL_LEMMA.md`](TAIL_LEMMA.md)
+8. [`DERIVATIVE_BOX_LEMMA.md`](DERIVATIVE_BOX_LEMMA.md)
+9. [`BARRIER_CERTIFICATE.md`](BARRIER_CERTIFICATE.md)
+10. the Polymath and Platt--Trudgian papers listed in
+    [`BIBLIOGRAPHY.md`](BIBLIOGRAPHY.md)
 
-`REVIEW_SCOPE.md` gives a referee workflow and separates theorem review from
-software replay. `MAXIMUM_CHECKS.md` records the strongest checks performed
-before handoff and the final-seal checks that must remain green.
+[`REVIEW_SCOPE.md`](REVIEW_SCOPE.md) gives a referee workflow and separates
+theorem review from software replay. [`MAXIMUM_CHECKS.md`](MAXIMUM_CHECKS.md)
+records the strongest checks performed before handoff and the final-seal
+checks that must remain green. Reviewers should also read
+[`CITATION.md`](CITATION.md), [`REVIEW_TERMS.md`](REVIEW_TERMS.md), and
+[`THIRD_PARTY.md`](THIRD_PARTY.md).
+
+The release-grade referee manuscript is generated deterministically from
+`paper/generate_paper.py`. See `paper/README.md` for generation and visual-QA
+commands.
+
+## Companion wider-margin cross-check
+
+The separate private repository
+[`dbn-lambda-01858207-candidate-audit`](https://github.com/judegomila/dbn-lambda-01858207-candidate-audit/tree/e9cc86b9c4eb6e9d87a76116b1067843dc34d4f4)
+is retained as a wider-margin fallback and cross-check. Its proposed
+\(0.1858207\) conclusion is weaker, but its decisive finite and tail margins
+are substantially larger and its W1 certificate covers a larger local box.
+It is not used as a premise of this \(0.1787854\) candidate.
+
+`COMPARISON_BASELINE.md` records the exact relationship, independent replay
+roles, and the rule that a failure here must not be hidden by the companion
+package.
 
 ## Quick stored verification
 
@@ -190,7 +214,7 @@ Fresh coefficient regeneration and all 883 barrier prisms:
 ./scripts/run_barrier_replay.sh replay/barrier
 ```
 
-Fresh independent 256- and 512-bit Arb tail checks:
+Fresh 256- and 512-bit runs of the standalone Arb tail checker:
 
 ```sh
 ./scripts/run_tail_arb.sh replay/tail_arb
@@ -224,6 +248,9 @@ shards.
 - `vendor/`: version-locked upstream material and historical provenance.
 - `scripts/`: stored, container, barrier, tail, and full-sweep replay paths.
 - `references/`: the versioned upstream proof record.
+- `paper/`: deterministic source for the referee manuscript.
+- `output/pdf/`: release-grade referee manuscript.
+- `COMPARISON_BASELINE.md`: role of the wider-margin \(0.1858207\) package.
 
 The proper description of this repository remains: **an unreviewed
 computer-assisted candidate for an unconditional proof**, awaiting

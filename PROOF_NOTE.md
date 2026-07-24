@@ -2,8 +2,8 @@
 
 ## Status and candidate theorem
 
-This repository presents an **unreviewed computer-assisted unconditional
-proof candidate** for
+This repository presents an **unreviewed computer-assisted candidate for an
+unconditional proof** of
 
 \[
 \boxed{\Lambda\le
@@ -339,7 +339,7 @@ a closed box strictly containing \(y_0\), and an extended \(y\)-box whose
 top covers \(\sqrt{1-2t_0}\). No sampling in \(N\) and no assumed
 monotonicity in \(t\) is used.
 
-Independent FLINT/Arb implementations at 256 and 512 bits certify
+One standalone FLINT/Arb implementation, run at 256 and 512 bits, certifies
 
 \[
 D<0.999721,\qquad
@@ -494,9 +494,10 @@ t_0+\frac{y_0^2}{2}
 \tag{7.1}
 \]
 
-This is an unconditional implication in the sense that no conjectural
-hypothesis remains. It is still only an **unreviewed computer-assisted
-unconditional proof candidate** until independent mathematicians validate
+This is intended to be an unconditional implication in the sense that no
+conjectural hypothesis remains. It is still only an **unreviewed
+computer-assisted candidate for an unconditional proof** until independent
+mathematicians validate
 the cited-theorem applications, the new lemmas, the proof-to-code maps, and
 the interval computations.
 

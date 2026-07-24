@@ -3,7 +3,7 @@
 ## Review status
 
 This is a private referee package for the **unreviewed computer-assisted
-unconditional proof candidate**
+candidate for an unconditional proof**
 
 \[
 \Lambda\le\frac{893927}{5000000}=0.1787854.
@@ -132,9 +132,11 @@ Audit the endpoint-cap lemma, exact convolution partition, harmless
 nonnegative `OV` padding, all-\(N\) monotonicity gates, full-height transfer,
 complete \(t\)-box evaluation, and exact error formulas.
 
-The primary target certificates are independent FLINT/Arb runs at 256 and
-512 bits. The result is not dependent only on two precisions of the same
-`mpmath.iv` program.
+The primary target certificate comes from one standalone FLINT/Arb
+implementation run at 256 and 512 bits and independently parsed. A separate
+Python interval implementation supplies cross-implementation corroboration;
+the result is not dependent only on two precisions of one `mpmath.iv`
+program.
 
 ### 5. Site coverage and final weld
 

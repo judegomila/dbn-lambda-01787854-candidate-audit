@@ -6,8 +6,8 @@ hypotheses. The repository presently contains a candidate proof of each
 item, but an adverse answer to any load-bearing question may invalidate the
 conclusion.
 
-The package's status remains: **unreviewed computer-assisted unconditional
-proof candidate**, not an established or peer-reviewed theorem.
+The package's status remains: **unreviewed computer-assisted candidate for
+an unconditional proof**, not an established or peer-reviewed theorem.
 
 ## Priority 1: canonical Theorem 1.2 weld
 
@@ -160,9 +160,10 @@ Please audit `TAIL_LEMMA.md` and `verifiers/verify_tail_arb.c`.
   post-error margin?
 - Does nonvanishing of \(B_t\) complete the passage to \(H_t\)?
 
-The independent FLINT/Arb 256- and 512-bit certificates are primary. The
-older 160/256/384-bit Python interval runs are corroboration and source
-lineage evidence, not the sole justification.
+The primary certificate is one standalone FLINT/Arb implementation run at
+256 and 512 bits and independently parsed. The older 160/256/384-bit Python
+interval implementation supplies cross-implementation corroboration and
+source-lineage evidence, not the sole justification.
 
 ## Priority 7: implementation independence and reproducibility
 
@@ -192,7 +193,7 @@ After auditing the components, please state explicitly:
    validate;
 4. whether a correction is local or invalidates the target bound; and
 5. whether the package may properly advance beyond “unreviewed
-   computer-assisted unconditional proof candidate.”
+   computer-assisted candidate for an unconditional proof.”
 
 Until that review exists, automated `PASS` output must not be described as
 peer acceptance.

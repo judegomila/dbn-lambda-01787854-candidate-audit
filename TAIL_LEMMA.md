@@ -578,7 +578,7 @@ is uniform for every \(N\ge N_*\).
 
 ## 9. Numerical contraction and nonvanishing
 
-At both 256 and 512 bits, the independent Arb implementation proves
+At both 256 and 512 bits, the standalone Arb implementation proves
 
 \[
 D<0.999721<1,

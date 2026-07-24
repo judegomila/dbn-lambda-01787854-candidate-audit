@@ -13,3 +13,4 @@ barrier/src/TloopSinglemat_closed_cert.c -whitespace
 vendor/** -whitespace
 vendor/dbn21a/certificates/certified1875/windslab165_v2/tloop binary
 references/*.pdf binary
+output/pdf/*.pdf binary

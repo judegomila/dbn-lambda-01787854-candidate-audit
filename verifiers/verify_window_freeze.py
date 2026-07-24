@@ -142,6 +142,7 @@ def compact(text: str) -> str:
 def source_binding(repo: Path) -> None:
     source = repo / "src" / "lemma_sweep_p235711.c"
     driver = repo / "scripts" / "run_full_sweep.sh"
+    theorem = repo / "WINDOW_FREEZE_THEOREM.md"
     tail_160 = repo / "verifiers" / "verify_tail_1787854_160.py"
     tail_256 = repo / "verifiers" / "verify_tail_1787854_256.py"
     check("S0 producer source exists", source.is_file(), str(source))
@@ -236,6 +237,27 @@ def source_binding(repo: Path) -> None:
                 for text in tail_texts
             ),
             "finite and tail overlap at N=3840000",
+        )
+
+    check("S14 window-freeze theorem exists", theorem.is_file(), str(theorem))
+    if theorem.is_file():
+        theorem_text = compact(theorem.read_text(encoding="utf-8"))
+        corrected_sigma = (
+            r"\Sigma(x,y)&=\frac{1+y}{2} "
+            r"+\frac{t_0}{4}\log\frac{x}{4\pi} "
+            r"-\frac{t_0}{2x^2}"
+        )
+        stale_sigma_fragments = (
+            r"\Sigma(x,y)&=\frac{1+y}{2} \frac{t_0}{4}\log\frac{x}{4\pi}",
+            r"\Sigma(x,y)&=\frac{1+y}{2} {}\frac{t_0}{4}\log\frac{x}{4\pi}",
+            r"\Sigma(x,y)&=\frac{1+y}{2} {} \frac{t_0}{4}\log\frac{x}{4\pi}",
+        )
+        check(
+            "S15 theorem states the corrected sigma formula",
+            corrected_sigma in theorem_text
+            and not any(
+                fragment in theorem_text for fragment in stale_sigma_fragments
+            ),
         )
 
 

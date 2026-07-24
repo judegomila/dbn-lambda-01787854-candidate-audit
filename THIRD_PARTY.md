@@ -64,6 +64,18 @@ Its package hashes are locked in `requirements.txt`.
 The Python dependency `sympy==1.12` is distributed under the New BSD
 license.  Its package hashes are locked in `requirements.txt`.
 
+## Referee-manuscript dependencies
+
+The deterministic PDF generator uses:
+
+- `reportlab==4.4.9`, distributed under the ReportLab BSD license;
+- `pillow==12.2.0`, distributed under the MIT-CMU license; and
+- `charset-normalizer==3.4.9`, distributed under the MIT license.
+
+Their release hashes are locked in `paper/requirements.txt`. These packages
+are installation dependencies; their distributions are not copied into the
+repository.
+
 ## Repository-original material
 
 This notice records third-party rights only.  No public license has been

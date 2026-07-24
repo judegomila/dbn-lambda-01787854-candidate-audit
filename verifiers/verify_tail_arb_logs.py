@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Strictly parse the sealed independent FLINT/Arb tail certificates."""
+"""Strictly parse the sealed standalone FLINT/Arb tail certificates."""
 
 import argparse
 from decimal import Decimal, getcontext
