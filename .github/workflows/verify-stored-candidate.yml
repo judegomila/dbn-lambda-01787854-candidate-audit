@@ -94,10 +94,10 @@ jobs:
       - name: Build the versioned review container
         run: |
           set -o pipefail
-          mkdir -p replay/github-full-sweep
+          mkdir -p replay/github-build-logs
           docker build --pull=false --progress=plain --platform linux/amd64 \
             -t "$REVIEW_IMAGE" . \
-            2>&1 | tee replay/github-full-sweep/container-build.log
+            2>&1 | tee replay/github-build-logs/complete-finite-container-build.log
           test "$(docker image inspect --format '{{.Os}}/{{.Architecture}}' "$REVIEW_IMAGE")" = linux/amd64
           test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.base.digest"}}' "$REVIEW_IMAGE")" = "$REVIEW_BASE_DIGEST"
           test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.dbn.ubuntu-snapshot"}}' "$REVIEW_IMAGE")" = "$REVIEW_UBUNTU_SNAPSHOT"
@@ -117,5 +117,7 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: complete-finite-replay-${{ github.sha }}
-          path: replay/github-full-sweep/
+          path: |
+            replay/github-full-sweep/
+            replay/github-build-logs/complete-finite-container-build.log
           if-no-files-found: error
