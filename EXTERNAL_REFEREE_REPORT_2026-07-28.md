@@ -93,3 +93,17 @@ To close the §4 coverage gap, this review adds a fail-closed, stdlib-only log-a
 **Unreviewed computer-assisted proof candidate — confirmed as such, and materially strengthened by this pass.** No fatal or bound-invalidating defect was found; the criterion transcription and verified-height licensing are verified against primary sources; the barrier and tail computations are robust with real (non-knife-edge) margins; the one coverage gap has been closed at the log-audit level. It is **not** an established theorem: acceptance requires the §7 items — chiefly an independent recompile and human sign-off on three standard-but-un-machine-verified analytic steps. If those close, the result would be a genuine **unconditional** improvement on the Platt–Trudgian bound (0.2 → 0.1787854), obtained by the legitimate verified-height lever, not by any RH-hard or conjectural input.
 
 *This review was performed by AI agents under human direction. It is an adversarial technical audit, not human expert peer review, and its confidence figures are calibrated estimates, not guarantees.*
+
+---
+
+## Addendum 2026-07-28 — §7 item 1 (independent recompile) DISCHARGED
+
+All three heavy computational lanes were rebuilt **fresh from source** and reproduced the certified bounds:
+
+- **Barrier** — recompiled the four C producers natively (Homebrew **FLINT 3.6.0**, a different toolchain than the sealed linux/FLINT-3.0.1 lane), regenerated all **7,688** coefficient components (all fit their archived balls) and the **883-prism** closed certificate; every prism inequality was **independently recomputed from the regenerated balls** (min recomputed lower 0.5198 > 0), first prism at exact t=0, aggregate winding (−8.95e-13, 8.95e-13) certifies integer 0, Taylor tail 1.954×10⁻²² < 10⁻²⁰, Arb error 3.565×10⁻⁴ < 0.00125. `RESULT: ALL PASS` / `FRESH CLOSED-BARRIER REPLAY PASS`.
+- **Tail** — standalone Arb tail rebuilt at **256- and 512-bit**, 36/36, contraction D < 1, margin > 1.7×10⁻⁴ > 0 at both precisions. `INDEPENDENT ARB TAIL REPLAY PASS`.
+- **Full sweep** — all **3,149,013** finite rows (N = 690988..3840000) regenerated in the **exact pinned container** (image ID `bedf7303…`, linux/amd64, FLINT 3.0.1) and matched the sealed corpus line-for-line across all 15 blocks. `RESULT PASS: fresh sweep matches every canonical line and all 3149013 sealed rows`.
+
+**Effect:** the trust level for the heavy computations rises from *"the printed enclosures satisfy the gates"* (parse-the-sealed-log) to *"a fresh build from source regenerates the certified bounds"* — including a genuinely different toolchain for the barrier/tail and the exact pinned environment for the sweep. Referee D's trust-boundary caveat (the fast verifiers parse logs rather than recompute) is thereby closed for all three lanes.
+
+**Residual to acceptance is now purely human-mathematician analytic sign-off** (compute is exhausted): §7 items 2–3 (the prose-only `B_t ≠ 0` on R, the t>0→t=0 limiting extension of Lemma 8.4 / Thm 1.3, and the Dini y-transfer derivation) plus the documentary precise-PT-height citation (item 4). No further computational check is outstanding. This remains an AI-driven audit + recompute, **not** human expert peer review.
