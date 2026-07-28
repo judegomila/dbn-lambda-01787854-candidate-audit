@@ -1,4 +1,6 @@
-# Referee manuscript source
+# Paper artifacts
+
+## Deterministic repository referee manuscript
 
 Create or activate the repository virtual environment, install the
 hash-locked paper dependencies, and generate the deterministic release-grade
@@ -41,3 +43,16 @@ repository commit identify the actual review snapshot.
 The PDF is a referee guide and proof summary. The repository proof notes,
 source code, directed transcripts, and cited published papers remain
 authoritative.
+
+## Supplied theorem-style exposition
+
+`external/gomila-proof-exposition.pdf` is a separately supplied
+theorem-style exposition. Its LaTeX source and claimed finite-scan
+supplement were not supplied, so the original PDF is preserved byte-for-byte
+rather than regenerated here.
+
+Read `external/README.md` before the PDF. That cross-check records the exact
+artifact hash, binds the audited baseline tag and commit, lists required
+corrections, and distinguishes the useful exposition from independent
+acceptance. The supplied PDF is not authoritative when it conflicts with
+the sealed repository evidence.

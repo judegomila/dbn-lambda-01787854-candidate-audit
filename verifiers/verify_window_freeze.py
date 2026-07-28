@@ -7,7 +7,7 @@ Primary proof lane:
   * integer-square-root enclosures for the two square roots.
 
 Independent numerical lane:
-  * mpmath interval arithmetic at 250-bit precision.
+  * mpmath interval arithmetic at 400-bit precision.
 
 With --repo, the script also checks that the audited producer and full-sweep
 driver contain the formula/input fragments to which the theorem is applied.
