@@ -16,7 +16,7 @@ concurrency:
 
 env:
   REVIEW_IMAGE: dbn-lambda-01787854-review
-  REVIEW_BUILD_MANIFEST_SHA256: 1dbed4db14784e2764190039aa5fca014f25fd6a9d63e9b7f3730a935942159d
+  REVIEW_BUILD_MANIFEST_SHA256: 5566fe4ad23c9d0612a76d46c6886c978bd90fc610e40cf11b9330d49ad9cfa4
   REVIEW_BASE_DIGEST: sha256:52df9b1ee71626e0088f7d400d5c6b5f7bb916f8f0c82b474289a4ece6cf3faf
   REVIEW_UBUNTU_SNAPSHOT: 20260723T000000Z
   REVIEW_SOURCE_URL: https://github.com/judegomila/dbn-lambda-01787854-candidate-audit
@@ -38,7 +38,12 @@ jobs:
           sha256sum --strict --check scripts/REVIEW_CONTAINER_INPUTS.sha256
 
       - name: Build the versioned review container
-        run: docker build --pull=false --platform linux/amd64 -t "$REVIEW_IMAGE" .
+        run: |
+          set -o pipefail
+          mkdir -p replay/github-full-review
+          docker build --pull=false --progress=plain --platform linux/amd64 \
+            -t "$REVIEW_IMAGE" . \
+            2>&1 | tee replay/github-full-review/container-build.log
 
       - name: Verify reviewed container identity
         run: |
@@ -88,7 +93,11 @@ jobs:
 
       - name: Build the versioned review container
         run: |
-          docker build --pull=false --platform linux/amd64 -t "$REVIEW_IMAGE" .
+          set -o pipefail
+          mkdir -p replay/github-full-sweep
+          docker build --pull=false --progress=plain --platform linux/amd64 \
+            -t "$REVIEW_IMAGE" . \
+            2>&1 | tee replay/github-full-sweep/container-build.log
           test "$(docker image inspect --format '{{.Os}}/{{.Architecture}}' "$REVIEW_IMAGE")" = linux/amd64
           test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.base.digest"}}' "$REVIEW_IMAGE")" = "$REVIEW_BASE_DIGEST"
           test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.dbn.ubuntu-snapshot"}}' "$REVIEW_IMAGE")" = "$REVIEW_UBUNTU_SNAPSHOT"

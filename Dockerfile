@@ -11,15 +11,21 @@ FROM ubuntu:24.04@sha256:52df9b1ee71626e0088f7d400d5c6b5f7bb916f8f0c82b474289a4e
 # hashes while bootstrapping ca-certificates; all later HTTPS is authenticated.
 RUN sed -i '/^Signed-By:/a Snapshot: 20260723T000000Z' \
         /etc/apt/sources.list.d/ubuntu.sources \
-    && apt-get -o Acquire::https::Verify-Peer=false \
+    && apt-get -o Acquire::Retries=5 \
+        -o APT::Update::Error-Mode=any \
+        -o Acquire::https::Verify-Peer=false \
         --snapshot 20260723T000000Z update \
     && DEBIAN_FRONTEND=noninteractive apt-get \
+        -o Acquire::Retries=5 \
         -o Acquire::https::Verify-Peer=false \
         --snapshot 20260723T000000Z install -y --no-install-recommends \
         ca-certificates \
     && rm -rf /var/lib/apt/lists/* \
-    && apt-get --snapshot 20260723T000000Z update \
+    && apt-get -o Acquire::Retries=5 \
+        -o APT::Update::Error-Mode=any \
+        --snapshot 20260723T000000Z update \
     && DEBIAN_FRONTEND=noninteractive apt-get \
+        -o Acquire::Retries=5 \
         --snapshot 20260723T000000Z install -y --no-install-recommends \
         coreutils \
         diffutils \

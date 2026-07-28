@@ -11,7 +11,7 @@ image=${IMAGE:-dbn21a-flint}
 expected=${EXPECTED_IMAGE_ID:-sha256:bedf7303c0be0d35d658d3893cf9f8424aab9f55bc4167644ddf3df564a16538}
 historical_image_id=sha256:bedf7303c0be0d35d658d3893cf9f8424aab9f55bc4167644ddf3df564a16538
 build_manifest=scripts/REVIEW_CONTAINER_INPUTS.sha256
-reviewed_build_manifest_sha=1dbed4db14784e2764190039aa5fca014f25fd6a9d63e9b7f3730a935942159d
+reviewed_build_manifest_sha=5566fe4ad23c9d0612a76d46c6886c978bd90fc610e40cf11b9330d49ad9cfa4
 
 if command -v sha256sum >/dev/null 2>&1; then
   actual_build_manifest_sha=$(sha256sum "$build_manifest" | awk '{print $1}')
