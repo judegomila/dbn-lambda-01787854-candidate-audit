@@ -1,0 +1,34 @@
+PASS PI1          Machin and Gauss pi enclosures intersect
+PASS PI2          intersection nonempty, width < 1e-60 (width=0.0000000000000000000000000000000000000000000000000000000000000000000001)
+PASS PI3          sanity 3 < pi < 4
+PASS SQ0          isqrt bracket self-test (sqrt2 straddle, sqrt4 exact)
+PASS ALG1         window identity ws(N,t)=4piN^2-pi t/4 <-> radicand N^2-t/16 (exact)
+PASS Q1           d ws/dt = -pi/4 < 0 (pi_lo > 0): sup_t ws at t=0, inf_t ws at t=T_TOP -- t-for-all reduces to endpoints
+PASS Q2           d(radicand)/dx = 1/(4pi) > 0
+PASS Q3           d(radicand)/dt = 1/16 > 0: box for-all reduces to corners (X,0) and (X+1,T_TOP)
+PASS U1a          X - sup_t ws(N0,t) >= 5377392.8789 (their pinned floor literal); my exact lower endpoint floor4 = 5377392.8789
+PASS U1b          my enclosure floor4 string == their string on BOTH endpoints
+PASS U2a          inf_t ws(N0+1,t) - (X+1) >= 11989041.1415 (their literal); my floor4 = 11989041.1415
+PASS U2b          floor4 string match both endpoints
+PASS U3           [X,X+1] strictly inside [ws(N0,t), ws(N0+1,t)) for every slab t
+PASS R1           t0 + y0^2/2 = 1965/10000 EXACTLY (Lambda<=0.1965 row identity)
+PASS R2           y0^2 + 2 t0 = 393/1000 <= 1 (range condition)
+PASS R3           slab containment: y0^2 = 39/1000 >= (1809/10000)^2, t0 <= 1809/10000
+PASS R4           PT2021 admissibility X/2 = 3000000092913.5 <= T = 3000175332800 exact
+PASS R5a          row point margin >= 5377393.0179 (their literal); my floor4 = 5377393.0179
+PASS R5b          string match
+PASS R6a          row point margin >= 11989041.1446 (their literal); my floor4 = 11989041.1446
+PASS R6b          string match
+PASS R7           row-sharp margins dominate the uniform margins (consistency)
+PASS A1           the auxiliary line anchor: 0.1775-row margin >= 5377393.01, floor2 match; my floor4 = 5377393.0183
+PASS A2           the auxiliary line anchor: 0.1775-row margin >= 11989041.14, floor2 match; my floor4 = 11989041.1442
+PASS S1           N(x,t) = 690988 on ALL of [X,X+1] x [0,0.1809] (corner-reduced; S in [690988.309643027761, 690988.309643093525])
+PASS S2           frac(S_lo) >= 0.3096430277 (the auxiliary line pinned floor literal); my floor10 = 0.3096430277
+PASS S3           1 - frac(S_hi) >= 0.6903569064 (their literal); my floor10 = 0.6903569064
+PASS G1           candidate t0 = 81/500 in [0, 1809/10000] (uniform lemma applies)
+PASS G2           candidate t0 = 161/1000 in [0, 1809/10000] (uniform lemma applies)
+PASS G3           candidate t0 = 4/25 in [0, 1809/10000] (uniform lemma applies)
+
+TOTAL CHECKS RUN: 30
+PASS: 30  FAIL: 0
+RESULT: ALL PASS

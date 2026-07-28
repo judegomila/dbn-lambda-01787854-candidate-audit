@@ -1,0 +1,132 @@
+name: Publish verified private review image
+
+on:
+  push:
+    tags:
+      - review-01787854-v3
+
+permissions:
+  contents: read
+
+concurrency:
+  group: private-review-image-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.event.deleted == false
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    permissions:
+      contents: read
+      packages: write
+    env:
+      IMAGE_NAME: ghcr.io/judegomila/dbn-lambda-01787854-review
+      REVIEW_IMAGE: dbn-lambda-01787854-review
+      REVIEW_BUILD_MANIFEST_SHA256: 1dbed4db14784e2764190039aa5fca014f25fd6a9d63e9b7f3730a935942159d
+      REVIEW_BASE_DIGEST: sha256:52df9b1ee71626e0088f7d400d5c6b5f7bb916f8f0c82b474289a4ece6cf3faf
+      REVIEW_UBUNTU_SNAPSHOT: 20260723T000000Z
+      REVIEW_SOURCE_URL: https://github.com/judegomila/dbn-lambda-01787854-candidate-audit
+
+    steps:
+      - name: Check out sealed review package
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Verify reviewed container build inputs
+        run: |
+          manifest_sha=$(sha256sum scripts/REVIEW_CONTAINER_INPUTS.sha256 | awk '{print $1}')
+          test "$manifest_sha" = "$REVIEW_BUILD_MANIFEST_SHA256"
+          sha256sum --strict --check scripts/REVIEW_CONTAINER_INPUTS.sha256
+
+      - name: Build the exact image under review
+        run: docker build --pull=false --platform linux/amd64 -t "$REVIEW_IMAGE" .
+
+      - name: Verify reviewed container identity
+        run: |
+          test "$(docker image inspect --format '{{.Os}}/{{.Architecture}}' "$REVIEW_IMAGE")" = linux/amd64
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.base.digest"}}' "$REVIEW_IMAGE")" = "$REVIEW_BASE_DIGEST"
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.dbn.ubuntu-snapshot"}}' "$REVIEW_IMAGE")" = "$REVIEW_UBUNTU_SNAPSHOT"
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.dbn.platform"}}' "$REVIEW_IMAGE")" = linux/amd64
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.source"}}' "$REVIEW_IMAGE")" = "$REVIEW_SOURCE_URL"
+
+      - name: Run stored and fresh critical review against this image
+        run: |
+          set -o pipefail
+          mkdir -p replay/tag-full-review
+          docker run --rm --network none --read-only --cap-drop ALL \
+            --security-opt no-new-privileges \
+            --user "$(id -u):$(id -g)" \
+            --tmpfs /tmp:rw,exec,nosuid,size=4g \
+            -e REVIEW_OUTPUT=/review-output/evidence \
+            -v "$GITHUB_WORKSPACE:/work:ro" \
+            -v "$GITHUB_WORKSPACE/replay/tag-full-review:/review-output" \
+            -w /work "$REVIEW_IMAGE" \
+            2>&1 | tee replay/tag-full-review/container-review.log
+
+      - name: Regenerate and compare all 3,149,013 finite rows
+        run: |
+          image_id=$(docker image inspect --format '{{.Id}}' "$REVIEW_IMAGE")
+          IMAGE="$REVIEW_IMAGE" \
+          EXPECTED_IMAGE_ID="$image_id" \
+          EXPECTED_BUILD_MANIFEST_SHA256="$REVIEW_BUILD_MANIFEST_SHA256" \
+            ./scripts/run_full_sweep.sh replay/tag-full-sweep
+
+      - name: Push the exact verified image
+        id: image
+        env:
+          GHCR_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          image_ref="${IMAGE_NAME}:${GITHUB_SHA}"
+          docker tag "$REVIEW_IMAGE" "$image_ref"
+          printf '%s' "$GHCR_TOKEN" |
+            docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          docker push "$image_ref" | tee /tmp/dbn-image-push.log
+          digest=$(grep -Eo 'sha256:[0-9a-f]{64}' \
+            /tmp/dbn-image-push.log | tail -n 1)
+          case "$digest" in
+            sha256:[0-9a-f][0-9a-f]*) ;;
+            *)
+              echo "error: registry did not return a SHA-256 digest" >&2
+              exit 1
+              ;;
+          esac
+          mkdir -p replay/review-image
+          {
+            echo "format_version=1"
+            echo "repository=${GITHUB_REPOSITORY}"
+            echo "review_tag=${GITHUB_REF_NAME}"
+            echo "git_commit=${GITHUB_SHA}"
+            echo "image=${IMAGE_NAME}"
+            echo "image_digest=${digest}"
+            echo "local_image_id=$(docker image inspect --format '{{.Id}}' "$REVIEW_IMAGE")"
+            echo "review_container_inputs_sha256=${REVIEW_BUILD_MANIFEST_SHA256}"
+            echo "base_manifest_digest=${REVIEW_BASE_DIGEST}"
+            echo "ubuntu_snapshot=${REVIEW_UBUNTU_SNAPSHOT}"
+            echo "workflow_run=https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo "workflow_run_attempt=${GITHUB_RUN_ATTEMPT}"
+            echo "verification=stored-critical-and-complete-3149013-row-replay-pass"
+          } > replay/review-image/REVIEW_IMAGE.txt
+          (
+            cd replay/review-image
+            sha256sum REVIEW_IMAGE.txt > REVIEW_IMAGE.sha256
+          )
+          printf 'digest=%s\n' "$digest" >> "$GITHUB_OUTPUT"
+          {
+            echo "### Verified private review image"
+            echo
+            echo "\`${IMAGE_NAME}@${digest}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload exact-image evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: verified-private-image-${{ github.ref_name }}-attempt-${{ github.run_attempt }}
+          path: |
+            replay/tag-full-review/
+            replay/tag-full-sweep/
+            replay/review-image/
+          if-no-files-found: error

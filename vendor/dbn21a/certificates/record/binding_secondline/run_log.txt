@@ -1,0 +1,88 @@
+========================================================================
+SECTION A -- exact-rational record assembly (second line on R4/Sec.5)
+========================================================================
+[PASS] A1 Lambda = t0 + y0^2/2 = 197/1000 exact     t0=71/400, y0^2=39/1000 -> 197/1000
+[PASS] A2 X/2 <= T_PT (PT2021, exact)               X/2=6000000185827/2, T_PT=3000175332800, margin=350479773/2
+[PASS] A2b margin equals producer's 350479773/2     
+[PASS] A3a y0^2 >= 0.1809^2 (exact)                 39/1000 vs 3272481/100000000
+[PASS] A3b t0 <= 0.1809 (exact)                     71/400 = 0.1775
+[PASS] A3c y0^2 + 2 t0 <= 1 (exact)                 = 197/500 = 0.394
+[PASS] A3d ymax^2 = 1 - 2 t0 (exact)                
+[PASS] A4a window-left xL < X (interval ub vs exact) X - ub(xL) >= 5.3773930e+6 (FLOOR)
+[PASS] A4b X + 1 < window-right xR                  lb(xR) - (X+1) >= 1.1989041e+7 (FLOOR)
+[PASS] A4c 0 < 1 - y0^2 < 1 (exact)                 left edge in (X, X+1)
+
+========================================================================
+SECTION B -- R1 algebra second line (sympy exact + exact rationals)
+========================================================================
+[PASS] B1a s_*-phase cancels identically (sympy)    -s ln2 - s ln(n/2) + s ln n == 0
+[PASS] B1b b-exponent identity (sympy)              (t/4)(ln^2 2+ln^2(n/2)-ln^2 n) == -(t/2) ln2 ln(n/2)
+[PASS] B1c b_1 = exp((t/4) ln^2 1) = 1, hence c_2 = 0 (sympy) c_2 = b_2(1 - b_1) = 0
+[PASS] B2 rearrangement identity N=8 q=1/3 a_n=1/n  LHS=RHS=704/315
+[PASS] B2 rearrangement identity N=9 q=1/3 a_n=1/n  LHS=RHS=2252/945
+[PASS] B2 rearrangement identity N=8 q=1 a_n=1 (edge) LHS=RHS=8
+[PASS] B2 rearrangement identity N=9 q=1/5 a_n=1/n^2 LHS=RHS=6764641/5292000
+
+========================================================================
+SECTION C -- R2 second line: uniform sigma_min, C_my, m_min
+========================================================================
+[PASS] C1a 1 - 3 y0 > 0 (positive part active at y0) >= 4.0754747e-1 (FLOOR)
+[PASS] C1b d/dy inner = -3 + 4(1+2y)/x^2 < 0 (y<=1, x>=xL) <= -2.99999e+0
+[PASS] C1c corr_max > 0                             corr_max <= 1.00472e-27 (CEIL)
+[PASS] C2 L0 = log(xL/4pi) > 26.8 (also > 2 for M5) L0 >= 2.68917554729e+1 (FLOOR)
+sigma_min >= 1.79206373740e+0 (FLOOR, 12 digits)
+C_my = 1 + b_2^t 2^{-sigma_min} <= 1.2949811496e+0 (CEIL, 11 digits)
+[PASS] C3 cross-line digit match: C_lambda          my CEIL-10dp 1.2949811496 == producer printed 1.2949811496
+m_min = 0.03/C_my >= 2.3166360383e-2 (FLOOR, 11 digits)
+[PASS] C4 cross-line digit match: m_min             my FLOOR-10dp 0.0231663603 == producer printed 0.0231663603
+
+========================================================================
+SECTION D -- R3 second line: my own global uniform error budget E_my
+========================================================================
+[PASS] D1 p > 1 (integral tail valid)               p >= 1.195402912e+0 (FLOOR)
+S_my = 1 + 2^-p + 2^(1-p)/(p-1) <= 5.906039822e+0 (CEIL)
+P_my <= 2.020201341e+0 (CEIL)
+[PASS] D2 cross-line consistency: P_my <= 2.0203 (producer's P_max print) my CEIL 2.0203
+u1(xL) <= 3.4166973e-13 (CEIL)
+[PASS] D3 |log(x/4piN^2)| edge <= L0 (inner max at n=1) edge <= 2.32348e-14 (CEIL) << L0
+e_A + e_B <= 4.0765946e-12 (CEIL, my majorant)
+[PASS] D4 eAB sanity: my (cruder) bound still < 1e-11 NOTE producer's sharper endpoint-cap bound 1.78e-12 < mine; both valid uppers
+e_C0 <= 1.0458815e-7 (CEIL)
+[PASS] D5 cross-line digit match: e_C0 CEIL-6sig    my CEIL 1.04589e-7 == producer printed 1.04589e-7 (0.000000104589)
+E_my = (eA+eB)_ub + eC0_ub <= 1.0459223e-7 (CEIL, exact-rational sum)
+[PASS] D6 0 <= E_my - E_prod <= my_eAB_ub (excess = eAB majorant gap only) E_my - E_prod = 2.222e-12 (CEIL) <= eAB_ub = 4.077e-12
+
+========================================================================
+SECTION E -- R4 second line: the binding inequality, my constants
+========================================================================
+[PASS] E1 binding: m_min - E_my > 0                 margin >= 2.3166255790e-2 (FLOOR, exact rational arithmetic)
+[PASS] E2 cross-line digit match: binding margin FLOOR-10dp my FLOOR 0.0231662557 == producer printed 0.0231662557
+[PASS] E3 ratio m_min/E_my > 2e5 (5+ orders of safety on my line) my ratio >= 221492 (FLOOR int; producer's 221497 used their sharper E_max, mine is smaller as expected)
+
+========================================================================
+SECTION F -- pointwise falsification probe at x = X+1, y = y0
+========================================================================
+Re s_*(X+1, y0) in [1.7920637771720e+0, 1.7920637771721e+0] (FLOOR/CEIL 14 digits)
+[PASS] F1 direct Re s_* >= sigma_min (res-bound freeze direction holds) gap >= 3.97703e-8 (FLOOR)
+|1 - beta_2|(X+1, y0) in [7.27771658129e-1, 7.27771658130e-1]
+[PASS] F2 pointwise |1-beta_2| <= C_my (cap not violated) slack >= 5.67209e-1 (FLOOR)
+[PASS] F3 pointwise |1-beta_2| >= 1 - b2^t 2^{-sigma_pt} (two-sided sanity) 
+
+TOTAL GATES RUN: 35
+RESULT: ALL PASS
+
+CERTIFIED (second line, this certificate's code only):
+  * exact assembly: Lambda <= 197/1000 given (i) PT2021, (ii) binding,
+    (iii) slab containments -- all re-checked above in exact rationals;
+  * R1 algebra: phase cancellation + b-exponent + rearrangement identity
+    verified independently (sympy polynomial + exact rationals);
+  * R2: |1-beta_2| <= C_my <= 1.2949811496 (CEIL) and |f_t0| >= m_min
+    >= 0.0231663603 (FLOOR) uniformly on {N>=N0, x in window N, y in
+    [y0,1]}, via my own (res-bound) freeze chain (M1)-(M2);
+  * R3: my own global budget E_my <= 1.04593e-7 (CEIL): e_C0 part
+    digit-matches the producer (1.04589e-7 CEIL); eAB part uses an
+    independent, cruder majorant (integral tail) -- both valid uppers;
+  * R4: m_min - E_my >= 0.0231662557 (FLOOR) > 0 on MY constants --
+    the same 10-digit floor the producer printed: two-line value match.
+  RH-height dependency: NONE above; the assembled record consumes RH
+  to T = X/2 unconditionally via PT2021 (gate A2).

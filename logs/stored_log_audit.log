@@ -1,0 +1,9 @@
+[PASS] triangle_y_dini_180.log: four legs and strict ratio
+[PASS] triangle_y_dini_256.log: four legs and strict ratio
+[PASS] triangle_normalizer_corr_180.log: normalizer/correction gates
+[PASS] triangle_normalizer_corr_256.log: normalizer/correction gates
+[PASS] independent corrected Python head/tail logs
+[PASS] independent P11 cell decomposition log
+[PASS] tail_1787854_160.log: 93/93 and candidate tail gates
+[PASS] tail_1787854_256.log: 93/93 and candidate tail gates
+RESULT: STORED INTERVAL LOGS PASS

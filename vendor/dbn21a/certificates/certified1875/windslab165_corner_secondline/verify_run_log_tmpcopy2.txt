@@ -1,0 +1,25 @@
+== gate 0: artifact integrity (md5 pinned in wildcard-s32's verified windslab165_v2 fact)
+tloop_6e12_y165.txt: OK
+== gate 1: hash-seeded selection re-derived from log bytes
+seed_sha256 c402ac4ef703a734e865198a848fbd21ad03441025419f5d35897936a2df4009
+rect_count 492
+rect 1 t 0 ddt 58502.000000000000000 ddz 10721.000000000000000 wind 0.0000000000 min 4.2783620904181587383 mesh 42880 corners 0,1
+rect 71 t 0.0048489160490838339865 ddt 47372.000000000000000 ddz 8677.0000000000000000 wind 0.0000000000 min 4.0342498484369228591 mesh 34704 corners 2
+rect 223 t 0.018728548512163233847 ddt 25933.000000000000000 ddz 4743.0000000000000000 wind 0.0000000000 min 3.4587604271900031770 mesh 18968 corners 3
+rect 492 t 0.17354959427234065989 ddt 55.000000000000000000 ddz 13.000000000000000000 wind 0.0000000000 min 1.4714692759513059035 mesh 48 corners 2
+== gate 2: zero-foreign-toolchain (no ARB/pari/sibling imports)
+imports OK: ['fractions', 'json', 'mpmath', 'sys'] ; no foreign-toolchain references in code
+== gate 3: chunk coverage + exact recombination + containment
+rect 1 t field is the literal 0 (exact-t anchor) PASS
+rect 1 corner (X, y0): lb|f|=3.30138103057e1 (FLOOR) printed_min=4.2783620904181587383 ratio(lb/min)=7.71646e0 (FLOOR) width=9.22209e-23 (CEIL) containment=PASS nonvanish=PASS width<=1e-22=PASS
+rect 1 corner (X+1, y0): lb|f|=1.33551285584e1 (FLOOR) printed_min=4.2783620904181587383 ratio(lb/min)=3.12155e0 (FLOOR) width=7.74937e-23 (CEIL) containment=PASS nonvanish=PASS width<=1e-22=PASS
+rect 71 corner (X, 1): lb|f|=4.75192371026e0 (FLOOR) printed_min=4.0342498484369228591 ratio(lb/min)=1.17789e0 (FLOOR) width=7.51066e-25 (CEIL) containment=PASS nonvanish=PASS width<=1e-22=PASS
+rect 223 corner (X+1, 1): lb|f|=3.45876042719e0 (FLOOR) printed_min=3.4587604271900031770 ratio(lb/min)=9.99999e-1 (FLOOR) width=4.49611e-25 (CEIL) containment=PASS nonvanish=PASS width<=1e-22=PASS
+  value-match r223_c3: max|corner-printed_min|=3.10345e-21 (CEIL) <= 62069/20000000000000000000000000 PASS; NEAREST-display signature: printed min sits 3.10345e-21 (CEIL) above the enclosure, < half-ulp 5e-20 of a 20-digit NEAREST display: PASS
+rect 492 corner (X, 1): lb|f|=1.54376306220e0 (FLOOR) printed_min=1.4714692759513059035 ratio(lb/min)=1.04913e0 (FLOOR) width=2.40107e-27 (CEIL) containment=PASS nonvanish=PASS width<=1e-22=PASS
+  r492 corner above printed min by 7.22937862560e-2 (FLOOR of lo-pm or width if straddling) -- corner not the argmin or exact match; containment gate already decisive
+ALL PASS
+== gate 4: one hash-chosen chunk recomputed LIVE and matched
+chunk [280001,300000] done -> /tmp/windslab165_live_chunk.json
+live chunk runs/r1_c0_280001_300000.json [280001,300000] matches banked endpoints EXACTLY
+ALL GATES PASS

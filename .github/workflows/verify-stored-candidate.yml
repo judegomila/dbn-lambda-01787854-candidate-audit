@@ -1,0 +1,112 @@
+name: Verify stored candidate
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REVIEW_IMAGE: dbn-lambda-01787854-review
+  REVIEW_BUILD_MANIFEST_SHA256: 1dbed4db14784e2764190039aa5fca014f25fd6a9d63e9b7f3730a935942159d
+  REVIEW_BASE_DIGEST: sha256:52df9b1ee71626e0088f7d400d5c6b5f7bb916f8f0c82b474289a4ece6cf3faf
+  REVIEW_UBUNTU_SNAPSHOT: 20260723T000000Z
+  REVIEW_SOURCE_URL: https://github.com/judegomila/dbn-lambda-01787854-candidate-audit
+
+jobs:
+  full-review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Check out sealed review package
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Verify reviewed container build inputs
+        run: |
+          manifest_sha=$(sha256sum scripts/REVIEW_CONTAINER_INPUTS.sha256 | awk '{print $1}')
+          test "$manifest_sha" = "$REVIEW_BUILD_MANIFEST_SHA256"
+          sha256sum --strict --check scripts/REVIEW_CONTAINER_INPUTS.sha256
+
+      - name: Build the versioned review container
+        run: docker build --pull=false --platform linux/amd64 -t "$REVIEW_IMAGE" .
+
+      - name: Verify reviewed container identity
+        run: |
+          test "$(docker image inspect --format '{{.Os}}/{{.Architecture}}' "$REVIEW_IMAGE")" = linux/amd64
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.base.digest"}}' "$REVIEW_IMAGE")" = "$REVIEW_BASE_DIGEST"
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.dbn.ubuntu-snapshot"}}' "$REVIEW_IMAGE")" = "$REVIEW_UBUNTU_SNAPSHOT"
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.dbn.platform"}}' "$REVIEW_IMAGE")" = linux/amd64
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.source"}}' "$REVIEW_IMAGE")" = "$REVIEW_SOURCE_URL"
+
+      - name: Verify stored evidence and freshly replay critical C/Arb lanes
+        run: |
+          set -o pipefail
+          mkdir -p replay/github-full-review
+          docker run --rm --network none --read-only --cap-drop ALL \
+            --security-opt no-new-privileges \
+            --user "$(id -u):$(id -g)" \
+            --tmpfs /tmp:rw,exec,nosuid,size=4g \
+            -e REVIEW_OUTPUT=/review-output/evidence \
+            -v "$GITHUB_WORKSPACE:/work:ro" \
+            -v "$GITHUB_WORKSPACE/replay/github-full-review:/review-output" \
+            -w /work "$REVIEW_IMAGE" \
+            2>&1 | tee replay/github-full-review/container-review.log
+
+      - name: Upload full-review transcripts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: full-review-${{ github.sha }}
+          path: replay/github-full-review/
+          if-no-files-found: error
+
+  complete-finite-replay:
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - name: Check out sealed review package
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Verify reviewed container build inputs
+        run: |
+          manifest_sha=$(sha256sum scripts/REVIEW_CONTAINER_INPUTS.sha256 | awk '{print $1}')
+          test "$manifest_sha" = "$REVIEW_BUILD_MANIFEST_SHA256"
+          sha256sum --strict --check scripts/REVIEW_CONTAINER_INPUTS.sha256
+
+      - name: Build the versioned review container
+        run: |
+          docker build --pull=false --platform linux/amd64 -t "$REVIEW_IMAGE" .
+          test "$(docker image inspect --format '{{.Os}}/{{.Architecture}}' "$REVIEW_IMAGE")" = linux/amd64
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.base.digest"}}' "$REVIEW_IMAGE")" = "$REVIEW_BASE_DIGEST"
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.dbn.ubuntu-snapshot"}}' "$REVIEW_IMAGE")" = "$REVIEW_UBUNTU_SNAPSHOT"
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.dbn.platform"}}' "$REVIEW_IMAGE")" = linux/amd64
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.source"}}' "$REVIEW_IMAGE")" = "$REVIEW_SOURCE_URL"
+          image_id=$(docker image inspect --format '{{.Id}}' "$REVIEW_IMAGE")
+          echo "EXPECTED_IMAGE_ID=$image_id" >> "$GITHUB_ENV"
+
+      - name: Regenerate and compare all 3,149,013 finite rows
+        env:
+          IMAGE: ${{ env.REVIEW_IMAGE }}
+          EXPECTED_BUILD_MANIFEST_SHA256: ${{ env.REVIEW_BUILD_MANIFEST_SHA256 }}
+        run: ./scripts/run_full_sweep.sh replay/github-full-sweep
+
+      - name: Upload complete finite replay
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: complete-finite-replay-${{ github.sha }}
+          path: replay/github-full-sweep/
+          if-no-files-found: error

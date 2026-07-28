@@ -1,0 +1,6 @@
+ROW 129/800 87677/2500000 HEAD 6000
+TAIL PASS {'label': 'P11', 'boxes': 388574, 'cells': 243, 'max_depth': 9, 'worst_ratio': mpi('0.0', '0.0'), 'worst': None}
+TAIL PASS {'label': 'P7', 'boxes': 127588, 'cells': 81, 'max_depth': 6, 'worst_ratio': mpi('0.0', '0.0'), 'worst': None}
+TAIL PASS {'label': 'P5', 'boxes': 51456, 'cells': 27, 'max_depth': 0, 'worst_ratio': mpi('0.0', '0.0'), 'worst': None}
+TAIL PASS {'label': 'P23', 'boxes': 22272, 'cells': 9, 'max_depth': 0, 'worst_ratio': mpi('0.0', '0.0'), 'worst': None}
+RESULT ALL PASS

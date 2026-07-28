@@ -1,0 +1,78 @@
+==============================================================================
+R1. TRIB2 REWRITE LEMMA (exact algebra)
+==============================================================================
+[PASS] (R1a) s-phase exponent ln n - ln 2 - ln(n/2) == 0 identically (sympy)
+[PASS] (R1a) ln^2 2 + ln^2(n/2) - ln^2 n == -2 ln2 ln(n/2) identically (sympy)
+[PASS] (R1a) ratio in (0,1]: exponent -(t/2) ln2 ln(n/2) <= 0 for n>=2 (sign, exact)  ln(n/2) >= 0 for n >= 2; = 0 iff n = 2 (so c_2 = 0)
+[PASS] (R1b) trib2 rearrangement identity exact at N=12 (Fractions)  both sides = 26032/10395
+[PASS] (R1b) trib2 rearrangement identity exact at N=13 (Fractions)  both sides = 352276/135135
+[PASS] (R1c) 2^{-s}(n/2)^{-s} = n^{-s} identically (sympy, complex s)
+[PASS] (R1d) alpha-side ratio extra factor = 2^{-y} identically (sympy)
+
+==============================================================================
+R2. CAMPAIGN ROW, GATES, CONVERSION CONSTANT C_lambda
+==============================================================================
+[PASS] ymax^2 = 1 - 2 t0 (exact rational)
+[PASS] window tiling: windows N and N+1 abut exactly (formula identity)  upper end of window N = 4pi((N+1)^2 - t/16) = lower end of window N+1
+[PASS] left edge X + sqrt(1-y0^2) lies in window N0 = 690988  sqrt(x/4pi + t/16) in [690988.3096430922371008326998805106880753547130790543230670515024370287, 690988.3096430922371008326998805106880753547130790543230670515024388956]
+[PASS] xN0 <= X (window N0 starts left of the barrier)
+[PASS] (G0) positive-part cap valid: 8/xN0^2 < 3 y0  (=> cap <= 1 for all y in [y0,1])
+[PASS] delta1 freeze direction: t/(16 N^2) and t/(2 x_N^2) decreasing in N (exact form)  delta1 = [0.000000000000001031040512352470199006108431788520634132771182424863662524632973681371, 0.000000000000001031040512352470199006108431788520634132771182424863662524632973681371]
+[PASS] delta1 <= 1.04e-15 (quoted upper bound)
+[PASS] sigma1lo(N0,y0) > 0  in [1.792063737401745861852216133123503996513343541138751503763165217036091, 1.792063737401745861852216133123503996513343541138751503763165217042026]
+[PASS] (G2) Y1(N0) = 0.02 - (1/2)ln(N0^2 - t/16) + (1/2)ln N0 <= -6.7029 < 0  Y1(N0) in [-6.702938868231477947743726649945090608878909250894942669759171885514533, -6.702938868231477947743726649945090608878909250894942669759171885490794]
+[PASS] (G2a) Y1 decreasing in N: N^2/(N^2 - t/16) > 1 (exact sign)  d Y1/d lnN = 1/2 - N^2/(N^2-t/16) < -1/2 < 0
+[PASS] (G3) frozen kappa kapF = t/(2(xN0-6)) > 0 finite  kapF = [0.00000000000001479167946534486935177017681914335905514772826097330737370837109724689, 0.00000000000001479167946534486935177017681914335905514772826097330737370837109724689]
+  C_lambda <= 1.2949811496  (CEILING-truncated, machine-derived)
+[PASS] C_lambda upper bound matches writeup digits  got 1.2949811496
+  m_min = 0.03/C_lambda >= 0.0231663603  (FLOOR-truncated, machine-derived)
+[PASS] m_min lower bound matches writeup digits  got 0.0231663603
+
+==============================================================================
+R3. UNIFORM ERROR BUDGET E_max (all N >= N0, x in window N, y in [y0, ymax])
+==============================================================================
+[PASS] (U1) gate L0 = ln(xN0/4pi) > 2 (so u1 decreasing on the whole region)  L0 in [26.89175547292593502569067786749680101822372295608820191462014150428256, 26.89175547292593502569067786749680101822372295608820191462014150430155]
+[PASS] L0 > 26.89 (quoted lower bound)
+[PASS] u1max > 0  u1max = [0.0000000000003416697220067335472214110671501620552409385808635616052517915052119522, 0.0000000000003416697220067335472214110671501620552409385808635616052517915052119522]
+[PASS] (U2) gate ln N0 > 1/2 (kappa1(N) lnN decreasing in N)
+[PASS] P_max finite  P_max = [2.020201340026970567104043349108808806243528807961650518616159341592968, 2.020201340026970567104043349108808806243528807961650518616159341592968]
+[PASS] P_max <= 2.0203 (quoted upper bound)
+[PASS] (U3a) cap validity: sigma1lo(N) - (t/2)lnN = (1+y0)/2 - delta1 > 0 (N-indep.)
+[PASS] (U3b) cap gate term1: -(t/2)lnM0 + 1/(lnN0-lnM0) < 0  in [-0.5034929709917237129092426460544156267699246078350998212998958556087131, -0.5034929709917237129092426460544156267699246078350998212998958556057457]
+[PASS] cap gate term1 <= -0.503 (quoted upper bound)
+[PASS] (U3c) cap gate term2: (1-y0)/2 + delta1 - (t/2)lnN0 + 1/(lnN0-lnM0) < 0  in [-0.6209766151091097651808892035887944825927742407019678663909771681746232, -0.620976615109109765180889203588794482592774240701967866390977168169282]
+[PASS] cap gate term2 <= -0.620 (quoted upper bound)
+  head(2..2000) <= [1.146580210035260832964109764472918347844676139865525109097532767307799, 1.146580210035260832964109764472918347844676139865525109097532767307799]
+  cap_u <= [0.4224089702846505711680427385074142327249575848475655672074364432666685, 0.4224089702846505711680427385074142327249575848475655672074364432666685]
+  S_max <= [2.568989180319911404132152502980332580569633724713090676304969210575951, 2.568989180319911404132152502980332580569633724713090676304969210575951]
+[PASS] S_max finite
+[PASS] S_max <= 2.569 (quoted upper bound)
+  e_A + e_B <= 0.00000000000178  (CEILING-truncated, machine-derived)
+[PASS] eAB digit string matches writeup  got 0.00000000000178
+[PASS] eAB_max below 5e-12  eAB_max = [0.000000000001773223279905174466902646875291111234355184489549773835898899451823271, 0.000000000001773223279905174466902646875291111234355184489549773835898899451823271]
+[PASS] (U5) gate: 3/10.44 < 1 (exact rational)
+  e_C0 <= 0.000000104589  (CEILING-truncated, machine-derived)
+[PASS] eC0 digit string matches writeup  got 0.000000104589
+[PASS] eC0_max below 2e-7  eC0_max = [0.0000001045880713094751006310670498524703288869032800746541949152169435913514, 0.0000001045880713094751006310670498524703288869032800746541949152169435913514]
+  E_max = eAB_max + eC0_max <= 0.000000104590  (CEILING-truncated, machine-derived)
+[PASS] E_max matches writeup digits  got 0.000000104590
+[PASS] BINDING: m_min - E_max > 0  (every swept window is zero-free on [y0, ymax])  margin in [0.02316625579318371408158221443171124854277805607400111864281370683528436, 0.02316625579318371408158221443171124854277805607400111864281370683528436]
+  certified pointwise |H_t0/B_t0| >= 0.0231662557  (FLOOR-truncated)
+  margin ratio m_min/E_max >= 221497.2  (FLOOR-truncated)
+[PASS] margin matches writeup digits  got 0.0231662557
+[PASS] ratio exceeds 1.8e5  ratio >= 221497.2
+[PASS] ratio >= 221497 (quoted integer floor)
+
+==============================================================================
+R4. RECORD ASSEMBLY ARITHMETIC (exact rationals)
+==============================================================================
+[PASS] Lambda functional: t0 + y0^2/2 = 0.197 exactly
+[PASS] hypothesis (i): X/2 <= T_PT (exact)  X/2 = 6000000185827/2 = 3000000092913.5, margin 350479773/2
+[PASS] (iii) containment: y0^2 = 0.039 >= 0.1809^2 (exact)
+[PASS] (iii) containment: t0 = 0.1775 <= 0.1809 (exact)
+[PASS] (iii) y lower edge at t=0: y0^2 + 2 t0 = 0.394 <= 1 (exact)
+[PASS] (iii) x-range: sqrt(1-y0^2) <= 1, so [X, X+sqrt(1-y0^2)] inside slab [X, X+1]  1 - y0^2 = 0.961 exact
+[PASS] (ii) y-range inside transfer range: ymax^2 = 0.645 <= 1 (exact)
+
+50/50 checks passed in 0.4s
+ALL CHECKS PASSED -- exit 0

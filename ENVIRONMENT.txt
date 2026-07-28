@@ -1,0 +1,78 @@
+Standalone review environment
+Prepared: 2026-07-24
+
+Reviewed pinned, replayable build:
+  Root Dockerfile
+  Platform: linux/amd64 (intentional and enforced)
+  Ubuntu 24.04 linux/amd64 child-manifest digest:
+    sha256:52df9b1ee71626e0088f7d400d5c6b5f7bb916f8f0c82b474289a4ece6cf3faf
+  Ubuntu archive snapshot: 20260723T000000Z
+  Reviewed build-input manifest:
+    scripts/REVIEW_CONTAINER_INPUTS.sha256
+  Manifest SHA-256:
+    1dbed4db14784e2764190039aa5fca014f25fd6a9d63e9b7f3730a935942159d
+  ca-certificates: 20260601~24.04.1
+  coreutils: 9.4-3ubuntu6.2
+  diffutils: 1:3.10-1build1
+  GCC metapackage: 4:13.2.0-7ubuntu1
+  gzip: 1.12-1ubuntu3.2
+  libc6-dev: 2.39-0ubuntu8.7
+  libflint-dev: 3.0.1-3.1build1
+  libgmp-dev: 2:6.3.0+dfsg-2ubuntu6.1
+  libmpfr-dev: 4.2.1-1build1.1
+  openssl: 3.0.13-0ubuntu3.11
+  pari-gp: 2.15.4-2.1build1
+  Python: 3.12.3-0ubuntu2.1
+  Ubuntu python3-mpmath: 1.2.1-3
+  Ubuntu python3-sympy: 1.12-7
+  Ubuntu python3-venv: 3.12.3-0ubuntu2.1
+  mpmath: 1.4.1, locked with PyPI SHA-256 hashes in requirements.txt
+  SymPy: 1.12, locked with PyPI SHA-256 hashes in requirements.txt
+  System Python also has Ubuntu's mpmath/SymPy packages for pristine
+    upstream scripts that explicitly invoke /usr/bin/python3.
+
+Validated preparation-host build:
+  Tag: dbn-lambda-01787854-review-final
+  Platform: linux/amd64 (emulated on the macOS arm64 preparation host)
+  Image ID:
+    sha256:57cc776bac0652a34d87cb36e7ac54f2ed3673c6b2f068344be7840ad773f141
+  The local image ID records this validation build.  The reviewed source
+    manifest, base child digest, snapshot, static OCI labels, and package
+    versions are the cross-builder trust anchors.
+
+Historical sealed-run environment:
+  Docker tag: dbn21a-flint
+  Image ID:
+    sha256:bedf7303c0be0d35d658d3893cf9f8424aab9f55bc4167644ddf3df564a16538
+  OS/toolchain: Ubuntu 24.04, GCC 13.3.0
+  FLINT/Arb: FLINT 3.0.1
+  Python inside image: 3.12.3
+
+Host-side Python interval logs in this candidate were generated/replayed with:
+  mpmath 1.4.1
+
+Independent preparation-host replays:
+  OS/architecture: macOS arm64
+  Compiler: Apple clang 21.0.0
+  FLINT/Arb: Homebrew FLINT 3.6.0
+  GMP: 6.3.0
+  MPFR: 4.2.2
+  Python: 3.14.6
+  The portable runner discovers these paths without embedding them in any
+    sealed source or evidence file.
+  Complete barrier transcript:
+    barrier/certificates/barrier_target_closed_macos_arm64_flint36.log
+  Its final CPU-profiler field is a non-mathematical platform artifact;
+    certificate verification ignores timing fields.
+
+Stored canonical barrier transcript:
+  OS/architecture: Ubuntu 24.04 linux/arm64
+  Compiler: GCC 13.3.0
+  FLINT/Arb: FLINT 3.0.1
+  Complete barrier transcript:
+    barrier/certificates/barrier_target_closed.log
+
+Image IDs are builder- and platform-specific.  The reviewed Dockerfile is
+linux/amd64 only so that every APT dependency comes from the dated Ubuntu
+snapshot.  Apple Silicon reviewers can build and run it through amd64
+emulation and compare the directed result strings and sealed Arb logs.

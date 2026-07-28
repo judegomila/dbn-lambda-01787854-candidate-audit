@@ -1,0 +1,16 @@
+[PASS] N is 690988 at both monotone slab corners (690988,690988)
+[PASS] N^2 < X/(4*pi), hence n^2/(x/(4*pi)) < 1
+[PASS] 2*log(N) < log(X/(4*pi))
+[PASS] a_eff=(1+ymin)/2-delta is positive
+[PASS] a_eff < 1
+a_eff = [0.5904499999999999999999999977604168053917 +/- 2.25e-41]
+sum core upper = [600.0757241492663941738398463249927598141 +/- 9.94e-39]
+prefactor upper = [2.020201340026940139094071721986791348517 +/- 8.13e-41]
+u_n upper = [3.002027044925361114071296191377288359499e-13 +/- 4.42e-53]
+e_A+e_B upper = [3.639278679550540203591748210416995862340e-10 +/- 4.09e-50]
+e_C0 upper = [0.0003565226476721717133262781510939880123480 +/- 1.56e-44]
+uniform conservative error total upper = [0.0003565230116000396683802985102688090540476 +/- 2.94e-44]
+winding allowance = [0.001250000000000000000000000000000000000000 +/- 3e-47]
+[PASS] uniform conservative error total < 0.00125
+RESULT: UNIFORM NUMERICAL ERROR-FORMULA BOUND CERTIFIED
+SCOPE NOTE: analytic justification at t=0 remains external.

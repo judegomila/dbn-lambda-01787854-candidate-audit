@@ -1,0 +1,49 @@
+PASS [0.20-row barrier corner] N agree (630783)
+PASS [0.20-row barrier corner] (20) gamma T1xT2 overlap+endpoints agree to 1e-12
+PASS [0.20-row barrier corner] (21) Re s_* T1xT2 overlap+endpoints agree to 1e-12
+PASS [0.20-row barrier corner] (22) kappa T1xT2 overlap+endpoints agree to 1e-12
+PASS [0.20-row barrier corner] (23) eA+eB T1xT2 overlap+endpoints agree to 1e-6
+PASS [0.20-row barrier corner] (24) eC0 T1xT2 overlap+endpoints agree to 1e-6
+   N=630783  gamma<= 0.107388920399386  Re s_*>= 1.82565371914697  kappa<= 3.11233787871095e-15
+   eA+eB <= 4.45755342295454e-12   eC0 <= 1.0306754114217e-7   total <= 1.03071998695593e-7
+PASS [0.20-row barrier corner] eA+eB+eC0 upper end < 1e-3
+PASS [0.20-row slab top] N agree (630783)
+PASS [0.20-row slab top] (20) gamma T1xT2 overlap+endpoints agree to 1e-12
+PASS [0.20-row slab top] (21) Re s_* T1xT2 overlap+endpoints agree to 1e-12
+PASS [0.20-row slab top] (22) kappa T1xT2 overlap+endpoints agree to 1e-12
+PASS [0.20-row slab top] (23) eA+eB T1xT2 overlap+endpoints agree to 1e-6
+PASS [0.20-row slab top] (24) eC0 T1xT2 overlap+endpoints agree to 1e-6
+   N=630783  gamma<= 1.61735669647742e-6  Re s_*>= 1.06677358705091  kappa<= 9.99999961029602e-16
+   eA+eB <= 2.81552432648603e-11   eC0 <= 1.01504049448184e-6   total <= 1.0150686497251e-6
+PASS [0.20-row slab top] eA+eB+eC0 upper end < 1e-3
+PASS [campaign interior] N agree (661570)
+PASS [campaign interior] (20) gamma T1xT2 overlap+endpoints agree to 1e-12
+PASS [campaign interior] (21) Re s_* T1xT2 overlap+endpoints agree to 1e-12
+PASS [campaign interior] (22) kappa T1xT2 overlap+endpoints agree to 1e-12
+PASS [campaign interior] (23) eA+eB T1xT2 overlap+endpoints agree to 1e-6
+PASS [campaign interior] (24) eC0 T1xT2 overlap+endpoints agree to 1e-6
+   N=661570  gamma<= 0.0688053004132711  Re s_*>= 1.60517793604491  kappa<= 2.7272727272757e-15
+   eA+eB <= 9.32002125874291e-12   eC0 <= 3.82206727632809e-7   total <= 3.82216047654068e-7
+PASS [campaign interior] eA+eB+eC0 upper end < 1e-3
+PASS [0.197-site (0.1809 row)] N agree (690988)
+PASS [0.197-site (0.1809 row)] (20) gamma T1xT2 overlap+endpoints agree to 1e-12
+PASS [0.197-site (0.1809 row)] (21) Re s_* T1xT2 overlap+endpoints agree to 1e-12
+PASS [0.197-site (0.1809 row)] (22) kappa T1xT2 overlap+endpoints agree to 1e-12
+PASS [0.197-site (0.1809 row)] (23) eA+eB T1xT2 overlap+endpoints agree to 1e-6
+PASS [0.197-site (0.1809 row)] (24) eC0 T1xT2 overlap+endpoints agree to 1e-6
+   N=690988  gamma<= 0.0881477087069745  Re s_*>= 1.80662968179519  kappa<= 2.72706741554227e-15
+   eA+eB <= 4.10775296056188e-12   eC0 <= 1.0026822017604e-7   total <= 1.00272327929e-7
+PASS [0.197-site (0.1809 row)] eA+eB+eC0 upper end < 1e-3
+PASS [0.197-site tuned params] N agree (690988)
+PASS [0.197-site tuned params] (20) gamma T1xT2 overlap+endpoints agree to 1e-12
+PASS [0.197-site tuned params] (21) Re s_* T1xT2 overlap+endpoints agree to 1e-12
+PASS [0.197-site tuned params] (22) kappa T1xT2 overlap+endpoints agree to 1e-12
+PASS [0.197-site tuned params] (23) eA+eB T1xT2 overlap+endpoints agree to 1e-6
+PASS [0.197-site tuned params] (24) eC0 T1xT2 overlap+endpoints agree to 1e-6
+   N=690988  gamma<= 0.0705564328159757  Re s_*>= 1.79206168888141  kappa<= 2.92105824286767e-15
+   eA+eB <= 4.20855309056953e-12   eC0 <= 1.04590777103001e-7   total <= 1.04594985656091e-7
+PASS [0.197-site tuned params] eA+eB+eC0 upper end < 1e-3
+PASS FLAG repo 6.92/(x-6.66) < paper 6.92/(x-12) (strict, certified)
+PASS FLAG mismatch magnitude relative < 2e-12 at campaign x
+
+ALL CHECKS PASSED (error_terms_audit package)
