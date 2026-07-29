@@ -76,6 +76,34 @@ Their release hashes are locked in `paper/requirements.txt`. These packages
 are installation dependencies; their distributions are not copied into the
 repository.
 
+## Referee workspace (`dan-reworking/`)
+
+The unsealed referee workspace described in `REVIEW_SCOPE.md` carries its own
+copies of third-party material. Because that root is excluded from the seal,
+these copies are **not** covered by `SHA256SUMS` and their integrity is not
+attested by `verify.sh`.
+
+It reproduces the same two preprints already noted under “Reference PDFs”,
+in fuller form — arXiv source archives rather than only the rendered PDFs:
+
+- `dan-reworking/papers/polymath-1904.12438v2.tar.gz` and its extracted
+  sources, including the figure images under
+  `dan-reworking/papers/polymath-1904.12438v2/`; and
+- `dan-reworking/papers/platt-trudgian-2004.09765v1.tar.gz` and
+  `dan-reworking/papers/platt-trudgian-2004.09765v1.tex`.
+
+Copyright remains with their respective authors or publishers. Their
+inclusion here is not a claim that this repository can relicense or
+redistribute them, and arXiv source archives are a broader reproduction than
+the review PDFs under `references/`. The caution recorded under “Reference
+PDFs” applies to these copies with at least equal force: reassess or remove
+them before any public redistribution if the applicable arXiv license or
+permission does not permit the intended release.
+
+`dan-reworking/latex/gomila-proof-exposition.pdf` and its `.tex` source are
+a reviewer's reworking of repository-original material, not third-party
+content. They are not the sealed exposition; see `REVIEW_SCOPE.md`.
+
 ## Repository-original material
 
 This notice records third-party rights only.  No public license has been

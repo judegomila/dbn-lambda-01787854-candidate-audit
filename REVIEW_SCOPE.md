@@ -255,6 +255,28 @@ Agreement at levels 4--6 cannot repair an error at levels 1--3. Conversely,
 a mathematically correct reduction still needs a faithful, fail-closed
 implementation.
 
+## Unsealed referee workspace
+
+`dan-reworking/` is an in-progress referee workspace contributed by a
+reviewer with write access. It is **outside the sealed review surface**:
+
+- it is excluded from `SHA256SUMS`, so `scripts/seal.py --check` neither
+  hashes nor descends into it, and the stable-file count it reports excludes
+  every file under it;
+- `verify.sh` does not read it, and no verifier asserts anything about its
+  contents; and
+- it is excluded so that a reviewer can iterate on a manuscript without
+  resealing the audited artifact on every rebuild.
+
+Nothing under `dan-reworking/` is evidence for the candidate. Where it
+restates or reworks the argument, the sealed files remain authoritative: the
+exposition bound by `verifiers/verify_external_exposition.py` is
+`paper/external/gomila-proof-exposition.pdf`, identified by exact size and
+SHA-256. A reworked copy carrying the same filename elsewhere in the tree is
+not the sealed artifact.
+
+Third-party material it carries is recorded in `THIRD_PARTY.md`.
+
 ## What is not claimed
 
 The repository does not claim:
