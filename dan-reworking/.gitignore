@@ -1,0 +1,16 @@
+# The repository root .gitignore ignores *.out; re-include the
+# verification run outputs, which are supplementary material
+# referenced by the manuscript.
+!code/prop43/runs/*.out
+
+# LaTeX build artifacts
+latex/*.aux
+latex/*.log
+latex/*.out
+latex/*.fls
+latex/*.fdb_latexmk
+latex/*.toc
+latex/*.synctex.gz
+
+# Compiled binaries
+code/prop43/prop43_proof

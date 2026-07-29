@@ -1,0 +1,8 @@
+last_N 1965333
+rows_done 468667
+rows_total 468667
+elapsed_s 1282
+rows_per_s 365.5749
+eta_s 0
+min_L12 0.104199122870
+uncert 0

@@ -1,0 +1,11 @@
+Proposition 4.3 verification run summary
+========================================
+Range iterated:    N = 729000 .. 818999  (90000 values, stride 1)
+Mollifier mtype:   5
+Certified rows:    90000 of 90000  (UNCERT rows: 0)
+L12 lower bounds:  min 0.000315112481  (at N = 729000)
+                   max 0.029586984252  (at N = 818999)
+Success criterion: every N certified (no UNCERT rows) and min L12 > 0
+RESULT:            SUCCESS
+Wall time:         13m 11s
+Full results file: p7_sweep.out
