@@ -7,10 +7,12 @@ Reviewed pinned, replayable build:
   Ubuntu 24.04 linux/amd64 child-manifest digest:
     sha256:52df9b1ee71626e0088f7d400d5c6b5f7bb916f8f0c82b474289a4ece6cf3faf
   Ubuntu archive snapshot: 20260723T000000Z
+  Snapshot acquisition: five bounded APT retries per request; any partial
+    index update is fatal, with no mirror or snapshot-date fallback.
   Reviewed build-input manifest:
     scripts/REVIEW_CONTAINER_INPUTS.sha256
   Manifest SHA-256:
-    1dbed4db14784e2764190039aa5fca014f25fd6a9d63e9b7f3730a935942159d
+    5566fe4ad23c9d0612a76d46c6886c978bd90fc610e40cf11b9330d49ad9cfa4
   ca-certificates: 20260601~24.04.1
   coreutils: 9.4-3ubuntu6.2
   diffutils: 1:3.10-1build1
@@ -31,14 +33,15 @@ Reviewed pinned, replayable build:
   System Python also has Ubuntu's mpmath/SymPy packages for pristine
     upstream scripts that explicitly invoke /usr/bin/python3.
 
-Validated preparation-host build:
+Preparation-host package/toolchain validation build:
   Tag: dbn-lambda-01787854-review-final
   Platform: linux/amd64 (emulated on the macOS arm64 preparation host)
   Image ID:
     sha256:57cc776bac0652a34d87cb36e7ac54f2ed3673c6b2f068344be7840ad773f141
-  The local image ID records this validation build.  The reviewed source
-    manifest, base child digest, snapshot, static OCI labels, and package
-    versions are the cross-builder trust anchors.
+  This local image predates the retry-only acquisition hardening above and
+    used the same base child digest, snapshot, package set, requirements, and
+    static OCI labels. The current reviewed source manifest is rebuilt and
+    checked by GitHub Actions; image IDs remain builder-specific.
 
 Historical sealed-run environment:
   Docker tag: dbn21a-flint
