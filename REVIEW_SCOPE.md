@@ -27,12 +27,18 @@ predicates. It does not substitute for the first.
 Read:
 
 1. `README.md` for the claim and package map;
-2. `PROOF_NOTE.md` for the complete theorem chain;
-3. `OPEN_REVIEW_QUESTIONS.md` for the requested referee decisions;
-4. `CANDIDATE_PARAMETERS.md` for exact domains and margins; and
-5. `BIBLIOGRAPHY.md` for the two published theorem inputs; and
-6. `ADVERSARIAL_REVIEW_PROTOCOL.md` for the proof-dependency blueprint,
+2. `paper/external/README.md`, followed by the supplied theorem-style
+   exposition, for its exact artifact binding and required corrections;
+3. `PROOF_NOTE.md` for the complete theorem chain;
+4. `OPEN_REVIEW_QUESTIONS.md` for the requested referee decisions;
+5. `CANDIDATE_PARAMETERS.md` for exact domains and margins;
+6. `BIBLIOGRAPHY.md` for the two published theorem inputs; and
+7. `ADVERSARIAL_REVIEW_PROTOCOL.md` for the proof-dependency blueprint,
    mutation catalogue, and independent-recomputation standard.
+
+The supplied exposition is a review aid, not an external acceptance report.
+Its cross-check must remain attached whenever the PDF is circulated from
+this repository.
 
 Then run:
 
