@@ -41,6 +41,27 @@ not as an unconditional result.
 
 This positive upper bound is not a proof of RH.
 
+## Background reading (to understand the setting)
+
+Readers new to the de Bruijn--Newman constant \(\Lambda\) and the heat-flow
+picture of the Riemann \(\xi\) function will find **Dan Romik, *Orthogonal
+polynomial expansions for the Riemann xi function*** (arXiv:1902.06330,
+*Advances in Mathematics*) a helpful entry point. It develops Hermite,
+Meixner--Pollaczek, and continuous Hahn expansions of \(\xi\), connects Tur\'an's
+classical program on the location of the zeta zeros with the separate
+de Bruijn--Newman program, and gives an accessible account of the objects this
+candidate manipulates: \(\xi\), its heat-flow deformation \(H_t\), and the
+reality-of-zeros criterion whose threshold is \(\Lambda\). The exact PDF is
+bundled as `references/romik-1902.06330-orthogonal-polynomial-xi.pdf`
+(arXiv non-exclusive-distribution license; author retains copyright); see
+[`BIBLIOGRAPHY.md`](BIBLIOGRAPHY.md) entry 4.
+
+The precise object used by the proof is the Polymath15 normalization
+\(H_0(z)=\tfrac18\,\xi(\tfrac12+\tfrac{iz}{2})\) and its heat flow \(H_t\); the
+constant \(\Lambda\) is the threshold at or above which all zeros of \(H_t\) are
+real. The candidate does **not** re-derive this theory — it instantiates the
+published Polymath15 upper-bound criterion (Theorem 1.2) at exact parameters.
+
 ## Proof architecture
 
 The package proposes suppliers for the three hypotheses of Polymath Theorem

@@ -175,6 +175,11 @@ p15 = prerequisite(
     [PYTHON, "verifiers/verify_error_constant_weld.py"],
     ("RESULT: CONSERVATIVE ERROR-CONSTANT WELD PASS",),
 )
+p16 = prerequisite(
+    "P16 sealed Arb Dini y-transfer (numerator y-monotonicity) certificates",
+    [PYTHON, "verifiers/verify_triangle_y_dini_logs.py"],
+    ("RESULT: SEALED TRIANGLE Y-DINI CERTIFICATES PASS",),
+)
 print("--- A: exact candidate and criterion domain")
 a1 = check("A1 exact candidate identity", T0 + Y0_SQUARED / 2 == BOUND)
 a2 = check("A2 exact decimal is 0.1787854", BOUND == F(1_787_854, 10_000_000))
@@ -279,6 +284,7 @@ check(
             tail_prerequisites[256],
             p11,
             p15,
+            p16,
             a3,
             a4,
             ii1,
