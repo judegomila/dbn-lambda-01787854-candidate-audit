@@ -27,12 +27,18 @@ predicates. It does not substitute for the first.
 Read:
 
 1. `README.md` for the claim and package map;
-2. `PROOF_NOTE.md` for the complete theorem chain;
-3. `OPEN_REVIEW_QUESTIONS.md` for the requested referee decisions;
-4. `CANDIDATE_PARAMETERS.md` for exact domains and margins; and
-5. `BIBLIOGRAPHY.md` for the two published theorem inputs; and
-6. `ADVERSARIAL_REVIEW_PROTOCOL.md` for the proof-dependency blueprint,
+2. `paper/external/README.md`, followed by the supplied theorem-style
+   exposition, for its exact artifact binding and required corrections;
+3. `PROOF_NOTE.md` for the complete theorem chain;
+4. `OPEN_REVIEW_QUESTIONS.md` for the requested referee decisions;
+5. `CANDIDATE_PARAMETERS.md` for exact domains and margins;
+6. `BIBLIOGRAPHY.md` for the two published theorem inputs; and
+7. `ADVERSARIAL_REVIEW_PROTOCOL.md` for the proof-dependency blueprint,
    mutation catalogue, and independent-recomputation standard.
+
+The supplied exposition is a review aid, not an external acceptance report.
+Its cross-check must remain attached whenever the PDF is circulated from
+this repository.
 
 Then run:
 
@@ -254,6 +260,28 @@ For each component, distinguish:
 Agreement at levels 4--6 cannot repair an error at levels 1--3. Conversely,
 a mathematically correct reduction still needs a faithful, fail-closed
 implementation.
+
+## Unsealed referee workspace
+
+`dan-reworking/` is an in-progress referee workspace contributed by a
+reviewer with write access. It is **outside the sealed review surface**:
+
+- it is excluded from `SHA256SUMS`, so `scripts/seal.py --check` neither
+  hashes nor descends into it, and the stable-file count it reports excludes
+  every file under it;
+- `verify.sh` does not read it, and no verifier asserts anything about its
+  contents; and
+- it is excluded so that a reviewer can iterate on a manuscript without
+  resealing the audited artifact on every rebuild.
+
+Nothing under `dan-reworking/` is evidence for the candidate. Where it
+restates or reworks the argument, the sealed files remain authoritative: the
+exposition bound by `verifiers/verify_external_exposition.py` is
+`paper/external/gomila-proof-exposition.pdf`, identified by exact size and
+SHA-256. A reworked copy carrying the same filename elsewhere in the tree is
+not the sealed artifact.
+
+Third-party material it carries is recorded in `THIRD_PARTY.md`.
 
 ## What is not claimed
 

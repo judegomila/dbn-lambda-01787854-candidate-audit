@@ -13,6 +13,11 @@ The architecture is deliberately fixed to `linux/amd64`. Reviewers on another
 host architecture should use Docker's emulation rather than silently resolving
 packages from a different Ubuntu archive.
 
+The build retries transient archive downloads up to five times, but treats any
+incomplete package-index update as fatal. It never falls back to a live mirror
+or a different snapshot date. GitHub Actions also retains the complete
+container-build transcript when acquisition fails before proof replay begins.
+
 ## Local build
 
 ```sh

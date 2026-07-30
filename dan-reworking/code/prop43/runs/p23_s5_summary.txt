@@ -1,0 +1,11 @@
+Proposition 4.3 verification run summary
+========================================
+Range iterated:    N = 2902668 .. 3371334  (468667 values, stride 1)
+Mollifier mtype:   3
+Certified rows:    468667 of 468667  (UNCERT rows: 0)
+L12 lower bounds:  min 0.251466658176  (at N = 2902668)
+                   max 0.276813353550  (at N = 3371334)
+Success criterion: every N certified (no UNCERT rows) and min L12 > 0
+RESULT:            SUCCESS
+Wall time:         22m 16s
+Full results file: p23_s5_sweep.out

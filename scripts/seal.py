@@ -4,6 +4,7 @@
 The stable tree is the repository tree after excluding only:
 
 * repository-local transient roots: .git, .venv, replay, and tmp;
+* unsealed content roots: dan-reworking (see below);
 * Python cache directories named __pycache__; and
 * SHA256SUMS itself (a manifest cannot contain its own digest).
 
@@ -12,8 +13,19 @@ file, a missing listed file, a malformed/duplicate entry, a hash mismatch,
 or any symlink/special file in the stable tree is fatal.
 
 Known stray editor/build products (.DS_Store, *.pyc, *.pyo, *.pyd, *.o, and
-*.out) are forbidden outside the excluded transient directories.  They are
-not silently omitted and cannot accidentally become part of a release seal.
+*.out) are forbidden outside the excluded roots.  They are not silently
+omitted and cannot accidentally become part of a release seal.
+
+An excluded root is not descended into at all, so none of the checks above
+apply anywhere inside it: such a subtree may contain symlinks, special
+files, stray build products, and files absent from SHA256SUMS.
+
+The transient roots hold generated or ephemeral state.  dan-reworking is
+different in kind: it is durable content, an in-progress referee workspace
+excluded so that its author can iterate without resealing the audited
+artifact on every rebuild.  Nothing under it is attested by SHA256SUMS or
+by verify.sh, and it is outside the reviewed surface.  See REVIEW_SCOPE.md
+for scope and THIRD_PARTY.md for the third-party material it carries.
 """
 
 from __future__ import annotations
@@ -29,7 +41,9 @@ import tempfile
 
 ROOT = Path(__file__).resolve().parent.parent
 MANIFEST_NAME = "SHA256SUMS"
-EXCLUDED_ROOTS = {".git", ".venv", "replay", "tmp"}
+TRANSIENT_ROOTS = {".git", ".venv", "replay", "tmp"}
+UNSEALED_CONTENT_ROOTS = {"dan-reworking"}
+EXCLUDED_ROOTS = TRANSIENT_ROOTS | UNSEALED_CONTENT_ROOTS
 EXCLUDED_DIR_NAMES = {"__pycache__"}
 FORBIDDEN_FILE_NAMES = {".DS_Store"}
 FORBIDDEN_FILE_SUFFIXES = {".o", ".out", ".pyc", ".pyd", ".pyo"}
@@ -71,7 +85,7 @@ def stable_files() -> dict[str, Path]:
             if not parts and entry.name in EXCLUDED_ROOTS:
                 if not stat.S_ISDIR(mode):
                     raise SealError(
-                        f"excluded transient root is not a directory: {display}"
+                        f"excluded root is not a directory: {display}"
                     )
                 continue
             if stat.S_ISDIR(mode) and entry.name in EXCLUDED_DIR_NAMES:
