@@ -189,9 +189,11 @@ deliberately departs from a cited display, namely equation~(24) of
 \cite{Polymath}, is discussed in Remark~\ref{rem:1044}. The
 lemmas of item (2) are given complete proofs below, all verified in
 the course of this review. Of the computations in item (3), the
-main finite computation (Proposition~\ref{prop:sweep}) has been
-reproduced on an independent toolchain with its program reviewed
---- its proof is given in Section~\ref{sec:stored} --- while the
+main finite computation (Proposition~\ref{prop:sweep}) and the
+finite-region error bound (Proposition~\ref{prop:finiteerr}) have
+been reproduced on an independent toolchain with their programs
+reviewed --- their proofs are given in Sections~\ref{sec:stored}
+and~\ref{sec:finiteerr} --- while the
 remaining certified computations have not yet been independently
 verified; each such step is flagged by a framed, numbered
 \emph{gap / review point}, and all remaining flagged steps are of
@@ -924,29 +926,109 @@ of Theorem~1.3 at $t=t_0$, bounded using equation (23) of
 e_A+e_B\le2.06\times10^{-12},\qquad
 e_{C,0}\le0.000000233492848188649183,
 \]
-and hence
+and
 \[
 e_A+e_B+e_{C,0}\ \le\ E_{\max}:=0.000000233494905212337849 .
 \]
+(The third bound is certified directly and is sharper than the sum
+of the two displayed bounds, which are rounded upward for display.)
 \end{proposition}
 
-The proof is again an interval computation (the majorants are
-decreasing in $x$, so the enclosure is controlled by the left
-endpoint $x_*$); unlike Proposition~\ref{prop:sweep}, it has not yet
-been independently reproduced.
+\begin{proof}
+The proof is computer-assisted; the verification program
+\texttt{prop410\_proof.py}, included with this manuscript as
+supplementary material (directory \texttt{code/prop410}; derived
+from Gomila's source as documented in its header and reviewed line
+by line as part of this audit), computes outward-rounded interval
+enclosures ($220$-bit precision) of majorants of the right-hand
+sides of equation (23) of \cite{Polymath} and of the corollary
+\eqref{eq:ec0}. Its only inputs are the exact rational parameters
+$t_0$, $y_0^2$ and $N_0=690988$ (the enclosures are computed over
+the rational interval $[t_0,\,t_0+10^{-9}]$, which contains $t_0$);
+it reads no stored data, and every acceptance condition below is a
+strict inequality between exact rational endpoints, checked in
+exact arithmetic.
 
-\begin{gap}{the finite-region error computation}
-\label{gap:finiteerr}
-This gap is the computer-assisted proof of
-Proposition~\ref{prop:finiteerr}. In Gomila's repository the
-computation is part of
-\texttt{verifiers/verify\_finite\_and\_binding.py}; its verification
-requires reading that program's error evaluation against equation
-(23) of \cite{Polymath} and the corollary \eqref{eq:ec0}, and
-rerunning it --- a small computation, in contrast with
-Proposition~\ref{prop:sweep}, since the majorants are monotone in
-$x$ and only the extremal enclosures enter.
-\end{gap}
+A single evaluation dominates the whole region $x\ge x_*$,
+$y_0\le y\le\sqrt{1-2t_0}$, $t=t_0$ by the following monotonicity
+reductions, whose hypotheses are among the twelve domain and sign
+conditions certified by the program. Write
+$\ell=\log\frac{x_*}{4\pi}=\log\bigl(N_0^2-\tfrac{t_0}{16}\bigr)$,
+\[
+\delta_1=\frac{t_0}4\log\Bigl(1-\frac{t_0}{16N_0^2}\Bigr)^{-1}
++\frac{t_0}{2x_*^2},
+\qquad
+\sigma_1=\frac{1+y_0}2+\frac{t_0}2\log N_0-\delta_1
+=\frac{1+y_0}2+\frac{t_0}4\ell-\frac{t_0}{2x_*^2}.
+\]
+
+(i) \emph{The exponent.} In \eqref{eq:gsk} the positive part is at
+most $1$: the program certifies $8/x_*^2<3y_0$, so
+$\frac{4y(1+y)}{x^2}\le\frac{8y}{x^2}<3y$ for all $y\ge y_0$, and
+$\Rea s_*\ge\frac{1+y}2+\frac{t_0}4\log\frac x{4\pi}
+-\frac{t_0}{2x^2}\ge\sigma_1$ throughout the region.
+
+(ii) \emph{The bound \eqref{eq:ec0} for $e_{C,0}$.} Each factor is
+monotone in the favorable direction: the prefactor
+$(\frac x{4\pi})^{-(1+y)/4}$ and the term
+$-\frac{t_0}{16}\log^2\frac x{4\pi}$ decrease in $x$ (certified:
+$\ell>2>0$) and in $y$; the factor $3^y+3^{-y}$ increases in $y$;
+$N-0.125$ increases with the window; and the final quotient
+decreases in $x$ because
+$3\,\frac{d}{dx}\bigl|\log\tfrac x{4\pi}+\tfrac{i\pi}2\bigr|
+\le\frac3x$ while the numerator exceeds $10.50>3$ (certified).
+Hence \eqref{eq:ec0} evaluated at $x=x_*$ and $N=N_0$, with $y=y_0$
+in the decreasing factors and $y=\sqrt{1-2t_0}$ in $3^y+3^{-y}$,
+bounds $e_{C,0}$ on the whole region; this evaluation is the
+program's quantity \texttt{error\_c0}.
+
+(iii) \emph{The bound (23) for $e_A+e_B$.} Since
+$4\pi n^2\le4\pi N^2\le x\,(1-\frac{t_0}{16N^2})^{-1}$ for every
+$n\le N$, the bounds \eqref{eq:gsk} give, uniformly on the region,
+\[
+1+|\gamma|N^{|\kappa|}n^y\ \le\
+1+e^{0.02}\Bigl(1-\frac{t_0}{16N_0^2}\Bigr)^{-1/2}
+\exp\Bigl(\frac{t_0\log N_0}{2(x_*-6)}\Bigr)
+\]
+(the quantity $\log N/(x_N-6)$ decreases in $N$), while
+$\log^2\frac{x}{4\pi n^2}\le\log^2\frac x{4\pi}$ for $n\le N$ and
+the monotonicity of $\log^2(\frac x{4\pi})/(x-6.66)$ in $x$
+(certified: $\ell>2$) bound the last factor of (23) by
+$\exp\bigl(\frac{(t_0^2/16)\ell^2+0.626}{x_*-6.66}\bigr)-1$. For
+the middle factor, $\sum_{n=1}^{N}b_{t_0}(n)\,n^{-\Rea s_*}\le
+1+\sum_{n=2}^{m_0}b_{t_0}(n)\,n^{-\sigma_1}+T_N$ with $m_0=2000$,
+where $T_N$ is the sum over $m_0<n\le N$. The summand
+$\exp(\frac{t_0}4\log^2n-\sigma_N\log n)$ decreases in $n$ on
+$n\le N$ (certified: $\frac{1+y_0}2-\delta_1>0$), so
+$T_N\le\int_{\log m_0}^{\log N}e^{\psi(L)}\,dL$ with
+$\psi(L)=(1-\sigma_N)L+\frac{t_0}4L^2$; since $\psi$ is convex,
+$T_N\le(\log N-\log m_0)\,
+\max\bigl(e^{\psi(\log m_0)},e^{\psi(\log N)}\bigr)$. Finally, the
+two certified rate inequalities
+\[
+\frac{t_0}2\log m_0\ >\ \Bigl(\log\frac{N_0}{m_0}\Bigr)^{-1},
+\qquad
+\frac{t_0}2\log N_0-\frac{1-y_0}2-\delta_1\ >\
+\Bigl(\log\frac{N_0}{m_0}\Bigr)^{-1},
+\]
+imply that each of the two endpoint products
+$(\log N-\log m_0)e^{\psi(\log m_0)}$ and
+$(\log N-\log m_0)e^{\psi(\log N)}$ is nonincreasing in $N$ for
+$N\ge N_0$ (using that $\sigma_N$ grows in $\log N$ at rate at
+least $\frac{t_0}2$, certified via $N_0^2/(N_0^2-\frac{t_0}{16})>1$,
+and that $\delta_N\le\delta_1$), so their values at $N=N_0$
+dominate every window. The product of the three bounds is the
+program's quantity \texttt{error\_ab}.
+
+The program certifies the twelve domain and sign conditions
+required above, computes the enclosures of
+\texttt{error\_ab}, \texttt{error\_c0} and of their interval sum,
+and establishes the three displayed inequalities by exact rational
+comparison of the outward-rounded upper endpoints against the
+displayed constants. The run completes in under a second; a
+human-readable report of all intermediate enclosures is written to
+\texttt{code/prop410/runs/prop410\_report.txt}.
+\end{proof}
 
 We can now state the conclusion of the finite range.
 
@@ -2187,10 +2269,11 @@ statements cited from \cite{Polymath} and \cite{PlattTrudgian} have
 been checked against the arXiv sources and are applied on domains
 where their hypotheses hold, the one caveat being
 Remark~\ref{rem:1044}. Items resolved during the review are also
-removed from this list: the computer-assisted proof of
-Proposition~\ref{prop:sweep} has been reproduced on an independent
-toolchain and its program reviewed --- see the proof given in
-Section~\ref{sec:stored} --- the proofs of
+removed from this list: the computer-assisted proofs of
+Propositions~\ref{prop:sweep} and~\ref{prop:finiteerr} have been
+reproduced on an independent toolchain and their programs reviewed
+--- see the proofs given in Sections~\ref{sec:stored}
+and~\ref{sec:finiteerr} --- the proofs of
 Lemmas~\ref{lem:frozen}, \ref{lem:contraction}, \ref{lem:tzero}
 and~\ref{lem:prism} have been verified in detail in the course of
 the review; the formerly outlined proofs of
@@ -2209,10 +2292,6 @@ items remain.)
 of Proposition~\ref{prop:dinicells} (the Dini cell certificates;
 worst ratio within $1.4\times10^{-6}$ of failing, the
 second-thinnest margin in the proof).
-\item[\textbf{\ref{gap:finiteerr}.}] The computer-assisted proof
-of Proposition~\ref{prop:finiteerr} (the uniform error bound
-$E_{\max}$ over the finite region; a small computation, not yet
-independently reproduced).
 \item[\textbf{\ref{gap:tailcomp}.}] The computer-assisted proof of
 Proposition~\ref{prop:tailcert} ($1-D<2.8\times10^{-4}$; post-error
 margin $\approx1.7\times10^{-4}$).
@@ -2230,7 +2309,8 @@ the C sources and FLINT/Arb).
 Each item should be verified by reading the certifying program
 against the corresponding statement in this paper and rerunning it
 on an independently built toolchain, following the protocol used
-for Proposition~\ref{prop:sweep} in Section~\ref{sec:stored}.
+for Propositions~\ref{prop:sweep} and~\ref{prop:finiteerr} in
+Sections~\ref{sec:stored} and~\ref{sec:finiteerr}.
 
 \subsection*{Overall assessment of proof architecture}
 The theorem inputs are settled: the criterion, the effective
