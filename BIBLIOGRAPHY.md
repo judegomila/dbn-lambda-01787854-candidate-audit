@@ -19,5 +19,14 @@
    Zenodo record, DOI <https://doi.org/10.5281/zenodo.21175533>.
    The record's PDF is included as `references/dbn21a-main.pdf`.
 
+4. Dan Romik, *Orthogonal polynomial expansions for the Riemann \(\xi\)
+   function*, Advances in Mathematics **376** (2021), 107439; arXiv:1902.06330,
+   <https://arxiv.org/abs/1902.06330>.
+   Background reading on the Riemann \(\xi\) function, its heat-flow deformation,
+   and the Tur\'an / de Bruijn--Newman connection. Bundled as
+   `references/romik-1902.06330-orthogonal-polynomial-xi.pdf` under the arXiv
+   non-exclusive-distribution license (author retains copyright); included as a
+   scholarly-review convenience, not part of the proof chain.
+
 The repository includes transcribed theorem and audit notes for review
 convenience.  The cited papers remain the authoritative mathematical sources.
