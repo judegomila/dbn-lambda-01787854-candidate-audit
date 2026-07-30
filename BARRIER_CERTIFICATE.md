@@ -195,6 +195,12 @@ For each boundary polygon it also requires that:
 - every complete argument increment lies strictly inside \((-\pi,\pi)\);
 - the complete winding enclosure lies strictly inside \((-1/4,1/4)\).
 
+The C source accumulates
+\(\arg(f(z_j)/f(z_{j+1}))\), the reverse of the forward orientation
+\(\arg(f(z_{j+1})/f(z_j))\) used in some expositions. This negates the
+winding orientation but leaves both the strict increment gate and the
+load-bearing conclusion, winding number zero, unchanged.
+
 The polygon winding is an integer and is therefore exactly zero.  The
 spatial interpolation, time-motion, and approximation bounds give a
 zero-avoiding homotopy from that polygon to \(g_t(\partial R)\).  Since

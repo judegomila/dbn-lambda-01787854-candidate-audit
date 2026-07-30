@@ -135,6 +135,22 @@ the new native binding, exact site coverage, or closed barrier certificate.
 The target error paths use \(x-6.66\) for \(e_A+e_B\) and the conservative
 Proposition 6.6(vi) corollary with \(x-12\) and \(10.50\) for \(e_{C,0}\).
 
+## Supplied theorem-style exposition
+
+A mathematician supplied a separate 22-page theorem-style exposition of
+the candidate. It is valuable because it puts the complete three-hypothesis
+weld and the load-bearing review points into conventional mathematical
+paper form.
+
+The supplied draft also contains known numerical, logical, attribution, and
+supplement-provenance defects. It is therefore preserved as a supplemental
+draft, not substituted for the repository proof record and not treated as
+external sign-off. Read
+[`paper/external/README.md`](paper/external/README.md) first, then
+[`paper/external/gomila-proof-exposition.pdf`](paper/external/gomila-proof-exposition.pdf).
+The cross-check binds the PDF to its exact SHA-256, the v3 baseline commit,
+the controlling repository values, and a page-by-page correction list.
+
 ## Start here
 
 For mathematical review, read in this order:
@@ -255,6 +271,8 @@ shards.
 - `SECURITY.md`: private reporting and execution policy.
 - `CONTAINER_IMAGE.md`: canonical container and exact verified image binding.
 - `paper/`: deterministic source for the referee manuscript.
+- `paper/external/`: supplied theorem-style exposition and its mandatory
+  repository cross-check.
 - `output/pdf/`: release-grade referee manuscript.
 
 The proper description of this repository remains: **an unreviewed

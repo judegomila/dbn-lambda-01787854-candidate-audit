@@ -8,6 +8,7 @@ root=$(cd "$(dirname "$0")" && pwd)
 cd "$root"
 
 python3 scripts/seal.py --check
+python3 verifiers/verify_external_exposition.py
 
 # Historical upstream artifacts are retained and checked for provenance.
 # The repaired target barrier does not consume the old winding/site result.
