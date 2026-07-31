@@ -189,11 +189,13 @@ deliberately departs from a cited display, namely equation~(24) of
 \cite{Polymath}, is discussed in Remark~\ref{rem:1044}. The
 lemmas of item (2) are given complete proofs below, all verified in
 the course of this review. Of the computations in item (3), the
-main finite computation (Proposition~\ref{prop:sweep}) and the
-finite-region error bound (Proposition~\ref{prop:finiteerr}) have
-been reproduced on an independent toolchain with their programs
-reviewed --- their proofs are given in Sections~\ref{sec:stored}
-and~\ref{sec:finiteerr} --- while the
+main finite computation (Proposition~\ref{prop:sweep}), the
+finite-region error bound (Proposition~\ref{prop:finiteerr}), and
+the barrier-box error bound (Proposition~\ref{prop:barriererr})
+have been reproduced on an independent toolchain with their
+programs reviewed --- their proofs are given in
+Sections~\ref{sec:stored}, \ref{sec:finiteerr}
+and~\ref{sec:barriererr} --- while the
 remaining certified computations have not yet been independently
 verified; each such step is flagged by a framed, numbered
 \emph{gap / review point}, and all remaining flagged steps are of
@@ -1727,24 +1729,75 @@ e_A+e_B+e_{C,0}\ <\ 0.000356523011600040\ <\ 0.00125 .
 \end{equation}
 \end{proposition}
 
-Gomila's proof is a 256-bit Arb enclosure over the full
-closed box; the constancy of $N$ makes $f_t$ a single analytic
-expression on $R$, and $N^2<x/(4\pi)$ fixes the sign of the heat
-exponent and yields the uniform bound $|\gamma|n^y\le e^{0.02}$ for
-$1\le n\le N$. The round number $0.00125=\frac1{800}$ is the
+\begin{proof}
+The proof is computer-assisted; the verification program
+\texttt{prop62\_proof.c}, included with this manuscript as
+supplementary material (directory \texttt{code/prop62}; derived
+from Gomila's source as documented in its header and reviewed line
+by line as part of this audit), encloses every quantity below in
+$256$-bit ball arithmetic starting from the exact inputs $X$,
+$t_0=\frac{129}{800}$, $y_{\min}=\frac{1809}{10000}$ and
+$N=690988$; it reads no stored data, and every acceptance
+condition is a strict ball inequality, which fails closed.
+
+\emph{Window-index constancy.} The quantity
+$q(x,t)=\frac{x}{4\pi}+\frac t{16}$ is strictly increasing in each
+of $x$ and $t$, and $N=\lfloor\sqrt{q}\,\rfloor$ is nondecreasing
+in $q$; so it suffices to evaluate $N$ at the two extreme corners
+$(X,0)$ and $(X+1,t_0)$ of the box. At each corner the program
+produces an enclosure of $\lfloor\sqrt q\rfloor$ that collapses to
+an exact integer (a straddling enclosure would fail closed) and
+checks that both integers equal $690988$. It further certifies
+$N^2<X/(4\pi)\le x/(4\pi)$, and the equivalent inequality
+$2\log N<L_{\min}:=\log\frac X{4\pi}$; write also
+$L_{\max}:=\log\frac{X+1}{4\pi}$.
+
+\emph{Error bound.} With $N$ constant, for $0<t\le t_0$ the error
+terms are bounded by equation (23) of \cite{Polymath} and by
+\eqref{eq:ec0}; the program encloses the following majorants, each
+uniform on the box because every $t$- and $y$-dependent factor is
+evaluated at its worst endpoint:
+(i) by \eqref{eq:gsk}, using $(\,\cdot\,)_+\le1+8/X^2$ and
+$y\ge y_{\min}$,
+$\Rea s_*\ge a+\frac t4L_{\min}-\delta$ with
+$a=\frac{1+y_{\min}}2$ and
+$\delta=\frac{t_0(1+8/X^2)}{2X^2}$; since
+$\log n\le\log N<\frac12L_{\min}$, this gives
+$b_t(n)\,n^{-\Rea s_*}\le n^{-a_{\mathrm{eff}}}$ with
+$a_{\mathrm{eff}}=a-\delta$, uniformly in $t\in[0,t_0]$ (the
+$t$-dependent parts cancel against $\frac t4\log^2n$; certified:
+$0<a_{\mathrm{eff}}<1$);
+(ii) hence, by comparison with $\int_1^Nu^{-a_{\mathrm{eff}}}\,du$,
+$\sum_{n=1}^{N}b_t(n)\,n^{-\Rea s_*}\le
+1+\frac{N^{1-a_{\mathrm{eff}}}-1}{1-a_{\mathrm{eff}}}$;
+(iii) since $n^2\le N^2<x/(4\pi)$, the bounds \eqref{eq:gsk} give
+$|\gamma|n^y\le e^{0.02y}\bigl(\frac{4\pi n^2}x\bigr)^{y/2}\le
+e^{0.02}$ and
+$N^{|\kappa|}\le\exp\bigl(\frac{t_0\log N}{2(X-6)}\bigr)$, so the
+prefactor of (23) is at most
+$1+e^{0.02}\exp\bigl(\frac{t_0\log N}{2(X-6)}\bigr)$;
+(iv) since $0<\log\frac x{4\pi n^2}\le L_{\max}$, the last factor
+of (23) is at most
+$\exp\bigl(\frac{(t_0^2/16)L_{\max}^2+0.626}{X-6.66}\bigr)-1$;
+(v) in \eqref{eq:ec0}, the prefactor is maximized at
+$(x,y)=(X,y_{\min})$, the factor $e^{-\frac t{16}\log^2\frac x{4\pi}}$
+is at most $1$, $3^y+3^{-y}\le3+\frac13=\frac{10}3$ (increasing in
+$y$, and $y\le1$), and the final quotient is bounded by maximizing
+its numerator ($L\le L_{\max}$) and minimizing its denominator
+($x\ge X$) separately.
+The program multiplies and sums these enclosures --- yielding
+$e_A+e_B\le3.64\times10^{-10}$ and
+$e_{C,0}\le0.000356522648$ --- and certifies the two strict
+inequalities of \eqref{eq:barriererror}, the sharp constant being
+compared as the exact rational $356523011600040\times10^{-18}$.
+The run completes in under a second; its output is included as
+\texttt{code/prop62/runs/prop62\_report.txt}.
+\end{proof}
+
+The constancy of $N$ makes $f_t$ a single analytic
+expression on $R$. The round number $0.00125=\frac1{800}$ is the
 \emph{approximation allowance} used by the prism criterion below;
 \eqref{eq:barriererror} says it is safely conservative.
-
-\begin{gap}{the uniform-error computation}
-\label{gap:unifboxerr}
-This gap is the computer-assisted proof of
-Proposition~\ref{prop:barriererr} --- the window-index constancy
-$N=690988$, the inequality $N^2<x/(4\pi)$, and the error enclosure
-\eqref{eq:barriererror} --- certified by the program
-\texttt{barrier/src/verify\_uniform\_error\_01787854.c}. It is a
-small computation (a single 256-bit enclosure over the closed box),
-not yet independently reproduced or reviewed.
-\end{gap}
 
 Theorem~1.3 is stated in \cite{Polymath} for $t>0$; the following
 lemma extends its conclusion to the closed endpoint $t=0$ on the
@@ -2270,10 +2323,11 @@ been checked against the arXiv sources and are applied on domains
 where their hypotheses hold, the one caveat being
 Remark~\ref{rem:1044}. Items resolved during the review are also
 removed from this list: the computer-assisted proofs of
-Propositions~\ref{prop:sweep} and~\ref{prop:finiteerr} have been
-reproduced on an independent toolchain and their programs reviewed
---- see the proofs given in Sections~\ref{sec:stored}
-and~\ref{sec:finiteerr} --- the proofs of
+Propositions~\ref{prop:sweep}, \ref{prop:finiteerr}
+and~\ref{prop:barriererr} have been reproduced on an independent
+toolchain and their programs reviewed --- see the proofs given in
+Sections~\ref{sec:stored}, \ref{sec:finiteerr}
+and~\ref{sec:barriererr} --- the proofs of
 Lemmas~\ref{lem:frozen}, \ref{lem:contraction}, \ref{lem:tzero}
 and~\ref{lem:prism} have been verified in detail in the course of
 the review; the formerly outlined proofs of
@@ -2295,10 +2349,6 @@ second-thinnest margin in the proof).
 \item[\textbf{\ref{gap:tailcomp}.}] The computer-assisted proof of
 Proposition~\ref{prop:tailcert} ($1-D<2.8\times10^{-4}$; post-error
 margin $\approx1.7\times10^{-4}$).
-\item[\textbf{\ref{gap:unifboxerr}.}] The computer-assisted proof
-of Proposition~\ref{prop:barriererr} (window-index constancy,
-$N^2<x/4\pi$, and the uniform error enclosure on the barrier box;
-a small computation).
 \item[\textbf{\ref{gap:barriercomp}.}] The computer-assisted
 proofs of Propositions~\ref{prop:prismcert}
 and~\ref{prop:tailexp} (the $883$-prism certificate, coefficient
@@ -2309,8 +2359,9 @@ the C sources and FLINT/Arb).
 Each item should be verified by reading the certifying program
 against the corresponding statement in this paper and rerunning it
 on an independently built toolchain, following the protocol used
-for Propositions~\ref{prop:sweep} and~\ref{prop:finiteerr} in
-Sections~\ref{sec:stored} and~\ref{sec:finiteerr}.
+for Propositions~\ref{prop:sweep}, \ref{prop:finiteerr}
+and~\ref{prop:barriererr} in Sections~\ref{sec:stored},
+\ref{sec:finiteerr} and~\ref{sec:barriererr}.
 
 \subsection*{Overall assessment of proof architecture}
 The theorem inputs are settled: the criterion, the effective

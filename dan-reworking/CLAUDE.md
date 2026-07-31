@@ -35,6 +35,11 @@ suitable for publication in a research mathematics journal.
   Precedent for pure-calculation Python components: exact rational
   inputs, mpmath.iv interval arithmetic, acceptance by exact
   rational comparison of outward-rounded endpoints, no file reads.
+- `code/prop62/` — the verification program for Proposition 6.2
+  (`prop62_proof.c`, derived from
+  `barrier/src/verify_uniform_error_01787854.c` as documented in
+  its header; adds a strict check of the manuscript's sharp
+  constant) and its run report `runs/prop62_report.txt`.
 
 ## Working conventions
 
@@ -58,12 +63,12 @@ suitable for publication in a research mathematics journal.
 ## Status
 
 As of 2026-07-30: literature checks complete; all analytic arguments
-carry complete verified proofs; Propositions 4.3 (window sweep) and
-4.10 (finite-region error bound) are fully discharged with programs
-and proofs in the manuscript; four computer-assisted components
-remain to be reproduced (see the manuscript's summary section):
-the Dini cell certificates, the tail cutoff inequalities, the
-barrier-box uniform error bound, and the barrier prism certificate.
+carry complete verified proofs; Propositions 4.3 (window sweep),
+4.10 (finite-region error bound) and 6.2 (barrier-box error bound)
+are fully discharged with programs and proofs in the manuscript;
+three computer-assisted components remain to be reproduced (see the
+manuscript's summary section): the Dini cell certificates, the tail
+cutoff inequalities, and the barrier prism certificate.
 
 ## Session bootstrap (current state as of 2026-07-30)
 
@@ -105,22 +110,29 @@ for the C and Python precedents):
 |---|---|---|---|
 | 1 | Prop: Dini cell certificates | `verifiers/verify_triangle_y_dini_arb.c` (180+256 bit) | moderate |
 | 2 | Prop: tail cutoff inequalities | `verifiers/verify_tail_arb.c` (256+512 bit; `scripts/run_tail_arb.sh`) | small |
-| 3 | Prop: barrier-box uniform error | `barrier/src/verify_uniform_error_01787854.c` | small |
-| 4 | Props: prism certificate + tail-exponent gate | `barrier/src/TloopSinglemat_closed_cert.c` (`scripts/run_barrier_replay.sh`) | large |
+| 3 | Props: prism certificate + tail-exponent gate | `barrier/src/TloopSinglemat_closed_cert.c` (`scripts/run_barrier_replay.sh`) | large |
 
-Gap 2 also discharges the hypotheses of the tail lemmas; gaps 2 and
-3 are the natural next targets.
+Gap 2 also discharges the hypotheses of the tail lemmas and is the
+natural next target.
 
-Resolved 2026-07-30: the former gap 2 (finite-region E_max,
-Proposition 4.10) — `code/prop410/prop410_proof.py`, with a full
-proof block in the manuscript including the monotonicity reduction
-of the whole region to the single evaluation at (x_*, N_0); the
-program's error evaluation was read line by line against Polymath
-eq. (23) and the manuscript's corollary (eq:ec0), and the fresh run
-reproduced E_max = 0.000000233494905212337849 exactly. Toolchain
-note per Dan: mpmath (independently installed) is acceptable; same
-library family as Jude's is not a concern, reliability of the
-package is what matters.
+Resolved 2026-07-30 (both following the same protocol: standalone
+program under `code/`, line-by-line read against the sources, fresh
+run, full proof block in the manuscript):
+- Finite-region E_max (Proposition 4.10) —
+  `code/prop410/prop410_proof.py`; monotonicity reduction of the
+  whole region to the single evaluation at (x_*, N_0); read against
+  Polymath eq. (23) and corollary (eq:ec0); fresh run reproduced
+  E_max = 0.000000233494905212337849 exactly. Toolchain note per
+  Dan: mpmath (independently installed) is acceptable; package
+  reliability is what matters, not differing from Jude's library.
+- Barrier-box uniform error (Proposition 6.2) —
+  `code/prop62/prop62_proof.c` (256-bit Arb); two-corner argument
+  for window-index constancy (monotonicity of x/4pi + t/16 under
+  floor-sqrt), N^2 < x/4pi, and the uniform majorization of eq.
+  (23) + (eq:ec0) with every t- and y-dependent factor at its worst
+  endpoint; the sharp displayed constant 0.000356523011600040 is
+  now itself certified (added strict ball check, documented in the
+  header); fresh run passes all checks in under a second.
 
 **Key findings so far** (details in the manuscript): the displayed
 10.44 in Polymath eq. (24) is not derivable from their own stated
