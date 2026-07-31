@@ -165,9 +165,41 @@ implementation step is to parameterize and independently audit the
 Taylor-tail, uniform-error, and barrier-binding checks before anything is
 moved into the sealed proof surface.
 
+## Anchor-quality finding (2026-07-31)
+
+The conservative height-budget endpoint \(X_*=6\,000\,342\,141\,913\) is
+**not** a viable barrier site: the closed-slab program fails at the first
+prism with no positive certified time-motion budget.  This is expected in
+hindsight — the sealed anchor \(6\,000\,000\,185\,827\) was *selected* for
+barrier quality, not chosen arbitrarily.  Height budget alone does not
+select a wall location; an anchor-quality search inside the
+\(8\,523\,687\)-integer slack must precede the pilot.
+
+A three-point probe across the slack range found:
+
+| anchor | first-prism budget | outcome |
+|---|---|---|
+| \(6\,000\,342\,141\,913\) (\(X_*\)) | none | FAIL |
+| \(6\,000\,343\,000\,000\) | none | FAIL |
+| \(6\,000\,345\,678\,901\) | positive | **CLOSED SLAB CERTIFIED** |
+| \(6\,000\,348\,141\,913\) | positive | 790+ prisms passing (stopped; redundant) |
+
+At \(X=6\,000\,345\,678\,901\) (window \(N=691008\) at both corners) the
+full closed slab certified over \(t\in[0,0.16125]\) with 3,709 consecutive
+passing prisms in about 26 minutes of wall time, and the strict transcript
+validator accepts the run
+(`validate_barrier_transcript.py --expected-n 691008`).  See
+`RESULTS_static_reanchor_691008.md` for the run record.  This smoke pass
+shows the stronger window is numerically viable; the new-site Taylor-tail,
+uniform-error, proof-to-code, and theorem-assembly obligations remain
+outstanding, so no improved Lambda bound is certified.
+
 ## Route toward a smaller bound
 
-1. Establish the fixed \(N=691008\) barrier pilot at the current row.
+1. Establish the fixed \(N=691008\) barrier pilot at the current row —
+   **done 2026-07-31** at anchor \(6\,000\,345\,678\,901\) (smoke only; see
+   above), after an anchor-quality search sub-step that the original list
+   omitted.
 2. Generalize the uniform-error and suffix/window welds.
 3. Hold \(y_0^2\) fixed and screen rational \(t_0<129/800\).  This directly
    lowers the objective while keeping the final bottom height fixed.
