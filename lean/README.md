@@ -1,5 +1,27 @@
 # Lean 4 formalization — barrier analytic skeletons
 
+## Files
+
+- `BarrierAnalyticSkeleton.lean` — reduction logic of the two prose-only
+  analytic steps (see below).
+- `StrongerWindowArithmetic.lean` — exact arithmetic of the stronger-window
+  (static re-anchor) research lane (Lean 4 + mathlib v4.22.0, `sorry`-free,
+  axioms `[propext, Classical.choice, Quot.sound]`, verified 2026-07-31):
+  the Λ objective identity `t₀ + y₀²/2 = 0.1787854` and collar-width
+  identity; the Platt–Trudgian budget check for the re-anchor site
+  `X = 6000345678901`; the window index `⌊√(x/(4π) + t/16)⌋ = 691008` on
+  the whole slab `[X, X+1] × [0, 129/800]` (π enters only via mathlib's
+  `pi_gt_d6`/`pi_lt_d6`); the unreachability of window 691009 within the
+  budget; the exact reserve identity `T_min − E_max` and its `> 14×`
+  comparison with the current binding margin; and the conditional
+  reserve-to-ΔΛ conversion (slope ≥ 19 ⟹ ΔΛ < 4.4·10⁻⁷).  Honest scope:
+  it checks the exact bookkeeping around the interval-arithmetic
+  certificates, not the certificates themselves; the certified stored
+  values and the measured slope enter as explicit rational inputs and
+  hypotheses.
+
+## BarrierAnalyticSkeleton
+
 `BarrierAnalyticSkeleton.lean` machine-checks (Lean 4 + mathlib v4.22.0, `sorry`-free,
 axioms `[propext, Classical.choice, Quot.sound]`) the **reduction logic** of the two
 prose-only analytic steps flagged in `EXTERNAL_REFEREE_REPORT_2026-07-28.md` §3:
