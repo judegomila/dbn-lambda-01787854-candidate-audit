@@ -194,6 +194,36 @@ shows the stronger window is numerically viable; the new-site Taylor-tail,
 uniform-error, proof-to-code, and theorem-assembly obligations remain
 outstanding, so no improved Lambda bound is certified.
 
+## Parameterized site checkers (2026-07-31)
+
+`src/uniform_error_site.c` and `src/storedsum_taylor_tail_site.c` are
+research-lane derivatives of the two pinned checkers
+(`barrier/src/verify_uniform_error_01787854.c`,
+`barrier/src/StoredSumTaylorTail_cert.c`); the only change is that \(X\)
+and \(N\) are command-line arguments, plus an unmistakable SITE/RESEARCH
+banner.  Regression at the sealed site reproduces the sealed outputs
+ball-for-ball.  At the new site \(X=6\,000\,345\,678\,901\), \(N=691008\):
+the uniform conservative error total is \(0.000356517 < 0.00125\) and the
+Taylor truncation is \(1.9546\times10^{-22} < 10^{-20}\) — both certified.
+Outstanding before any promotion: independent proof-to-code audit of the
+two derivatives and a separate theorem assembly.
+
+## t0 sensitivity (2026-07-31)
+
+Measured with the sealed sweep parameters at \(N=691008\): the certified
+finite row is linear in \(t\) with slope \(19.05\), so the entire
+stronger-window reserve \(8.24\times10^{-6}\) converts to
+\(\Delta t_0\approx4.3\times10^{-7}\), i.e.
+\(\Delta\Lambda\approx4\times10^{-7}\) at fixed \(y_0^2\) and fixed
+mollifier.  The proof's \(t_0=129/800\) sits within \(\sim5\times10^{-7}\)
+of the smallest certifiable \(t_0\).  See
+`RESULTS_t0_sensitivity.md`.  Material reductions require restructuring
+(mollifier retuning at lower \(t_0\), larger windows, or a different
+barrier/window trade), for which the stronger window is a prerequisite
+rather than the payoff; step 3 below is accordingly demoted from
+"directly lowers the objective" to "bounded by \(\sim4\times10^{-7}\)
+without restructuring".
+
 ## Route toward a smaller bound
 
 1. Establish the fixed \(N=691008\) barrier pilot at the current row —
