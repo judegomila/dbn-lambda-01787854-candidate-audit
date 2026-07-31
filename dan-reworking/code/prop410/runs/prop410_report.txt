@@ -1,0 +1,41 @@
+Proposition 4.10: uniform error bound, finite region
+
+Parameters (exact rationals):
+  t_0    = 129/800
+  t-box  = [129/800, 161250001/1000000000]
+  y_0^2  = 87677/2500000
+  ymax^2 = 1 - 2 t_0 = 271/400
+  N_0    = 690988
+  interval precision: 220 bits
+
+Domain and sign conditions (all must hold):
+  [PASS] G0_positive_part
+  [PASS] sigma1_positive
+  [PASS] Y1_negative
+  [PASS] kappa_domain
+  [PASS] G2a_ratio
+  [PASS] U1_log_domain
+  [PASS] U2_logN
+  [PASS] U3a_tail_decrease
+  [PASS] Y_range
+  [PASS] U3b_first_endpoint
+  [PASS] U3c_second_endpoint
+  [PASS] U5_last_factor
+
+Certified upper endpoints (outward-rounded, then rounded up
+once more in the last printed digit):
+  e_A+e_B        <= 0.000000000002057023688667
+  e_C0           <= 0.000000233492848188649183
+  e_A+e_B+e_C0   <= 0.000000233494905212337849
+
+Auxiliary enclosures (upper endpoints):
+  Y1   <= -6.702938868231479011
+  g_t1 <= -0.441735638507944293
+  g_t2 <= -0.506622767561136732
+
+Bounds of Proposition 4.10 (exact rational comparison):
+  [PASS] e_A+e_B <= 2.06e-12
+  [PASS] e_C0 <= 0.000000233492848188649183
+  [PASS] e_A+e_B+e_C0 <= E_max
+
+RESULT PASS: e_A+e_B+e_C0 <= E_max = 0.000000233494905212337849 on the finite region

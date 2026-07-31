@@ -26,6 +26,20 @@ suitable for publication in a research mathematics journal.
   documented in its header) and the complete fresh-run outputs in
   `runs/` (`*_sweep.out`, `*_summary.txt`, `*_progress.txt`),
   referenced by the manuscript as supplementary material.
+- `code/prop410/` — the verification program for Proposition 4.10
+  (`prop410_proof.py`, derived from
+  `verifiers/verify_finite_and_binding.py` as documented in its
+  header: the stored-log parsing and the redundant corr-rate gate
+  were removed, leaving only the self-contained error-budget
+  computation) and its run report `runs/prop410_report.txt`.
+  Precedent for pure-calculation Python components: exact rational
+  inputs, mpmath.iv interval arithmetic, acceptance by exact
+  rational comparison of outward-rounded endpoints, no file reads.
+- `code/prop62/` — the verification program for Proposition 6.2
+  (`prop62_proof.c`, derived from
+  `barrier/src/verify_uniform_error_01787854.c` as documented in
+  its header; adds a strict check of the manuscript's sharp
+  constant) and its run report `runs/prop62_report.txt`.
 
 ## Working conventions
 
@@ -48,22 +62,25 @@ suitable for publication in a research mathematics journal.
 
 ## Status
 
-As of 2026-07-29: literature checks complete; all analytic arguments
-carry complete verified proofs; five computer-assisted components
-remain to be reproduced (see the manuscript's summary section):
-the Dini cell certificates, the finite-region error bound, the tail
-cutoff inequalities, the barrier-box uniform error bound, and the
-barrier prism certificate.
+As of 2026-07-30: literature checks complete; all analytic arguments
+carry complete verified proofs; Propositions 4.3 (window sweep),
+4.10 (finite-region error bound) and 6.2 (barrier-box error bound)
+are fully discharged with programs and proofs in the manuscript;
+three computer-assisted components remain to be reproduced (see the
+manuscript's summary section): the Dini cell certificates, the tail
+cutoff inequalities, and the barrier prism certificate.
 
-## Session bootstrap (current state as of 2026-07-29)
+## Session bootstrap (current state as of 2026-07-30)
 
 Read first, in order: this file; the manuscript's final section
 ("Summary of gaps") and the gap boxes it references; then the header
 of `code/prop43/prop43_proof.c` for the verification-run precedent.
 
 **Git / GitHub state.** This directory lives inside the clone of
-Jude's repo. Work happens on branch `dan-reworking-review` (pushed).
-`main` is protected: changes only via PR, with a required CI check
+Jude's repo. The original working branch `dan-reworking-review` was
+merged into `main` via PR #2 (squash) and deleted 2026-07-30; new
+work happens on `main` locally until a fresh branch is cut for the
+next PR. `main` is protected: changes only via PR, with a required CI check
 `full-review` (rebuilds Jude's pinned container and replays critical
 lanes; up to ~2 h; our directory cannot affect it — the
 `.dockerignore` excludes everything but `Dockerfile` and
@@ -81,19 +98,41 @@ tighter than his 3.0.1); differences so far were always in the
 favorable direction. Prop 4.3 timings: naive mode ~67 s/row;
 full sweep ~35 min wall-clock sharded on 8 cores.
 
-**Remaining gaps** (all: read program against the manuscript
-statement, then rerun on our toolchain):
+**Remaining gaps** (numbering matches the manuscript's gap boxes
+after the 2026-07-30 renumbering; all: read program against the
+manuscript statement, then rerun on our toolchain; the deliverable
+per gap is a standalone pure-calculation program under
+`dan-reworking/code/` that reads no stored files, plus a proof
+block in the manuscript — see `code/prop43/` and `code/prop410/`
+for the C and Python precedents):
 
-| gap | statement | program (in repo root) | cost |
+| gap | statement | Jude's program (in repo root) | cost |
 |---|---|---|---|
 | 1 | Prop: Dini cell certificates | `verifiers/verify_triangle_y_dini_arb.c` (180+256 bit) | moderate |
-| 2 | Prop: finite-region E_max | `verifiers/verify_finite_and_binding.py` | small |
-| 3 | Prop: tail cutoff inequalities | `verifiers/verify_tail_arb.c` (256+512 bit; `scripts/run_tail_arb.sh`) | small |
-| 4 | Prop: barrier-box uniform error | `barrier/src/verify_uniform_error_01787854.c` | small |
-| 5 | Props: prism certificate + tail-exponent gate | `barrier/src/TloopSinglemat_closed_cert.c` (`scripts/run_barrier_replay.sh`) | large |
+| 2 | Prop: tail cutoff inequalities | `verifiers/verify_tail_arb.c` (256+512 bit; `scripts/run_tail_arb.sh`) | small |
+| 3 | Props: prism certificate + tail-exponent gate | `barrier/src/TloopSinglemat_closed_cert.c` (`scripts/run_barrier_replay.sh`) | large |
 
-Gap 3 also discharges the hypotheses of the tail lemmas; gaps 3 and
-4 are the natural next targets.
+Gap 2 also discharges the hypotheses of the tail lemmas and is the
+natural next target.
+
+Resolved 2026-07-30 (both following the same protocol: standalone
+program under `code/`, line-by-line read against the sources, fresh
+run, full proof block in the manuscript):
+- Finite-region E_max (Proposition 4.10) —
+  `code/prop410/prop410_proof.py`; monotonicity reduction of the
+  whole region to the single evaluation at (x_*, N_0); read against
+  Polymath eq. (23) and corollary (eq:ec0); fresh run reproduced
+  E_max = 0.000000233494905212337849 exactly. Toolchain note per
+  Dan: mpmath (independently installed) is acceptable; package
+  reliability is what matters, not differing from Jude's library.
+- Barrier-box uniform error (Proposition 6.2) —
+  `code/prop62/prop62_proof.c` (256-bit Arb); two-corner argument
+  for window-index constancy (monotonicity of x/4pi + t/16 under
+  floor-sqrt), N^2 < x/4pi, and the uniform majorization of eq.
+  (23) + (eq:ec0) with every t- and y-dependent factor at its worst
+  endpoint; the sharp displayed constant 0.000356523011600040 is
+  now itself certified (added strict ball check, documented in the
+  header); fresh run passes all checks in under a second.
 
 **Key findings so far** (details in the manuscript): the displayed
 10.44 in Polymath eq. (24) is not derivable from their own stated
