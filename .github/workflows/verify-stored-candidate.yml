@@ -5,6 +5,9 @@ on:
     branches:
       - main
   pull_request:
+    # 'labeled' is not a default activity type.  Without it, applying
+    # 'full-ci' to an open pull request would silently do nothing.
+    types: [opened, synchronize, reopened, labeled]
   workflow_dispatch:
 
 permissions:

@@ -1,7 +1,7 @@
 3addb9f37b262e654410fbcb1d65e78165605369c6f9941331ba167701734b6f  ./.dockerignore
 0e68f8ca7bfc19c48823cf9ae82d9873f1cf98023a8423824c0dee68d7ae6364  ./.gitattributes
 12efa9a8c7d4183d667a9cca46890daa7f7ef4184bf24ffc37cec2670ca45406  ./.github/workflows/publish-verified-image.yml
-3ce3fb1c30bd6cab85254420e9751c1058594df4557fdb1f73f86ccd0c2004f5  ./.github/workflows/verify-stored-candidate.yml
+81ef12e1d4ed8f46330472fc9df090aab1b12fe9f3da24e6cbcaa380ee7135e8  ./.github/workflows/verify-stored-candidate.yml
 2162fd39f7d1dc6d4243b7b1be657be23ad6f7e3f0338c82a56cc79dc68e3f1c  ./.gitignore
 adde20ab49730cb23f301c06748ef58087014a9a89c2c4ad923e67980a7f5dfd  ./ADVERSARIAL_REVIEW_PROTOCOL.md
 81bea0505d1a5f127e24703910244960ee7813b726f6ff873bfc79370407ceac  ./BARRIER_CERTIFICATE.md
