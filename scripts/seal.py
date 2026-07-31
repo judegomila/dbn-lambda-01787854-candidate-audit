@@ -83,11 +83,19 @@ def stable_files() -> dict[str, Path]:
                 raise SealError(f"symlink forbidden in stable tree: {display}")
 
             if not parts and entry.name in EXCLUDED_ROOTS:
-                if not stat.S_ISDIR(mode):
-                    raise SealError(
-                        f"excluded root is not a directory: {display}"
-                    )
-                continue
+                if stat.S_ISDIR(mode):
+                    continue
+                # In a git worktree or submodule checkout, .git is a
+                # regular file holding a gitdir: pointer rather than a
+                # directory.  Its contents are outside the seal in either
+                # form, so accepting the file form costs no coverage and
+                # lets a reviewer check the seal from a worktree.  A
+                # symlink is still refused above.  Every other excluded
+                # root must be a real directory: replacing one with a
+                # file would hide content that belongs in the tree.
+                if entry.name == ".git" and stat.S_ISREG(mode):
+                    continue
+                raise SealError(f"excluded root is not a directory: {display}")
             if stat.S_ISDIR(mode) and entry.name in EXCLUDED_DIR_NAMES:
                 continue
             if stat.S_ISDIR(mode):
