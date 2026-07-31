@@ -261,6 +261,46 @@ Agreement at levels 4--6 cannot repair an error at levels 1--3. Conversely,
 a mathematically correct reduction still needs a faithful, fail-closed
 implementation.
 
+## Independent recomputation and cross-check
+
+`independent/` holds self-contained programs that recompute published
+quantities by a second, independently written route. They are sealed and
+`verifiers/verify_independent_crosscheck.py` executes them as part of
+`verify.sh`.
+
+They close a specific gap. Two sharp constants were stated in prose but
+machine-checked only through weaker bounds:
+
+- `E_max = 0.000000233494905212337849`, where
+  `verify_finite_and_binding.py` gates on `error_max < 234/10**9`; and
+- `0.000356523011600040`, where
+  `barrier/src/verify_uniform_error_01787854.c` gates on the loose
+  `0.00125` allowance.
+
+Both are now recomputed and compared against the digits this package
+publishes, so a document drifting from a program is a seal failure.
+
+Treat this as cross-implementation corroboration, not proof. It
+establishes that two implementations agree and that the published digits
+are reproducible; it does not establish either proposition and does not
+change the candidate's review status. `independent/README.md` records
+provenance, the one modification made during promotion, and the open
+`prop43` reproducibility gap.
+
+## Replay depth on pull requests
+
+`scripts/run_container_review.sh` honours `REVIEW_DEPTH`. Pushes to
+`main` and manual dispatches run at `full` depth. Pull requests run at
+`quick` depth, which still performs the seal check, the exposition
+binding, the upstream provenance subset, the independent cross-check and
+the complete assembly arithmetic, but does not re-derive the C/Arb lanes
+from source.
+
+A pull request that touches the replay lanes should be run at full
+depth before merging: apply the `full-ci` label and re-run. Note that a
+`quick` pass therefore does not by itself evidence a fresh replay; only
+`main` results and labelled pull requests do.
+
 ## Unsealed referee workspace
 
 `dan-reworking/` is an in-progress referee workspace contributed by a

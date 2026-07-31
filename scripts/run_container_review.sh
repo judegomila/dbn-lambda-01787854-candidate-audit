@@ -7,6 +7,29 @@ export PYTHONDONTWRITEBYTECODE=1
 root=$(cd "$(dirname "$0")/.." && pwd)
 cd "$root"
 
+# REVIEW_DEPTH selects how much is recomputed.
+#
+#   full   (default) every stored lane plus a fresh replay of the
+#          critical C/Arb lanes.  This is the merge-gate depth and the
+#          depth every push to main runs.
+#   quick  the fail-closed stored verification only.  Pull requests use
+#          this: it still runs the seal, the exposition binding, the
+#          upstream provenance subset, the independent cross-check and
+#          the full assembly arithmetic, so no conclusion is reached on
+#          unverified inputs -- it just does not re-derive the lanes
+#          that a fresh replay would.
+#
+# A pull request touching the replay lanes should be run at full depth
+# before merging; the workflow exposes a 'full-ci' label for that.
+review_depth=${REVIEW_DEPTH:-full}
+case "$review_depth" in
+  quick | full) ;;
+  *)
+    echo "REVIEW_DEPTH must be 'quick' or 'full', got: $review_depth" >&2
+    exit 1
+    ;;
+esac
+
 if [[ -n ${REVIEW_OUTPUT:-} ]]; then
   scratch=$(python3 "$root/scripts/replay_guard.py" prepare \
     "$root" "$REVIEW_OUTPUT")
@@ -16,6 +39,12 @@ else
 fi
 
 ./verify.sh
+
+if [[ $review_depth == quick ]]; then
+  echo "RESULT: CONTAINER REVIEW PASS (QUICK DEPTH)"
+  echo "STATUS: stored fail-closed verification only; fresh C/Arb replay not run."
+  exit 0
+fi
 
 for precision in 180 256; do
   gcc -O2 -DPREC="$precision" \

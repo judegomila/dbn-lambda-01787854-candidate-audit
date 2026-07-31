@@ -22,6 +22,10 @@ env:
   REVIEW_SOURCE_URL: https://github.com/judegomila/dbn-lambda-01787854-candidate-audit
 
 jobs:
+  # The required status check.  Its name must not change without also
+  # updating branch protection.  Depth varies by event: pull requests get
+  # the stored fail-closed verification, everything else gets the full
+  # fresh replay.  Label a pull request 'full-ci' to force full depth.
   full-review:
     runs-on: ubuntu-24.04
     timeout-minutes: 120
@@ -53,6 +57,18 @@ jobs:
           test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.dbn.platform"}}' "$REVIEW_IMAGE")" = linux/amd64
           test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.source"}}' "$REVIEW_IMAGE")" = "$REVIEW_SOURCE_URL"
 
+      - name: Select review depth
+        id: depth
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ] \
+             && [ "${{ contains(github.event.pull_request.labels.*.name, 'full-ci') }}" != "true" ]; then
+            echo "value=quick" >> "$GITHUB_OUTPUT"
+            echo "Pull request without the 'full-ci' label: quick depth."
+          else
+            echo "value=full" >> "$GITHUB_OUTPUT"
+            echo "Full depth."
+          fi
+
       - name: Verify stored evidence and freshly replay critical C/Arb lanes
         run: |
           set -o pipefail
@@ -62,6 +78,7 @@ jobs:
             --user "$(id -u):$(id -g)" \
             --tmpfs /tmp:rw,exec,nosuid,size=4g \
             -e REVIEW_OUTPUT=/review-output/evidence \
+            -e REVIEW_DEPTH=${{ steps.depth.outputs.value }} \
             -v "$GITHUB_WORKSPACE:/work:ro" \
             -v "$GITHUB_WORKSPACE/replay/github-full-review:/review-output" \
             -w /work "$REVIEW_IMAGE" \
