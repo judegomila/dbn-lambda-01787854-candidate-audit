@@ -10,6 +10,11 @@ cd "$root"
 python3 scripts/seal.py --check
 python3 verifiers/verify_external_exposition.py
 
+# Independently written recomputations of two published constants.  This
+# binds the displayed digits to a fresh calculation; the sealed lanes
+# below only ever gated on weaker bounds around them.  Sub-second.
+python3 verifiers/verify_independent_crosscheck.py
+
 # Historical upstream artifacts are retained and checked for provenance.
 # The repaired target barrier does not consume the old winding/site result.
 ./scripts/verify_upstream_subset.sh
