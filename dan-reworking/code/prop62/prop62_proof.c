@@ -3,7 +3,7 @@
  *
  * The computation constituting the computer-assisted proof of
  * Proposition 6.2 of the review manuscript
- * (dan-reworking/latex/gomila-proof-exposition.tex): on the barrier
+ * (dan-reworking/latex/exposition/gomila-proof-exposition.tex): on the barrier
  * box
  *
  *     x in [X, X+1],  X = 6000000185827,

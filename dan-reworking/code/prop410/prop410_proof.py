@@ -3,7 +3,7 @@
 
 The computation constituting the computer-assisted proof of
 Proposition 4.10 of the review manuscript
-(dan-reworking/latex/gomila-proof-exposition.tex): the uniform bound
+(dan-reworking/latex/exposition/gomila-proof-exposition.tex): the uniform bound
 on the effective-approximation error terms of Theorem 1.3 over the
 finite region, at t = t_0, bounded using equation (23) of [Polymath]
 for e_A + e_B and the conservative corollary (eq:ec0) for e_C0:

@@ -22,18 +22,6 @@
 \newtheorem{definition}[theorem]{Definition}
 \newtheorem{remark}[theorem]{Remark}
 
-% ---------------------------------------------------------------
-% "Gap / review point" environment: numbered, framed, colored
-% ---------------------------------------------------------------
-\definecolor{gapred}{RGB}{160,20,20}
-\definecolor{gapbg}{RGB}{253,242,242}
-\newcounter{gapctr}
-\newenvironment{gap}[1]{%
-  \refstepcounter{gapctr}%
-  \def\FrameCommand{\fboxsep=8pt\fcolorbox{gapred}{gapbg}}%
-  \begin{framed}\noindent\textbf{\color{gapred}Gap / review point \thegapctr\ (#1).}\ }%
-  {\end{framed}}
-
 \newcommand{\LB}{\Lambda}
 \newcommand{\eps}{\varepsilon}
 \newcommand{\R}{\mathbb{R}}
@@ -43,44 +31,35 @@
 \newcommand{\calS}{\mathcal{S}}
 \newcommand{\CapT}{\operatorname{Cap}}
 \DeclareMathOperator{\Rea}{Re}
+\DeclareMathOperator{\Ima}{Im}
 \DeclareMathOperator{\sgn}{sgn}
 
-\title{An exposition of a computer-assisted proof of the bound
-$\Lambda\le 0.1787854$ for the de Bruijn--Newman constant}
-\author{Authors TBD\thanks{Referee's exposition of an unpublished
-proof by J.~Gomila (private repository
-\texttt{dbn-lambda-01787854-candidate-audit}, ``sealed referee snapshot,''
-2026). This document describes the argument for the purpose of
-independent review; it does not currently certify its correctness. All gaps and
-steps that this expositor has not verified are marked explicitly.}}
-\date{July 27, 2026}
+\title{An improved upper bound for the de Bruijn--Newman constant}
+\author{Jude Gomila \and [additional authors TBD]}
+\date{}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-We give a self-contained mathematical exposition of a claimed computer-assisted proof, due to J.~Gomila, of the bound
-\[
-\LB\le\frac{893927}{5000000}=0.1787854
-\]
+We prove the new upper bound
+$\LB\le\frac{893927}{5000000}=0.1787854$
 for the de Bruijn--Newman constant $\LB$, improving the bound
-$\LB\le0.22$ of the Polymath~15 project and the current record
-$\LB\le0.2$ of Platt--Trudgian. The argument is intended to be
-unconditional: it instantiates the criterion of Polymath~15
-[Theorem~1.2, arXiv:1904.12438v2] at the exact parameters
-$X=6000000185827$, $t_0=129/800$, $y_0^2=87677/2500000$, supplying its
-three hypotheses by, respectively, the Platt--Trudgian finite
-verification of the Riemann hypothesis, a hybrid finite-scan/analytic-tail
-nonvanishing theorem for $H_{t_0}$, and an interval-arithmetic barrier
-certificate. The proof has not been peer reviewed, and the
-correctness of neither the analytic reductions nor the extensive interval
-computations has been independently confirmed. All statements quoted
-here from the published literature have been checked against the arXiv
-sources of the cited papers. The steps of the argument that
-remain unverified --- at the present stage of the review, the
-independent reproduction of its certified computations --- are
-marked throughout as numbered \emph{gap / review points}, and are
-collected in Section~\ref{sec:gaps}.
+$\LB\le0.22$ of the Polymath~15 project and the previous record
+$\LB\le0.2$ of Platt--Trudgian. The proof is unconditional: it
+instantiates the criterion of Polymath~15 [Theorem~1.2,
+arXiv:1904.12438v2] at the exact parameters $X=6000000185827$,
+$t_0=129/800$, $y_0^2=87677/2500000$, supplying its three
+hypotheses by, respectively, the Platt--Trudgian finite
+verification of the Riemann hypothesis, a hybrid
+finite-scan/analytic-tail nonvanishing theorem for $H_{t_0}$, and
+an interval-arithmetic barrier argument. The proof is
+computer-assisted: its computational ingredients are stated as
+explicit propositions, each proved by a self-contained program
+included with this paper as supplementary material. The programs
+take only exact integer and rational inputs fixed in their source
+code, read no stored data, and decide every acceptance condition
+by a strict directed interval comparison.
 \end{abstract}
 
 \tableofcontents
@@ -124,30 +103,30 @@ Trudgian observed \cite[Corollary~2]{PlattTrudgian} that their
 verification of RH to height $3\cdot10^{12}$
 (Section~\ref{sec:hypi} below), combined with the second row of the
 parameter table in \cite[Table~1, p.~65]{Polymath} (which requires
-verified height $H>2.51\cdot10^{12}$), yields the current record
+verified height $H>2.51\cdot10^{12}$), yields the bound
 \begin{equation}\label{eq:ptbound}
-\LB\le0.2 .
+\LB\le0.2 ,
 \end{equation}
-Thus at present $0\le\LB\le0.2$. Platt and Trudgian further note
+the best previously known. Platt and Trudgian further note
 that the next entry of the same table would give $\LB<0.19$, but only
 conditionally on a verified height slightly above $10^{13}$, beyond
 their theorem; the bound \eqref{eq:target} below therefore
-goes past both the published record \eqref{eq:ptbound} and that
+goes past both the previous record \eqref{eq:ptbound} and that
 conditional entry, while consuming only the established
 $3\cdot10^{12}$ verification height.
 
 \subsection{Main result}
 
-This paper describes a claimed computer-assisted proof, due to
-J.~Gomila, of the following improvement of \eqref{eq:ptbound}.
+The main result of this paper is the following improvement of
+\eqref{eq:ptbound}.
 
-\begin{theorem}[Theorem; \textbf{unreviewed}]\label{thm:main}
+\begin{theorem}\label{thm:main}
 \[
 \LB\le\frac{893927}{5000000}=0.1787854 .
 \]
 \end{theorem}
 
-The proposed proof instantiates the barrier criterion of
+The proof instantiates the barrier criterion of
 \cite[Theorem~1.2]{Polymath} at the exact parameters
 \begin{equation}\label{eq:params}
 X=6000000185827,\qquad
@@ -163,44 +142,48 @@ $0<t_0<\tfrac12$, $0<y_0^2<1-2t_0=\tfrac{271}{400}$, and
 $y_0^2+2t_0=\tfrac{893927}{2500000}<1$, which place the parameters in
 the domain of the criterion.
 
-\subsection{Status, and how gaps are marked}\label{sec:status}
+\subsection{Structure of the proof, and the computer-assisted
+components}\label{sec:status}
 
-The claimed proof combines:
+The proof combines:
 \begin{enumerate}
 \item two published theorem inputs --- the Polymath~15 criterion and
 effective approximation \cite{Polymath}, and the Platt--Trudgian finite
 verification of RH \cite{PlattTrudgian};
-\item a collection of new lemmas (reproduced with proofs below),
-which bridge the published estimates to the quantities computed by
-the software; and
-\item a large body of rigorous-interval-arithmetic certificates
-(FLINT/Arb in C, plus corroborating Python interval implementations),
-totalling $3{,}149{,}013$ certified finite ``window'' rows, a
-standalone tail computation, and an $883$-prism barrier certificate.
+\item a collection of new lemmas, proved below, which bridge the
+published estimates to explicitly computable quantities; and
+\item seven computer-assisted propositions, proved by rigorous
+interval arithmetic (FLINT/Arb in C, plus one exact-rational Python
+component), totalling $3{,}149{,}013$ finite ``window'' rows, a
+cell-cover computation, two uniform error bounds, a standalone tail
+computation, and an $883$-prism barrier computation.
 \end{enumerate}
-The statements quoted from the published inputs in item~(1) ---
+The statements quoted from the published inputs in item~(1) are
 Theorems~1.2 and~1.3 of \cite{Polymath} together with the displays
 (14), (20)--(24), (71)--(72), Proposition~6.6 and Lemma~8.4 of that
-paper, and Theorem~1 of \cite{PlattTrudgian} --- have been checked
-verbatim against the arXiv source files of the cited papers
-(1904.12438v2 and 2004.09765v1, to which all equation and theorem
-numbers below refer). The one point where the current proof's usage
-deliberately departs from a cited display, namely equation~(24) of
-\cite{Polymath}, is discussed in Remark~\ref{rem:1044}. The
-lemmas of item (2) are given complete proofs below, all verified in
-the course of this review. Of the computations in item (3), the
-main finite computation (Proposition~\ref{prop:sweep}), the
-finite-region error bound (Proposition~\ref{prop:finiteerr}), and
-the barrier-box error bound (Proposition~\ref{prop:barriererr})
-have been reproduced on an independent toolchain with their
-programs reviewed --- their proofs are given in
-Sections~\ref{sec:stored}, \ref{sec:finiteerr}
-and~\ref{sec:barriererr} --- while the
-remaining certified computations have not yet been independently
-verified; each such step is flagged by a framed, numbered
-\emph{gap / review point}, and all remaining flagged steps are of
-this computational kind. The full list is collected in
+paper, and Theorem~1 of \cite{PlattTrudgian}; all equation and
+theorem numbers below refer to the arXiv versions 1904.12438v2 and
+2004.09765v1. The one point where our usage deliberately departs
+from a cited display, namely equation~(24) of \cite{Polymath}, is
+discussed in Remark~\ref{rem:1044}. Each computer-assisted
+proposition of item (3) --- the main finite computation
+(Proposition~\ref{prop:sweep}), the Dini cell computation
+(Proposition~\ref{prop:dinicells}), the finite-region error bound
+(Proposition~\ref{prop:finiteerr}), the tail cutoff computation
+(Proposition~\ref{prop:tailcert}), the barrier-box error bound
+(Proposition~\ref{prop:barriererr}), the tail-exponent inequality
+(Proposition~\ref{prop:tailexp}), and the barrier prism
+decomposition (Proposition~\ref{prop:prismcert}) --- is proved by a
+standalone program included with this paper (supplementary
+directory \texttt{code/}); the programs and their common discipline
+are described with the respective propositions and summarized in
 Section~\ref{sec:gaps}.
+
+
+
+\subsection{Statement on AI usage}
+
+The work presented here was done with substantial assistance from Anthropic's Claude AI model.
 
 % ===============================================================
 \section{The Polymath criterion and effective approximation}
@@ -248,10 +231,9 @@ $\xi\bigl(\frac{1-y+ix}{2}\bigr)=0$; the functional equation
 $\xi(s)=\xi(1-s)$ followed by complex conjugation produces the
 representative zero $\xi\bigl(\frac{1+y+ix}{2}\bigr)=0$ with
 $\sigma=\frac{1+y}2\ge\frac{1+y_0}2$ and ordinate $T=\frac x2$, which
-is the region excluded in (i). (The proof verifies the affine
-algebra of this ``sign map'' by an exact-rational script; the
-functional equation and the reality symmetry
-$\overline{\xi(\bar s)}=\xi(s)$ are the classical inputs.)
+is the region excluded in (i). (The functional equation and the
+reality symmetry $\overline{\xi(\bar s)}=\xi(s)$ are the classical
+inputs; the affine algebra of this ``sign map'' is elementary.)
 
 \subsection{The effective approximation}\label{sec:thm13}
 
@@ -271,7 +253,7 @@ branch cut, and therefore $B_t(x+iy)\neq0$ for all $t\ge0$, $x>0$ and
 $y>0$, as noted explicitly in \cite[\S1, after (11)]{Polymath}. This
 nonvanishing is used below both in the reduction of zero-freeness of
 $H_t$ to lower bounds on $|f_t|$ and in the argument-principle step
-of the barrier certificate (Section~\ref{sec:barrier}).
+of the barrier argument (Section~\ref{sec:barrier}).
 Theorem~1.3 of \cite{Polymath} provides, in the region
 \begin{equation}\label{eq:region}
 x\ge200,\qquad 0\le y\le1,\qquad 0<t\le\tfrac12,
@@ -300,14 +282,15 @@ $N=\bigl\lfloor\sqrt{\tfrac{x}{4\pi}+\tfrac{t}{16}}\bigr\rfloor$;
 \item explicitly defined quantities $\gamma=\gamma(x,y,t)$,
 $s_*=s_*(x,y,t)$, $\kappa=\kappa(x,y,t)$ satisfying (by equations
 (20)--(22) of \cite{Polymath}) the bounds
-\begin{equation}\label{eq:gsk}
-|\gamma|\le e^{0.02y}\Bigl(\frac{x}{4\pi}\Bigr)^{-y/2},
-\qquad
-\Rea s_*\ \ge\ \frac{1+y}{2}+\frac t4\log\frac{x}{4\pi}
+\begin{align}
+|\gamma|&\ \le\ e^{0.02y}\Bigl(\frac{x}{4\pi}\Bigr)^{-y/2},
+\label{eq:gammabound}\\
+\Rea s_*&\ \ge\ \frac{1+y}{2}+\frac t4\log\frac{x}{4\pi}
 -\frac{t}{2x^2}\Bigl(1-3y+\frac{4y(1+y)}{x^2}\Bigr)_{\!+},
-\qquad
-|\kappa|\le\frac{ty}{2(x-6)};
-\end{equation}
+\label{eq:resbound}\\
+|\kappa|&\ \le\ \frac{ty}{2(x-6)};
+\label{eq:kappabound}
+\end{align}
 \item and error terms $e_A,e_B,e_{C,0}$ with explicit majorants
 (equations (71)--(72) and (23)--(24) of \cite{Polymath}).
 \end{itemize}
@@ -318,7 +301,7 @@ non-vanishing'').
 
 \subsection{The conservative error constant $10.50$}\label{sec:weld}
 
-The current proof deliberately does \emph{not} use the constant $10.44$
+Our proof deliberately does \emph{not} use the constant $10.44$
 displayed in equation~(24) of \cite{Polymath} for the majorization of
 $e_{C,0}$.
 Instead it derives a
@@ -354,7 +337,8 @@ part (vi) of the proposition by ``the inequality $1+u\le\exp(u)$''
 followed by the bound $\frac{1}{x-8.52}\le\frac{1}{x-12}$; carrying
 out this recipe yields the constant $3.58+6.92=10.50$, and we are not
 aware of an argument in \cite{Polymath} producing the displayed
-$10.44$. Accordingly, the current proof relies on (24): all error computations use only
+$10.44$. Accordingly, our proof does not rely on (24): all error
+computations use only
 \eqref{eq:ec0}, which follows rigorously from Proposition~6.6(vi) by
 the two elementary steps just described, uniformly on the domain
 \eqref{eq:region}. (The weaker constant costs a factor
@@ -397,8 +381,7 @@ $\zeta$ has a pole. This supplies hypothesis (i).
 As with any use of a computationally established theorem, this step
 inherits the correctness of the Platt--Trudgian computation itself (a
 rigorous interval-arithmetic computation, independent of anything in
-the present paper); we accept it here as a published-theorem
-input.
+the present paper); we use it as a published-theorem input.
 
 % ===============================================================
 \section{Hypothesis (ii), finite range: the window scan}\label{sec:finite}
@@ -410,10 +393,10 @@ x\ge x_*:=X+\sqrt{1-y_0^2},
 \qquad
 y_0\le y\le\sqrt{1-2t_0}.
 \end{equation}
-Gomila's proof splits this region at the abscissa corresponding to
+The proof splits this region at the abscissa corresponding to
 the window index $N_*=3840000$: the finite range
 $690988\le N\le3840000$ is handled in this section by
-$3{,}149{,}013$ individually certified interval computations, and
+$3{,}149{,}013$ individual interval computations, and
 the infinite range $N\ge3840000$ in Section~\ref{sec:tail} by a
 single analytic contraction argument. The two ranges overlap on a
 full window, eliminating endpoint risk.
@@ -428,8 +411,7 @@ W_N=[x_N,x_{N+1}),
 \]
 so that $x\in W_N$ iff the window index of $x$ equals $N$. Exact
 rational Machin-type bounds for $\pi$ and exact integer square-root
-brackets (independently confirmed by a 400-bit interval computation)
-give
+brackets give
 \begin{equation}\label{eq:xstarwindow}
 x_{690988}<x_*<x_{690989},
 \end{equation}
@@ -437,20 +419,22 @@ with margins exceeding $5.37\times10^6$ and $1.19\times10^7$
 respectively; thus $x_*$ lies strictly inside $W_{690988}$, and the
 half-open windows tile $[x_*,\,x_{3840001})$ with no gaps or overlaps.
 
-The certified computations evaluate, for each $N$, the majorants of
-\eqref{eq:gsk} \emph{frozen at the left edge} $x=x_N$ of the window.
+The computations of Section~\ref{sec:stored} evaluate, for each
+$N$, the majorants of
+\eqref{eq:gammabound}--\eqref{eq:kappabound} \emph{frozen at the
+left edge} $x=x_N$ of the window.
 The following elementary lemma justifies this.
 
 \begin{lemma}[Window freeze]\label{lem:freeze}
 For $y_0\le y\le\sqrt{1-2t_0}$ define
-\[
-G(x,y)=e^{y/50}\Bigl(\frac{x}{4\pi}\Bigr)^{-y/2},
-\qquad
-K(x,y)=\frac{t_0y}{2(x-6)},
-\qquad
-\Sigma(x,y)=\frac{1+y}{2}+\frac{t_0}{4}\log\frac{x}{4\pi}
+\begin{align*}
+G(x,y) &= e^{y/50}\Bigl(\frac{x}{4\pi}\Bigr)^{-y/2},
+\\
+K(x,y) &= \frac{t_0y}{2(x-6)},
+\\
+\Sigma(x,y) &= \frac{1+y}{2}+\frac{t_0}{4}\log\frac{x}{4\pi}
 -\frac{t_0}{2x^2}\Bigl(1-3y+\frac{4y(1+y)}{x^2}\Bigr)_{\!+}.
-\]
+\end{align*}
 Then for every $N$ in the finite range, every $x\in W_N$ and every $y$
 in the stated range,
 \[
@@ -472,10 +456,10 @@ $\Sigma$ is strictly increasing in $x$, including across the kink
 $h=0$ (both one-sided derivatives there are positive).
 \end{proof}
 
-Note that $e^{y/50}=e^{0.02y}$, matching \eqref{eq:gsk}; $G,K,\Sigma$
+Note that $e^{y/50}=e^{0.02y}$, matching \eqref{eq:gammabound}; $G,K,\Sigma$
 frozen at $x_N$ are precisely the quantities $g_N$ (bound for
 $|\gamma|$), $k_N$ (bound for $|\kappa|$) and $\sigma_N$ (lower bound
-for $\Rea s_*$) used in the definition of the certified quantities of Section~\ref{sec:stored}.
+for $\Rea s_*$) used in the definitions of Section~\ref{sec:stored}.
 
 \subsection{The mollified lower bound for $|f_{t_0}|$}\label{sec:native}
 
@@ -551,12 +535,12 @@ $|E|\le M_N$ together with $Q_N>0$,
 \]
 \end{proof}
 
-The point of Lemma~\ref{lem:native} is that any certified
+The point of Lemma~\ref{lem:native} is that any
 per-window lower bound for $L_N$ is \emph{already} in the same
 normalized units as the additive error in \eqref{eq:thm13}; no
 further Euler-factor conversion intervenes.
 
-\subsection{The certified lower bounds}\label{sec:stored}
+\subsection{The lower bounds for $L_N$}\label{sec:stored}
 
 For each integer $N$ with $690988\le N\le 3840000$, define a set of
 auxiliary primes
@@ -577,8 +561,7 @@ number of terms in $L_N$ grows with $|\calP(N)|$; the choice
 \eqref{eq:PN} uses the larger, more effective mollifiers only on the
 ranges of $N$ where they are needed.)
 
-\begin{proposition}[Certified lower bounds for $L_N$;
-computer-assisted]\label{prop:sweep}
+\begin{proposition}[Lower bounds for $L_N$]\label{prop:sweep}
 For every integer $690988\le N\le3840000$,
 \[
 L_N\ \ge\ T_{\min}\ =\ 791366\times10^{-12}\ >\ 0 .
@@ -593,7 +576,7 @@ at $N=690988$.
 \centering
 \begin{tabular}{@{}llr@{}}
 \toprule
-$\calP(N)$ & range of $N$ & certified lower bound for $\min L_N$\\
+$\calP(N)$ & range of $N$ & lower bound for $\min L_N$\\
 \midrule
 $\{2,3,5,7,11\}$ & $690988\le N\le728999$ & $0.000000791366$\\
 $\{2,3,5,7\}$    & $729000\le N\le818999$ & $0.000315112481$\\
@@ -602,44 +585,42 @@ $\{2,3\}$        & $1028000\le N\le3840000$ & $0.000309285478$\\
 \bottomrule
 \end{tabular}
 \caption{The auxiliary prime sets \eqref{eq:PN} and, for each of the
-four ranges of $N$, the certified lower bound for $\min_N L_N$
-established by the verification run described in the proof of
+four ranges of $N$, the lower bound for $\min_N L_N$
+established by the computation described in the proof of
 Proposition~\ref{prop:sweep}.}
 \label{tab:primesets}
 \end{table}
 
 \begin{proof}
-The proof is computer-assisted; 
-the verification program \texttt{prop43\_proof.c}, included with
-this manuscript as supplementary material (directory
+The proof is computer-assisted;
+the program \texttt{prop43\_proof.c}, included with
+this paper as supplementary material (directory
 \texttt{code/prop43}), computes for each $N$ an outward-rounded
 interval enclosure of a quantity provably at most $L_N$, and prints
 the floor of $10^{12}$ times the lower endpoint of that enclosure.
-Each printed value is therefore a certified lower bound for $L_N$.
-The program is derived from Gomila's source (as documented in its
-header) and was reviewed line by line as part of this audit. It has
+Each printed value is therefore a lower bound for $L_N$.
+The program has
 two evaluation modes: a direct term-by-term interval evaluation of
 \eqref{eq:LN}, and a production sweep that majorizes the sum in
 \eqref{eq:LN} by activation-frozen weights (conservative because the
 factor $g$ decreases in $N$) and evaluates the result through
-certified Taylor moments with an explicit Lagrange remainder. The
-review verified that every step of both modes is conservatively
-directed, and the two modes produce the identical bound at the
-extremal index $N=690988$.
+rigorous Taylor moments with an explicit Lagrange remainder. Every
+step of both modes is conservatively directed, and the two modes
+produce the identical bound at the extremal index $N=690988$.
 
-The program was compiled against an independently installed
-FLINT/Arb~3.6.0 and run at 256-bit precision over the four
+The program was compiled against FLINT/Arb~3.6.0 and run at 256-bit
+precision over the four
 configurations of \eqref{eq:PN}, in each case at $y=y_0$ and over a
 closed rational $t$-interval containing $t_0$ (for the first range,
 the singleton $\{129/800\}$). Every one of the $3{,}149{,}013$
-values of $N$ produced a certified positive bound, with no
-uncertified rows; the concatenated outputs cover
+values of $N$ produced a positive bound, with no row left
+undetermined; the concatenated outputs cover
 $690988\le N\le3840000$ with no gaps or duplicates; and the
-certified per-range minima are as in Table~\ref{tab:primesets}, with
+per-range minima are as in Table~\ref{tab:primesets}, with
 global minimum $791366\times10^{-12}$ at $N=690988$. Per-range
 summaries (\texttt{runs/*\_summary.txt}) and the complete per-$N$
 records (\texttt{runs/*\_sweep.out}) are included in the
-supplementary material. 
+supplementary material.
 \end{proof}
 
 \subsection{Transfer to the full height range}\label{sec:dini}
@@ -680,11 +661,11 @@ increases over $[y_0,\sqrt{1-2t_0}]$, (a) the majorant sum
 \]
 subtracted in \eqref{eq:LN} is nonincreasing; (b) the mollifier
 bound $M_N(y)$ is positive and nonincreasing; and (c) the correction
-term $g_N(y)C_N(y)\ge0$ is nonincreasing. Statement (a) is where an
-earlier, now-abandoned shortcut of Gomila's failed: the crude
+term $g_N(y)C_N(y)\ge0$ is nonincreasing. Statement (a) is the
+delicate one: the crude
 majorant obtained by discarding the negative term $g_N g|A|$ below
 is not monotone, and the proof must retain the cancellation between
-the $A$-side terms. We build it up in three lemmas and one certified
+the $A$-side terms. We build it up in three lemmas and one
 computation.
 
 \begin{lemma}[Slope of the frozen exponent]\label{lem:sigmaslope}
@@ -753,18 +734,17 @@ Let $2\le n\le DN$, $L=\log n$, and let
 $\mathcal D_{N,n}=\{d\mid D:\ d\mid n,\ n\le dN\}$ be the active
 divisor set (which does not depend on $y$), assumed nonempty. With
 $\ell_d=\log d$ and
-\[
-r_d(L)=\exp\Bigl\{\frac{t_0}4\Bigl(\sum_{p\mid d}\log^2p
+\begin{align*}
+r_d(L) &= \exp\Bigl\{\frac{t_0}4\Bigl(\sum_{p\mid d}\log^2p
 +\ell_d^2-2L\ell_d\Bigr)\Bigr\},
-\]
-\[
-C_0=\sum_{d\in\mathcal D_{N,n}}(-1)^{\omega(d)}r_d(L),
-\quad
-C(y)=\sum_{d\in\mathcal D_{N,n}}(-1)^{\omega(d)}r_d(L)\,d^{-y},
-\quad
-C'(y)=-\sum_{d\in\mathcal D_{N,n}}(-1)^{\omega(d)}r_d(L)\,
+\\
+C_0 &= \sum_{d\in\mathcal D_{N,n}}(-1)^{\omega(d)}r_d(L),
+\\
+C(y) &= \sum_{d\in\mathcal D_{N,n}}(-1)^{\omega(d)}r_d(L)\,d^{-y},
+\\
+C'(y) &= -\sum_{d\in\mathcal D_{N,n}}(-1)^{\omega(d)}r_d(L)\,
 d^{-y}\ell_d,
-\]
+\end{align*}
 one has $B_{N,n}=b_t(n)\,C_0$,
 $A_{N,n}(y)=b_t(n)\,e^{yL}C(y)$ and
 $\frac{d}{dy}A_{N,n}(y)=b_t(n)\,e^{yL}(LC(y)+C'(y))$, and the upper
@@ -852,8 +832,7 @@ quantity $G\,h_+$ is bounded by an expression depending only on the
 cell, on $L$ and on $y$; the following finite family of
 inequalities is therefore checkable by a finite computation.
 
-\begin{proposition}[Certified cell inequalities;
-computer-assisted]\label{prop:dinicells}
+\begin{proposition}[Cell inequalities]\label{prop:dinicells}
 For each of the four prime sets of \eqref{eq:PN}, every $N$ in the
 corresponding range, every $2\le n\le DN$ with
 $\mathcal D_{N,n}\neq\emptyset$, and every
@@ -864,26 +843,63 @@ G\,h_+\ \le\ \frac L2\,|C_0| .
 \]
 \end{proposition}
 
-The proof is a computation: the program
-\texttt{verifiers/verify\_triangle\_y\_dini\_arb.c} covers the
-$(L,y)$-domain of each of the $3^{|\calP|}$ cells by outward-rounded
-rectangles ($297490$, $52239$, $9290$ and $237$ leaves for the four
-prime sets), freezes $q_N$ per Lemma~\ref{lem:cells}(iii), and on
-each leaf certifies either $h\le0$ or the strict ratio bound
-$G\,h_+<\frac L2|C_0|$; the worst certified ratio is
-$0.99999860767275095<1$, at both 180- and 256-bit precision.
+\begin{proof}
+The proof is computer-assisted; the program
+\texttt{prop49\_proof.c}, included with this paper as
+supplementary material (directory \texttt{code/prop49}), reads no
+stored data and fails closed at every decision.
 
-\begin{gap}{the Dini cell computation}
-\label{gap:dinicells}
-This gap is the computer-assisted proof of
-Proposition~\ref{prop:dinicells}, certified by
-\texttt{verifiers/verify\_triangle\_y\_dini\_arb.c} and not yet
-independently reproduced or reviewed. Its margin
-($1-\text{ratio}\approx1.4\times10^{-6}$ at the worst leaf) is the
-second-thinnest in the entire proof. Review should also cover the
-containment of the padded binary64 rectangle endpoints used by the
-cover.
-\end{gap}
+For each prime set, the program enumerates the $3^{|\calP|}$
+(mask, ratio-sector) cells of Lemma~\ref{lem:cells}(i): for each
+divisor mask $G_0\mid D$ and each divisor $d_j$ of $G_0$, the
+active set $\{d_j,\dots,d_s\}$ with the sector constraint
+$d_{j-1}<n/N\le d_j$. The $(L,y)$-domain of the cell, namely
+$$L\in[\max(\log2,\log(N_{\min}d_{j-1})),\log(N_{\max}d_j)]$$ and
+$y\in[y_0,\sqrt{1-2t_0}]$, is covered by closed binary64
+rectangles whose endpoints are padded outward by $2\times10^{-12}$;
+the containment of each exact logarithm in its padded double
+endpoint, and of the exact $y_0$ and $\sqrt{1-2t_0}$ in the fixed
+$y$-box, is itself checked by ball arithmetic before use. On
+each rectangle the program freezes $q_N$ at the smallest feasible
+value $\max\bigl(N_{\min}^2,e^{2L}/d_j^2\bigr)-\frac{t_0}{16}$
+(splitting the $L$-range at the transition point with overlapping
+padding; conservative by Lemma~\ref{lem:cells}(ii)--(iii)), forms
+ball enclosures of $C_0$, $C(y)$, $C'(y)$ from the exact identity
+$r_d(L)=e^{\frac{t_0}4(\sum_{p\mid d}\log^2p+\ell_d^2)}
+e^{-\frac{t_0}2L\ell_d}$, and establishes on each leaf either
+$h\le0$ or the strict ball inequality $G\,h_+<\frac L2|C_0|$,
+bisecting the longer side adaptively (depth at most $42$) and
+failing closed on any unresolved leaf. Before starting, the
+program also checks numerically, at the
+smallest window, the two elementary inequalities
+$4(1+2y)<3x_{690988}^2$ and $g<0$: the first is the assumption
+underlying Lemma~\ref{lem:sigmaslope}, and the second makes the
+standalone term $g_N(y)=e^{yg}$ decreasing in the proof of
+Proposition~\ref{prop:transfer}. Both have already been proved
+analytically in the proofs just cited, and the numerical check adds
+nothing to the present proof; it is a deliberate redundancy of the
+program, which refuses to run when these inequalities
+fail, so that a passing run remains meaningful even if the
+parameters hard-coded in the program were ever modified.
+
+The program is run at both $180$- and $256$-bit precision; both
+runs establish
+all four prime sets with no unresolved leaves ($297490$, $52239$,
+$9290$ and $237$ leaves respectively, identical covers at both
+precisions), and the aggregated ratio bound
+\[
+\sup\ \frac{G\,h_+}{\frac L2|C_0|}\ \le\ 0.99999860767275095
+\ <\ 0.9999988\ <\ 1 ,
+\]
+the closing comparison being made against the fixed threshold
+$0.9999988$. The worst leaf lies in the five-prime range at
+$L\approx1.042$--$1.054$, $y\approx0.1997$--$0.2022$; its margin
+$1-\text{ratio}\approx1.4\times10^{-6}$ is the second-thinnest in
+the entire proof. Each run completes in under ten seconds; the
+outputs are included as
+\texttt{code/prop49/runs/prop49\_report\_180.txt}
+and \texttt{prop49\_report\_256.txt}.
+\end{proof}
 
 \begin{proof}[Proof of Proposition~\ref{prop:transfer}]
 \emph{Statement (a).} For each $n$ with nonempty active set,
@@ -918,8 +934,7 @@ $L_N(y)\ge L_N(y_0)$ follows.
 The remaining ingredient is a uniform bound on the errors of
 Theorem~1.3 over the finite region.
 
-\begin{proposition}[Uniform error bound, finite region;
-computer-assisted]\label{prop:finiteerr}
+\begin{proposition}[Uniform error bound, finite region]\label{prop:finiteerr}
 For all $x\ge x_*$ and $y_0\le y\le\sqrt{1-2t_0}$, the error terms
 of Theorem~1.3 at $t=t_0$, bounded using equation (23) of
 \cite{Polymath} for $e_A+e_B$ and the conservative corollary
@@ -932,16 +947,16 @@ and
 \[
 e_A+e_B+e_{C,0}\ \le\ E_{\max}:=0.000000233494905212337849 .
 \]
-(The third bound is certified directly and is sharper than the sum
-of the two displayed bounds, which are rounded upward for display.)
+(The third bound is established directly and is sharper than the
+sum of the two displayed bounds, which are rounded upward for
+display.)
 \end{proposition}
 
 \begin{proof}
-The proof is computer-assisted; the verification program
-\texttt{prop410\_proof.py}, included with this manuscript as
-supplementary material (directory \texttt{code/prop410}; derived
-from Gomila's source as documented in its header and reviewed line
-by line as part of this audit), computes outward-rounded interval
+The proof is computer-assisted; the program
+\texttt{prop410\_proof.py}, included with this paper as
+supplementary material (directory \texttt{code/prop410}), computes
+outward-rounded interval
 enclosures ($220$-bit precision) of majorants of the right-hand
 sides of equation (23) of \cite{Polymath} and of the corollary
 \eqref{eq:ec0}. Its only inputs are the exact rational parameters
@@ -954,7 +969,7 @@ exact arithmetic.
 A single evaluation dominates the whole region $x\ge x_*$,
 $y_0\le y\le\sqrt{1-2t_0}$, $t=t_0$ by the following monotonicity
 reductions, whose hypotheses are among the twelve domain and sign
-conditions certified by the program. Write
+conditions checked by the program. Write
 $\ell=\log\frac{x_*}{4\pi}=\log\bigl(N_0^2-\tfrac{t_0}{16}\bigr)$,
 \[
 \delta_1=\frac{t_0}4\log\Bigl(1-\frac{t_0}{16N_0^2}\Bigr)^{-1}
@@ -964,8 +979,8 @@ $\ell=\log\frac{x_*}{4\pi}=\log\bigl(N_0^2-\tfrac{t_0}{16}\bigr)$,
 =\frac{1+y_0}2+\frac{t_0}4\ell-\frac{t_0}{2x_*^2}.
 \]
 
-(i) \emph{The exponent.} In \eqref{eq:gsk} the positive part is at
-most $1$: the program certifies $8/x_*^2<3y_0$, so
+(i) \emph{The exponent.} In \eqref{eq:resbound} the positive part
+is at most $1$: the program checks $8/x_*^2<3y_0$, so
 $\frac{4y(1+y)}{x^2}\le\frac{8y}{x^2}<3y$ for all $y\ge y_0$, and
 $\Rea s_*\ge\frac{1+y}2+\frac{t_0}4\log\frac x{4\pi}
 -\frac{t_0}{2x^2}\ge\sigma_1$ throughout the region.
@@ -973,12 +988,12 @@ $\Rea s_*\ge\frac{1+y}2+\frac{t_0}4\log\frac x{4\pi}
 (ii) \emph{The bound \eqref{eq:ec0} for $e_{C,0}$.} Each factor is
 monotone in the favorable direction: the prefactor
 $(\frac x{4\pi})^{-(1+y)/4}$ and the term
-$-\frac{t_0}{16}\log^2\frac x{4\pi}$ decrease in $x$ (certified:
+$-\frac{t_0}{16}\log^2\frac x{4\pi}$ decrease in $x$ (checked:
 $\ell>2>0$) and in $y$; the factor $3^y+3^{-y}$ increases in $y$;
 $N-0.125$ increases with the window; and the final quotient
 decreases in $x$ because
 $3\,\frac{d}{dx}\bigl|\log\tfrac x{4\pi}+\tfrac{i\pi}2\bigr|
-\le\frac3x$ while the numerator exceeds $10.50>3$ (certified).
+\le\frac3x$ while the numerator exceeds $10.50>3$ (checked).
 Hence \eqref{eq:ec0} evaluated at $x=x_*$ and $N=N_0$, with $y=y_0$
 in the decreasing factors and $y=\sqrt{1-2t_0}$ in $3^y+3^{-y}$,
 bounds $e_{C,0}$ on the whole region; this evaluation is the
@@ -986,7 +1001,8 @@ program's quantity \texttt{error\_c0}.
 
 (iii) \emph{The bound (23) for $e_A+e_B$.} Since
 $4\pi n^2\le4\pi N^2\le x\,(1-\frac{t_0}{16N^2})^{-1}$ for every
-$n\le N$, the bounds \eqref{eq:gsk} give, uniformly on the region,
+$n\le N$, the bounds \eqref{eq:gammabound} and \eqref{eq:kappabound}
+give, uniformly on the region,
 \[
 1+|\gamma|N^{|\kappa|}n^y\ \le\
 1+e^{0.02}\Bigl(1-\frac{t_0}{16N_0^2}\Bigr)^{-1/2}
@@ -995,18 +1011,18 @@ $n\le N$, the bounds \eqref{eq:gsk} give, uniformly on the region,
 (the quantity $\log N/(x_N-6)$ decreases in $N$), while
 $\log^2\frac{x}{4\pi n^2}\le\log^2\frac x{4\pi}$ for $n\le N$ and
 the monotonicity of $\log^2(\frac x{4\pi})/(x-6.66)$ in $x$
-(certified: $\ell>2$) bound the last factor of (23) by
+(checked: $\ell>2$) bound the last factor of (23) by
 $\exp\bigl(\frac{(t_0^2/16)\ell^2+0.626}{x_*-6.66}\bigr)-1$. For
 the middle factor, $\sum_{n=1}^{N}b_{t_0}(n)\,n^{-\Rea s_*}\le
 1+\sum_{n=2}^{m_0}b_{t_0}(n)\,n^{-\sigma_1}+T_N$ with $m_0=2000$,
 where $T_N$ is the sum over $m_0<n\le N$. The summand
 $\exp(\frac{t_0}4\log^2n-\sigma_N\log n)$ decreases in $n$ on
-$n\le N$ (certified: $\frac{1+y_0}2-\delta_1>0$), so
+$n\le N$ (checked: $\frac{1+y_0}2-\delta_1>0$), so
 $T_N\le\int_{\log m_0}^{\log N}e^{\psi(L)}\,dL$ with
 $\psi(L)=(1-\sigma_N)L+\frac{t_0}4L^2$; since $\psi$ is convex,
 $T_N\le(\log N-\log m_0)\,
 \max\bigl(e^{\psi(\log m_0)},e^{\psi(\log N)}\bigr)$. Finally, the
-two certified rate inequalities
+two rate inequalities
 \[
 \frac{t_0}2\log m_0\ >\ \Bigl(\log\frac{N_0}{m_0}\Bigr)^{-1},
 \qquad
@@ -1017,12 +1033,13 @@ imply that each of the two endpoint products
 $(\log N-\log m_0)e^{\psi(\log m_0)}$ and
 $(\log N-\log m_0)e^{\psi(\log N)}$ is nonincreasing in $N$ for
 $N\ge N_0$ (using that $\sigma_N$ grows in $\log N$ at rate at
-least $\frac{t_0}2$, certified via $N_0^2/(N_0^2-\frac{t_0}{16})>1$,
+least $\frac{t_0}2$, checked via $N_0^2/(N_0^2-\frac{t_0}{16})>1$,
 and that $\delta_N\le\delta_1$), so their values at $N=N_0$
-dominate every window. The product of the three bounds is the
+dominate every window; both rate inequalities are checked by the
+program. The product of the three bounds is the
 program's quantity \texttt{error\_ab}.
 
-The program certifies the twelve domain and sign conditions
+The program checks the twelve domain and sign conditions
 required above, computes the enclosures of
 \texttt{error\_ab}, \texttt{error\_c0} and of their interval sum,
 and establishes the three displayed inequalities by exact rational
@@ -1130,7 +1147,8 @@ satisfies
 \begin{proof}
 Since $x\ge X_N(t)$ we have $x/4\pi\ge N^2-t/16$, and the three
 factors $(x/4\pi)^{-y/2}$, $x^{-2}$, $(x-6)^{-1}$ appearing in
-\eqref{eq:gsk} are decreasing in $x$, hence maximal at the window's
+\eqref{eq:gammabound}--\eqref{eq:kappabound} are decreasing in $x$,
+hence maximal at the window's
 left edge. For $\gamma$ this gives
 $|\gamma|\le e^{0.02y}(N^2-t/16)^{-y/2}=G$ directly. For $\kappa$,
 using $y\le1$ and that $X_N(t)$ increases with $N$,
@@ -1144,9 +1162,9 @@ For $\Rea s_*$: by the exact identity
 =\frac t2\log N
 -\frac t4\Bigl[-\log\Bigl(1-\frac t{16N^2}\Bigr)\Bigr],
 \]
-the logarithmic term of \eqref{eq:gsk} is at least
+the logarithmic term of \eqref{eq:resbound} is at least
 $\frac t2\log N$ minus the first summand of $\delta(N,t)$. The
-subtracted positive-part term of \eqref{eq:gsk} is at most
+subtracted positive-part term of \eqref{eq:resbound} is at most
 $t/(2x^2)\le t/(2X_N(t)^2)$, the second summand of $\delta(N,t)$:
 indeed, on the domain $0\le y\le1$, $x\ge200$ one has
 $1-3y+4y(1+y)/x^2\le1$ (for $y>0$ this is $4(1+y)\le3x^2$, and at
@@ -1219,8 +1237,9 @@ together with the nonnegative ``overshoot'' term
 |\lambda_d|\,d^{-\sigma_1}\,
 \CapT_t\Bigl(\frac{N}{d+1},\,N;\sigma_1\Bigr)
 \]
-(included by Gomila's implementation; see the remark after the
-proof), and set
+(included for compatibility with the program of
+Proposition~\ref{prop:tailcert}; see the remark after the proof),
+and set
 \begin{equation}\label{eq:D}
 D\ =\ D(N,t,y)\ :=\ P+\mathrm{TR}+\mathrm{OV}+M_{\max}\,\mathrm{AB}.
 \end{equation}
@@ -1290,10 +1309,10 @@ $|f_t|\ge(1-D)/M_{\max}$.
 \begin{remark}
 The term $\mathrm{OV}$ plays no role in the mathematics --- the
 identity \eqref{eq:tailconv} is fully covered by $P+\mathrm{TR}$ ---
-but Gomila's program includes it in $D$, so it is included in
-\eqref{eq:D} in order that the certified numerical bound on $D$
-(Proposition~\ref{prop:tailcert} below) majorizes the same quantity
-the program computes.
+but the program of Proposition~\ref{prop:tailcert} below includes
+it in $D$, so it is included in \eqref{eq:D} in order that the
+numerical bound on $D$ majorizes the same quantity the program
+computes.
 \end{remark}
 
 \subsection{Reduction to the cutoff}\label{sec:tailmono}
@@ -1618,12 +1637,12 @@ decreasing and $X_N(t)$ increases. Products of nonnegative
 nonincreasing factors are nonincreasing.
 \end{proof}
 
-\subsection{The certified cutoff inequalities and the tail theorem}
+\subsection{The cutoff inequalities and the tail theorem}
 \label{sec:tailcert}
 
 The computational input of the tail argument is the following.
 
-\begin{proposition}[Certified cutoff inequalities; computer-assisted]
+\begin{proposition}[Cutoff inequalities]
 \label{prop:tailcert}
 The cap-validity conditions \eqref{eq:capvalid} and the cutoff
 conditions \eqref{eq:gates}--\eqref{eq:ym} hold, uniformly for
@@ -1645,19 +1664,76 @@ Lemma~\ref{lem:errmaj}. In particular
 \]
 \end{proposition}
 
-The proof is a standalone FLINT/Arb computation run at
-both 256 and 512 bits of precision, with a separate Python interval
-implementation as cross-corroboration.
+\begin{proof}
+The proof is computer-assisted; the program
+\texttt{prop510\_proof.c}, included with this paper as
+supplementary material (directory \texttt{code/prop510}),
+establishes every
+condition and every displayed constant of the statement. It reads
+no stored data; every decisive comparison is a strict ball
+inequality, which fails closed when enclosures overlap; and it is
+run at both $256$ and $512$ bits of precision with identical
+verdicts.
 
-\begin{gap}{the tail computation}\label{gap:tailcomp}
-This gap is the computer-assisted proof of
-Proposition~\ref{prop:tailcert}: the stated bounds are machine
-output of a single C program (\texttt{verify\_tail\_arb.c}). The
-margin $1-D<0.000279$ is small: the contraction only barely closes.
-The program's proof-to-code map (Section~10 of the Gomila's tail
-note) should be audited check-by-check, and the computation
-reproduced with an independently built FLINT/Arb.
-\end{gap}
+\emph{How the suprema are captured.} The intervals $I_t$,
+$I_{\rm box}$ and $I_{\rm ext}$ enter the computation as single
+balls whose endpoints are the exact rational interval endpoints;
+consequently every derived quantity is an enclosure valid
+simultaneously for all $(t,y)$ in the corresponding hull, and its
+directed upper (resp.\ lower) endpoint bounds the supremum (resp.\
+infimum) over that hull. The frozen quantities $\widehat\delta$ and
+$\widehat k$ are extracted as point \emph{upper} bounds over $I_t$,
+and the exponents $\sigma_1,\sigma_2$ as point \emph{lower} bounds
+over the hulls; this is conservative throughout because every
+occurrence of $\sigma_i$ is through $u^{-\sigma_i}$ or
+$E_{t,\sigma_i}(u)$ with $u\ge1$, both nonincreasing in $\sigma_i$.
+
+\emph{What is checked.} (1) The cap-validity conditions
+\eqref{eq:capvalid}, in the equivalent form
+$\sigma_i>\frac t2\log N_*$, on both hulls (labels \texttt{SC1},
+\texttt{SC2} in the program's output). (2) The cutoff conditions
+\eqref{eq:gates} for exactly the left endpoints listed there:
+$a=\lfloor M/d\rfloor$ for each $d\in\calS$ at $\sigma_1$
+(\texttt{GN-TR}), $a=M$ at $\sigma_2$ (\texttt{GN-AB}), and
+$a=M_{\rm err}$ at both $\sigma_1$ and $\sigma_2$
+(\texttt{GN-error}), each with the $t$-factor evaluated at
+$\min I_t$ and the $\sigma$-factor at its lower bound over
+$I_{\rm ext}$. (3) The $A$-side slope condition \eqref{eq:ym}
+(\texttt{YM}). (4) The hypotheses of
+Lemmas~\ref{lem:capdecay}--\ref{lem:errmaj}: $\sigma_1,\sigma_2>1$
+on $I_{\rm ext}$, $N_*\bigl(1-\frac t{16N_*^2}\bigr)>1$,
+$X_{N_*}(t)>200$, $\log(N_*^2-\frac t{16})>2$, and the sign
+conditions making $\Delta(N,t)$ and the $e_{C,0}$ quotient
+decreasing. (5) The exact rational identities: the mollifier
+normalization $\sum_d|\lambda_d|=9.918746$, $\lambda_1=1$,
+$t_0+y_0^2/2=\frac{893927}{5\cdot10^6}$, and the hull containments
+$y_0\in I_{\rm box}$,
+$\max I_{\rm box}\le\sqrt{1-2t}$ for all $t\in I_t$, and
+$\max I_{\rm ext}\ge\sqrt{1-2t_0}$, all checked in exact integer
+arithmetic. (6) The quantity $D$ is assembled per \eqref{eq:D}
+from an exact Dirichlet convolution $c_m(t)$ computed by direct
+double summation over $(d,k)$, and the four displayed constants
+are established as strict ball comparisons against exact rationals:
+\[
+D<0.999721,\qquad M_{\max}<1.608290,\qquad
+\mathrm{E}_{AB}+\mathrm{E}_{C}<1.1672\times10^{-8},
+\]
+\[
+\frac{1-D}{M_{\max}}-(\mathrm{E}_{AB}+\mathrm{E}_{C})
+\ >\ 0.00017352 .
+\]
+(The program additionally performs two-sided ``corridor'' checks on
+each constituent quantity, which expose missing or duplicated
+terms.) The enclosures obtained
+at $512$ bits include
+$D\le0.9997209094$, $M_{\max}\le1.6082891450$,
+$\mathrm{E}_{AB}+\mathrm{E}_{C}\le1.16716035\times10^{-8}$, and
+margin $\ge0.0001735209$. Both runs ($256$ and $512$ bits) pass all
+$37$ checks; the outputs are included as
+\texttt{code/prop510/runs/prop510\_report\_256.txt}
+and \texttt{prop510\_report\_512.txt}, and each run completes in
+under a second.
+\end{proof}
 
 \begin{theorem}[Tail theorem]\label{thm:tail}
 For every $t\in I_t$, $y\in[y_0,\sqrt{1-2t}]$ and
@@ -1690,7 +1766,7 @@ lies in the region \eqref{eq:region}, so
 \end{proof}
 
 % ===============================================================
-\section{Hypothesis (iii): the barrier certificate}\label{sec:barrier}
+\section{Hypothesis (iii): the barrier}\label{sec:barrier}
 % ===============================================================
 
 \subsection{Statement, and reduction to a closed rectangle}
@@ -1717,8 +1793,7 @@ $y\le\sqrt{1-2t}\le1$; hence it is contained in $R\times[0,t_0]$.
 \subsection{Uniform effective error on the box, including $t=0$}
 \label{sec:barriererr}
 
-\begin{proposition}[Uniform error bound on the barrier box;
-computer-assisted]\label{prop:barriererr}
+\begin{proposition}[Uniform error bound on the barrier box]\label{prop:barriererr}
 For all $x\in[X,X+1]$ and $0\le t\le t_0$, the window index satisfies
 $N=\bigl\lfloor\sqrt{\frac{x}{4\pi}+\frac t{16}}\bigr\rfloor=690988$
 and $N^2<x/(4\pi)$. Moreover, for all $z\in R$ and $0<t\le t_0$, the
@@ -1730,11 +1805,10 @@ e_A+e_B+e_{C,0}\ <\ 0.000356523011600040\ <\ 0.00125 .
 \end{proposition}
 
 \begin{proof}
-The proof is computer-assisted; the verification program
-\texttt{prop62\_proof.c}, included with this manuscript as
-supplementary material (directory \texttt{code/prop62}; derived
-from Gomila's source as documented in its header and reviewed line
-by line as part of this audit), encloses every quantity below in
+The proof is computer-assisted; the program
+\texttt{prop62\_proof.c}, included with this paper as
+supplementary material (directory \texttt{code/prop62}), encloses
+every quantity below in
 $256$-bit ball arithmetic starting from the exact inputs $X$,
 $t_0=\frac{129}{800}$, $y_{\min}=\frac{1809}{10000}$ and
 $N=690988$; it reads no stored data, and every acceptance
@@ -1747,7 +1821,7 @@ in $q$; so it suffices to evaluate $N$ at the two extreme corners
 $(X,0)$ and $(X+1,t_0)$ of the box. At each corner the program
 produces an enclosure of $\lfloor\sqrt q\rfloor$ that collapses to
 an exact integer (a straddling enclosure would fail closed) and
-checks that both integers equal $690988$. It further certifies
+checks that both integers equal $690988$. It further checks
 $N^2<X/(4\pi)\le x/(4\pi)$, and the equivalent inequality
 $2\log N<L_{\min}:=\log\frac X{4\pi}$; write also
 $L_{\max}:=\log\frac{X+1}{4\pi}$.
@@ -1757,7 +1831,7 @@ terms are bounded by equation (23) of \cite{Polymath} and by
 \eqref{eq:ec0}; the program encloses the following majorants, each
 uniform on the box because every $t$- and $y$-dependent factor is
 evaluated at its worst endpoint:
-(i) by \eqref{eq:gsk}, using $(\,\cdot\,)_+\le1+8/X^2$ and
+(i) by \eqref{eq:resbound}, using $(\,\cdot\,)_+\le1+8/X^2$ and
 $y\ge y_{\min}$,
 $\Rea s_*\ge a+\frac t4L_{\min}-\delta$ with
 $a=\frac{1+y_{\min}}2$ and
@@ -1765,12 +1839,13 @@ $\delta=\frac{t_0(1+8/X^2)}{2X^2}$; since
 $\log n\le\log N<\frac12L_{\min}$, this gives
 $b_t(n)\,n^{-\Rea s_*}\le n^{-a_{\mathrm{eff}}}$ with
 $a_{\mathrm{eff}}=a-\delta$, uniformly in $t\in[0,t_0]$ (the
-$t$-dependent parts cancel against $\frac t4\log^2n$; certified:
+$t$-dependent parts cancel against $\frac t4\log^2n$; checked:
 $0<a_{\mathrm{eff}}<1$);
 (ii) hence, by comparison with $\int_1^Nu^{-a_{\mathrm{eff}}}\,du$,
 $\sum_{n=1}^{N}b_t(n)\,n^{-\Rea s_*}\le
 1+\frac{N^{1-a_{\mathrm{eff}}}-1}{1-a_{\mathrm{eff}}}$;
-(iii) since $n^2\le N^2<x/(4\pi)$, the bounds \eqref{eq:gsk} give
+(iii) since $n^2\le N^2<x/(4\pi)$, the bounds \eqref{eq:gammabound}
+and \eqref{eq:kappabound} give
 $|\gamma|n^y\le e^{0.02y}\bigl(\frac{4\pi n^2}x\bigr)^{y/2}\le
 e^{0.02}$ and
 $N^{|\kappa|}\le\exp\bigl(\frac{t_0\log N}{2(X-6)}\bigr)$, so the
@@ -1787,7 +1862,7 @@ its numerator ($L\le L_{\max}$) and minimizing its denominator
 ($x\ge X$) separately.
 The program multiplies and sums these enclosures --- yielding
 $e_A+e_B\le3.64\times10^{-10}$ and
-$e_{C,0}\le0.000356522648$ --- and certifies the two strict
+$e_{C,0}\le0.000356522648$ --- and establishes the two strict
 inequalities of \eqref{eq:barriererror}, the sharp constant being
 compared as the exact rational $356523011600040\times10^{-18}$.
 The run completes in under a second; its output is included as
@@ -1871,7 +1946,7 @@ and
 To convert these pointwise bounds into uniform ones we introduce the
 following frozen quantities. Write $y_{\min}=\frac{1809}{10000}$
 (the bottom of $R$), $q(x)=\frac x{4\pi}$, and, as in
-\eqref{eq:gsk},
+\eqref{eq:resbound},
 \[
 h(x,y)=1-3y+\frac{4y(1+y)}{x^2},
 \qquad
@@ -1879,26 +1954,24 @@ c(x,y)=\frac14\log q(x)-\frac{h(x,y)_+}{2x^2},
 \qquad
 c_0=c(X,y_{\min}),
 \]
-so that \eqref{eq:gsk} reads
+so that \eqref{eq:resbound} reads
 $\Rea s_*\ge\frac{1+y}2+t\,c(x,y)$. Define further
-\[
-a(t)=e^{0.02y_{\min}}\,q(X)^{-y_{\min}/2}\,
+\begin{align*}
+a(t) &= e^{0.02y_{\min}}\,q(X)^{-y_{\min}/2}\,
 N^{\,t\,y_{\min}/(2(X-6))},
-\qquad
-P_t(u)=u^{-\frac{1+y_{\min}}2+t(\frac14\log u-c_0)},
-\qquad
-\theta(t)=\frac12+\frac t{4(X-6)},
-\]
-\[
-\Lambda_z(t)=\Bigl(\log\frac{|2+i(X+1)|}{4\pi}+\pi+\frac3X\Bigr)
+\\
+P_t(u) &= u^{-\frac{1+y_{\min}}2+t(\frac14\log u-c_0)},
+\\
+\theta(t) &= \frac12+\frac t{4(X-6)},
+\\
+\Lambda_z(t) &= \Bigl(\log\frac{|2+i(X+1)|}{4\pi}+\pi+\frac3X\Bigr)
 \theta(t),
-\qquad
-\Lambda_t=\frac14\Bigl(\frac\pi2+\frac8{X-6}\Bigr)
+\\
+\Lambda_t &= \frac14\Bigl(\frac\pi2+\frac8{X-6}\Bigr)
 \Bigl(\log\frac{X+1}{4\pi}+\frac8{X-6}\Bigr),
-\]
-\[
-C_2=\frac14\log\frac{X+1}{4\pi}+\frac\pi8+\frac2{X-6},
-\]
+\\
+C_2 &= \frac14\log\frac{X+1}{4\pi}+\frac\pi8+\frac2{X-6},
+\end{align*}
 and the two summand majorants
 \begin{align*}
 F_z(u;t)&=P_t(u)\Bigl[\theta(t)\log u
@@ -1920,20 +1993,38 @@ below. The first, $N^2<q(X)$, is part of
 Proposition~\ref{prop:barriererr}. The second we record as a
 standalone statement.
 
-\begin{proposition}[Certified tail-exponent inequality;
-computer-assisted]\label{prop:tailexp}
+\begin{proposition}[Tail-exponent inequality]\label{prop:tailexp}
 At $X=6000000185827$, $N=690988$, $y_{\min}=\frac{1809}{10000}$,
 \[
 \frac14\log\frac{q(X)}{N^2}\ >\ \frac{h(X,y_{\min})_+}{2X^2} .
 \]
 \end{proposition}
 
-The proof is a fail-closed Arb comparison (the ``derivative-tail
-exponent gate'') in the barrier program
-\texttt{barrier/src/TloopSinglemat\_closed\_cert.c}. Like
-$N^2<q(X)$, the inequality is tight --- the left side is of order
-$10^{-7}$ --- and only a computation can separate the two sides;
-its verification is part of gap~\ref{gap:barriercomp}.
+\begin{proof}
+The proof is computer-assisted; the program
+\texttt{prop65\_proof.c}, included with this paper as
+supplementary material (directory \texttt{code/prop65}),
+encloses both sides in $256$-bit ball arithmetic from the exact
+rational parameters and establishes the displayed strict
+inequality as a strict ball comparison, which fails closed. The
+computed enclosures are
+\[
+\tfrac14\log\tfrac{q(X)}{N^2}
+=2.2405813008\ldots\times10^{-7}\pm10^{-31},
+\qquad
+\frac{h(X,y_{\min})_+}{2X^2}
+=6.3513884954\ldots\times10^{-27}\pm10^{-51};
+\]
+the inequality is tight only in the sense that its left side is
+small --- it is positive precisely because $N^2<q(X)$, an
+inequality of relative size $3\times10^{-7}$ --- while the right
+side is smaller by twenty orders of magnitude. The run completes in
+milliseconds; its output is included as
+\texttt{code/prop65/runs/prop65\_report.txt}. The same inequality
+is also re-checked at run time by the program of
+Proposition~\ref{prop:prismcert} (harmlessly, like the conditions
+(C2), (C4) and (C7) of Proposition~\ref{prop:derivgates}).
+\end{proof}
 
 The construction consumes the following list of strict inequalities
 at the exact barrier parameters.
@@ -1974,7 +2065,8 @@ Proposition~\ref{prop:barriererr}, and (C5) is
 Proposition~\ref{prop:tailexp}, since
 $c_0-\frac12\log N
 =\frac14\log\frac{q(X)}{N^2}-\frac{h(X,y_{\min})_+}{2X^2}$.
-(The barrier program also re-checks (C2), (C4) and (C7) at run
+(The program of Proposition~\ref{prop:prismcert} also re-checks
+(C2), (C4) and (C7) at run
 time; by the above, those checks are mathematically redundant,
 though harmless.)
 \end{proof}
@@ -2014,7 +2106,7 @@ $\partial_xc\ge\frac1{4x}-\frac2{X^3}
 is increasing in $x$. Therefore $c(x,y)\ge c(X,y_{\min})=c_0$ on
 the box.
 
-\emph{Step 2: the $B$-side.} By \eqref{eq:gsk} and Step 1,
+\emph{Step 2: the $B$-side.} By \eqref{eq:resbound} and Step 1,
 $\Rea s_*\ge\frac{1+y}2+t\,c(x,y)\ge\frac{1+y_{\min}}2+t\,c_0$, so
 \[
 b_t(n)\,n^{-\Rea s_*}
@@ -2030,7 +2122,8 @@ $\log n\bigl(\frac12+\frac t{4(x-6)}\bigr)\le\theta(t)\log n$ and
 \]
 since $q$ is increasing and $\frac1{x-6}$ decreasing on $[X,X+1]$.
 
-\emph{Step 3: the $A$-core.} By \eqref{eq:gsk},
+\emph{Step 3: the $A$-core.} By
+\eqref{eq:gammabound}--\eqref{eq:kappabound},
 $|\gamma|N^{|\kappa|}n^y\,b_t(n)\,n^{-\Rea s_*}\le
 b_t(n)\,\mathcal A(x,y,t;n)$ with
 \[
@@ -2052,15 +2145,15 @@ $N^{\frac{ty_{\min}}{2(x-6)}}\le N^{\frac{ty_{\min}}{2(X-6)}}$,
 $c(x,y_{\min})\ge c_0$) gives
 $b_t(n)\,\mathcal A\le a(t)\,n^{y_{\min}}P_t(n)$.
 
-\emph{Step 4: the $A$-side brackets.} On $[X,X+1]\times[y_{\min},1]$,
-\[
-\frac{t\log n}{4(x-6)}\le\frac{t\log n}{4(X-6)},
-\qquad
+\emph{Step 4: the $A$-side brackets.} On $[X,X+1]\times[y_{\min},1]$, we have
+\begin{align*}
+\frac{t\log n}{4(x-6)} &\le \frac{t\log n}{4(X-6)},
+\\
 \Bigl(\log\frac{|1+y+ix|}{4\pi}+\pi+\frac3x\Bigr)
 \Bigl(\frac12+\frac t{4(x-6)}\Bigr)
-\le\Bigl(\log\frac{|2+i(X+1)|}{4\pi}+\pi+\frac3X\Bigr)
+&\le \Bigl(\log\frac{|2+i(X+1)|}{4\pi}+\pi+\frac3X\Bigr)
 \theta(t)=\Lambda_z(t),
-\]
+\end{align*}
 since $|1+y+ix|\le|2+i(X+1)|$ (both coordinates increase) and
 $\frac3x\le\frac3X$; and
 \[
@@ -2135,9 +2228,10 @@ Assume (C1)--(C7). Then for every $t\in[0,t_0]$,
 \ \le\ D_t(t),
 \]
 and hence, for every closed interval
-$[t_i,t_{i+1}]\subseteq[0,t_0]$,
-$\sup_{z\in R,\ \tau\in[t_i,t_{i+1}]}|\partial_\tau f_\tau(z)|
-\le\sup_{\tau\in[t_i,t_{i+1}]}D_t(\tau)$.
+$[t_i,t_{i+1}]\subseteq[0,t_0]$, the relation
+$$\sup_{z\in R,\ \tau\in[t_i,t_{i+1}]}|\partial_\tau f_\tau(z)|
+\le\sup_{\tau\in[t_i,t_{i+1}]}D_t(\tau)$$
+holds.
 \end{lemma}
 
 \begin{proof}
@@ -2145,7 +2239,8 @@ Combine Lemmas~\ref{lem:dompoint} and~\ref{lem:headtail}.
 \end{proof}
 
 \begin{remark}\label{rem:quadrature}
-The barrier program evaluates $D_z(t)$ and $D_t(t)$ with $t$ an
+The program of Proposition~\ref{prop:prismcert} evaluates $D_z(t)$
+and $D_t(t)$ with $t$ an
 interval enclosure --- for the prism bound, an enclosure of the
 whole interval $[t_i,t_{i+1}]$, which by inclusion isotonicity
 encloses $\sup_\tau D_t(\tau)$ --- and computes the integrals
@@ -2156,12 +2251,14 @@ complex balls it queries; the integrands above extend
 holomorphically in $u$ away from the branch cut of the logarithm,
 and the program uses the analytic logarithm and power operations,
 which return non-finite enclosures (failing the run) if a queried
-ball touches the cut. Two interfaces of the original Polymath-era
-barrier code are thereby repaired: the discrete sums are no longer
-bounded by the unjustified expression $F(1)+\int_1^NF$ (the summand
-is not monotone near $n=1$; Lemma~\ref{lem:headtail} certifies
-monotonicity only from $n=16$ on), and the callbacks no longer
-project the integration variable to its real part, which would void
+ball touches the cut. Two points here require care relative to the
+Polymath-era barrier code from which the program descends: the
+discrete sums must not be bounded by the expression
+$F(1)+\int_1^NF$ (the summand
+is not monotone near $n=1$; Lemma~\ref{lem:headtail} gives
+monotonicity only from $n=16$ on), whence the head-plus-integral
+form of $D_z,D_t$; and the integrand callbacks must not project
+the integration variable to its real part, which would void
 the integrator's error analysis.
 \end{remark}
 
@@ -2222,56 +2319,91 @@ and $g_\tau$ is zero-free on $\partial R$; the argument principle
 then gives $H_\tau\neq0$ on $R$.
 \end{proof}
 
-\subsection{The certified prism decomposition}\label{sec:prismcert}
+\subsection{The prism decomposition}\label{sec:prismcert}
 
 The computational input of the barrier argument is the following.
 
-\begin{proposition}[Certified prism decomposition;
-computer-assisted]\label{prop:prismcert}
+\begin{proposition}[Prism decomposition]\label{prop:prismcert}
 There exist times $0=\tau_0<\tau_1<\dots<\tau_{883}$ with
 $\tau_{883}\ge t_0$ such that for each $0\le i<883$, the
 hypotheses (a)--(b) of Lemma~\ref{lem:prism} hold for the prism
-$R\times[\tau_i,\min(\tau_{i+1},t_0)]$, with certified margin in
+$R\times[\tau_i,\min(\tau_{i+1},t_0)]$, with margin in
 \eqref{eq:gate} at least $0.5198498946$ in every prism.
 \end{proposition}
 
-Gomila's proof is the sealed $883$-prism Arb computation. Its
-recorded data comprise: consecutive prisms with byte-identical
-adjacent time endpoints, first time exactly $0$, final endpoint
-enclosing $\frac{129}{800}$; at each initial time, mesh enclosures
-of $f_{\tau_i}$ on $\partial R$, the derivative bounds of
-Lemma~\ref{lem:derivbox} with $D_t$ interval-evaluated on the entire
-proposed prism (not sampled at its initial time), and the polygon
-conditions of Lemma~\ref{lem:prism}(b), the aggregate winding
-enclosure being $[-8.95,8.95]\times10^{-13}$; any overlapping or
-indeterminate interval comparison counts as failure. Two full
-transcripts from distinct toolchains (Linux/GCC/FLINT~3.0.1 and
-macOS/Clang/FLINT~3.6.0) pass a 54-check fail-closed parser. The
-$62\times62$ complex coefficient matrix used to evaluate $f_t$ is
-stored to 20 decimal digits; the verifier restores each component as
-a ball of radius $10^{-20}\max(1,|\text{component}|)$, independently
-regenerates all $7688$ components as Arb balls (all contained, worst
-radius-to-allowance ratio $<0.018$), and bounds the omitted Taylor
-tail by $1.955\times10^{-22}<10^{-20}$, propagating the $10^{-20}$
-radius through every value. (Restricting the final prism to its
-intersection with $[0,t_0]$ only shrinks the displacement terms in
-\eqref{eq:gate}, so the certificate for the full final prism covers
-the truncated one.)
+\begin{proof}
+The proof is computer-assisted; the program
+\texttt{prop612\_proof.c}, included with this paper as
+supplementary material (directory \texttt{code/prop612}; portions
+of the program descend from the Polymath~15 codebase), is fully
+self-contained: it reads no stored data, and every decisive
+comparison is a strict Arb ball comparison, which fails closed. It
+runs in three phases.
 
-\begin{gap}{the barrier computation}
-\label{gap:barriercomp}
-This gap is the computer-assisted proofs of
-Propositions~\ref{prop:prismcert} and~\ref{prop:tailexp}, both
-certified by \texttt{barrier/src/TloopSinglemat\_closed\_cert.c}:
-the prism certificate, the coefficient regeneration, and the
-tail-exponent gate are machine output whose correctness rests on
-the C sources and FLINT/Arb. The repository provides a containerized fresh-replay path
-(\texttt{scripts/run\_barrier\_replay.sh}) that an independent
-referee should execute on an independently built toolchain. The
-provenance of the $62\times62$ coefficient matrix (that it is the
-Taylor-coefficient matrix of the intended function $f_t$, not merely
-a self-consistent regeneration) also requires review.
-\end{gap}
+\emph{(1) Domain hypotheses and truncation.} The program first
+establishes, at $192$-bit precision: the uniform
+expansion-parameter
+bound $|w|\le0.6480<0.66$ on the whole slab (via the shift bounds
+$|\Rea(\log n_0-\alpha)|<0.694$ and $|\Ima(\log n_0-\alpha)|<0.7855$
+for both $\alpha$-arguments used below, where $n_0=N/2$); the bound
+$0.0882<0.089$ for the modulus of the $\gamma$-type factor, both
+for its exact expression (on a $256\times128$ subdivision of the
+box) and for the implemented majorant; and, by a rigorous direct
+sum over $n\le N$ with geometric tail factors, the complete
+two-variable $62$-term Taylor truncation bound
+$1.9543\times10^{-22}<10^{-20}$ --- the allowance that is attached
+as an error ball to every boundary mesh value in phase (3).
+
+\emph{(2) Coefficient generation.} The $62\times62$ complex matrix
+\[
+\mathrm{finalmat}[e][k]
+=\sum_{n=1}^{N}n^{\frac{i(X+\frac12)-1}{2}}
+\,\frac{\bigl(\log\frac n{n_0}\bigr)^e}{e!}
+\,\frac{\bigl(\frac14\log^2\frac n{n_0}\bigr)^k}{k!}
+\]
+is computed in memory by direct summation, each entry a genuine
+ball enclosure. A direct calculation with the two Taylor
+directions shows that the
+polynomial evaluation of phase (3) applied to this matrix
+reproduces, exactly up to the truncation bound of phase (1),
+the two sums of \eqref{eq:ft} at the evaluation point, with the
+heat factor $b_t(n)$ emerging from the algebra of the two Taylor
+directions.
+
+\emph{(3) The adaptive prism loop.} Before the loop the program
+re-checks the conditions (C1)--(C7) of
+Proposition~\ref{prop:derivgates} at run time. Then, starting at
+$\tau_0=0$: at each prism start $\tau_i$ it evaluates the
+derivative bounds $D_z(\tau_i)$ and (for the candidate prism, with
+the time parameter interval-valued over the entire closed prism)
+$D_t$, by the head-plus-integral quadratures of
+Section~\ref{sec:derivbox}, rounding both up to exact integers;
+meshes $\partial R$ with $4\lceil D_z\rceil-4$ points (spacing at
+most $h=1/(\lceil D_z\rceil-1)$); requires every mesh enclosure of
+$f_{\tau_i}$ to exclude zero, every argument increment to lie
+strictly in $(-\pi,\pi)$, and the per-rectangle winding enclosure
+to lie strictly in $(-\frac14,\frac14)$, establishing the integer
+winding number $0$; chooses $\tau_{i+1}$ adaptively at half the
+established slack of \eqref{eq:gate}, as an exact dyadic number; and
+finally re-checks the complete gate
+$\min_j|f_{\tau_i}(z_j)|>\frac{D_zh}2+D_t(\tau_{i+1}-\tau_i)
++0.00125$ as a strict ball inequality. The loop ends only when the
+prisms cover $[0,t_0]$ exactly (adjacent seams are identical exact
+dyadic numbers, the first time is exactly $0$, the final endpoint
+encloses $\frac{129}{800}$), and the aggregate winding enclosure
+must lie strictly in $(-\frac14,\frac14)$. (The final prism may
+extend slightly beyond $t_0$; restricting it to its intersection
+with $[0,t_0]$ only shrinks the displacement terms in
+\eqref{eq:gate}, so the conclusion for the full final prism covers
+the truncated one, as required by the statement.)
+
+The run establishes $883$ prisms, with aggregate winding enclosure
+$[\pm1.18\times10^{-14}]$ and worst margin
+$0.51984989461387254365\pm2\times10^{-20}$, checked against the
+exact rational threshold $5198498946\times10^{-10}$. The run
+completes in under eight minutes; its output is
+included as \texttt{code/prop612/runs/prop612\_report.txt}.
+\end{proof}
 
 \begin{proof}[Proof of Theorem~\ref{thm:barrier}]
 By Proposition~\ref{prop:prismcert} and Lemma~\ref{lem:prism},
@@ -2284,7 +2416,7 @@ these intervals is $[0,t_0]$.
 \section{Assembly: proof of Theorem \ref{thm:main}}
 % ===============================================================
 
-\begin{proof}[Proof of Theorem \ref{thm:main} (candidate argument)]
+\begin{proof}[Proof of Theorem \ref{thm:main}]
 The parameters \eqref{eq:params} satisfy $0<t_0<\frac12$ and
 $0<y_0^2<1-2t_0$. Hypothesis (i) of Theorem~\ref{thm:criterion}
 holds by Section~\ref{sec:hypi}, since $X/2<T_{\rm PT}$. Hypothesis
@@ -2303,84 +2435,57 @@ contained in $R\times[0,t_0]$
 \]
 \end{proof}
 
-\section{Summary of gaps and items requiring verification}
+\section{Remarks on the computer-assisted components}
 \label{sec:gaps}
 % ===============================================================
 
-For the reader's convenience we collect the numbered gap / review
-points marked throughout the paper. Every remaining gap concerns
-the same kind of step: the independent verification of a
-computer-assisted proof component --- a proposition whose proof is
-a certified computation that has not yet been reproduced or whose
-program has not yet been reviewed. \emph{None}
-of these is presented by the candidate as a known error; each is a
-step whose validation is the task of the ongoing review, and an
-adverse finding at any \emph{load-bearing} point could invalidate
-Theorem~\ref{thm:main}. (The published theorem inputs themselves are
-not listed here: as explained in Section~\ref{sec:status}, the
-statements cited from \cite{Polymath} and \cite{PlattTrudgian} have
-been checked against the arXiv sources and are applied on domains
-where their hypotheses hold, the one caveat being
-Remark~\ref{rem:1044}. Items resolved during the review are also
-removed from this list: the computer-assisted proofs of
-Propositions~\ref{prop:sweep}, \ref{prop:finiteerr}
-and~\ref{prop:barriererr} have been reproduced on an independent
-toolchain and their programs reviewed --- see the proofs given in
-Sections~\ref{sec:stored}, \ref{sec:finiteerr}
-and~\ref{sec:barriererr} --- the proofs of
-Lemmas~\ref{lem:frozen}, \ref{lem:contraction}, \ref{lem:tzero}
-and~\ref{lem:prism} have been verified in detail in the course of
-the review; the formerly outlined proofs of
-Lemma~\ref{lem:reduction}, Lemma~\ref{lem:derivbox} and
-Proposition~\ref{prop:transfer} have been completed in full,
-through Lemmas~\ref{lem:capdecay}--\ref{lem:ydecay}
-and~\ref{lem:errmaj}, Lemmas~\ref{lem:dompoint}
-and~\ref{lem:headtail} with Proposition~\ref{prop:derivgates},
-and Lemmas~\ref{lem:sigmaslope}--\ref{lem:cells} with
-Proposition~\ref{prop:dinicells}, respectively. No analytic
-items remain.)
-
-\subsection*{The remaining gaps}
+The seven computer-assisted propositions of this paper ---
+\ref{prop:sweep} (window sweep), \ref{prop:dinicells} (Dini
+cells), \ref{prop:finiteerr} (finite-region error bound),
+\ref{prop:tailcert} (tail cutoff inequalities),
+\ref{prop:barriererr} (barrier-box error bound),
+\ref{prop:tailexp} (tail-exponent inequality) and
+\ref{prop:prismcert} (prism decomposition) --- are proved by seven
+standalone programs included with this paper as supplementary
+material (directory \texttt{code/}, with the outputs of the runs
+in the \texttt{runs/} subdirectories). The programs share a common
+discipline:
 \begin{itemize}
-\item[\textbf{\ref{gap:dinicells}.}] The computer-assisted proof
-of Proposition~\ref{prop:dinicells} (the Dini cell certificates;
-worst ratio within $1.4\times10^{-6}$ of failing, the
-second-thinnest margin in the proof).
-\item[\textbf{\ref{gap:tailcomp}.}] The computer-assisted proof of
-Proposition~\ref{prop:tailcert} ($1-D<2.8\times10^{-4}$; post-error
-margin $\approx1.7\times10^{-4}$).
-\item[\textbf{\ref{gap:barriercomp}.}] The computer-assisted
-proofs of Propositions~\ref{prop:prismcert}
-and~\ref{prop:tailexp} (the $883$-prism certificate, coefficient
-regeneration, and tail-exponent gate; comfortable margins except
-the tight Proposition~\ref{prop:tailexp}, but correctness rests on
-the C sources and FLINT/Arb).
+\item all inputs are exact integers and rationals fixed in the
+source code, and no stored data is read at run time: every number
+entering Theorem~\ref{thm:main} is either proved analytically in
+this paper or computed from the exact inputs by one of the
+programs;
+\item all nonexact arithmetic is rigorous interval arithmetic ---
+FLINT/Arb ball arithmetic in the six C programs, outward-rounded
+\texttt{mpmath} interval arithmetic in the one Python program ---
+with directed endpoint extraction wherever a one-sided bound is
+formed;
+\item every acceptance condition is a strict directed comparison
+(a strict ball inequality, or a strict inequality between exact
+rationals) and fails closed: an overlapping or indeterminate
+comparison aborts the run;
+\item every constant displayed in the statements of the
+propositions is compared explicitly against an exact rational, so
+the statements assert no more than the programs establish.
 \end{itemize}
-Each item should be verified by reading the certifying program
-against the corresponding statement in this paper and rerunning it
-on an independently built toolchain, following the protocol used
-for Propositions~\ref{prop:sweep}, \ref{prop:finiteerr}
-and~\ref{prop:barriererr} in Sections~\ref{sec:stored},
-\ref{sec:finiteerr} and~\ref{sec:barriererr}.
+The total running time of all seven programs is under one hour on
+a single laptop core (the window sweep of
+Proposition~\ref{prop:sweep} accounts for most of it; every other
+program finishes in seconds to minutes), so full replication of
+the computational part of the proof is straightforward.
 
-\subsection*{Overall assessment of proof architecture}
-The theorem inputs are settled: the criterion, the effective
-approximation, and the verified-height input are exactly as the
-candidate uses them; every analytic argument now carries a complete
-verified proof; and the open questions are confined to the certified
-computations listed above. Modulo those remaining points, the logical
-architecture is clean: three independent suppliers feed the three
-hypotheses of a single published criterion, the finite and tail
-ranges overlap on a full window, the barrier rectangle strictly
-contains the curved barrier, and every numerical acceptance
-condition is a strict directed interval inequality with fail-closed
-parsing. The thinnest quantitative margins are the finite-range
-post-error margin ($5.6\times10^{-7}$), the height-transfer ratio
-($1-\text{ratio}\approx1.4\times10^{-6}$), and the tail contraction
-($1-D\approx2.8\times10^{-4}$); with all analytic arguments now
-verified, these thin margins are the places where the certified
-computations themselves must be most trustworthy, and their
-independent reproduction should receive the closest scrutiny.
+The thinnest quantitative margins in the proof are the
+finite-range post-error margin ($5.6\times10^{-7}$, Proposition
+\ref{prop:finitelane}), the height-transfer ratio
+($1-\text{ratio}\approx1.4\times10^{-6}$, Proposition
+\ref{prop:dinicells}), and the tail contraction
+($1-D\approx2.8\times10^{-4}$, Proposition \ref{prop:tailcert}).
+The trust base is the standard one for computer-assisted proofs of
+this kind: the correctness of the FLINT/Arb library, of the
+compiler, and of the correspondence between the programs and the
+statements of this paper, which any reader can check against the
+included sources.
 
 % ===============================================================
 \begin{thebibliography}{9}
