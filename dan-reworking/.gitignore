@@ -4,14 +4,19 @@
 !code/prop43/runs/*.out
 
 # LaTeX build artifacts
-latex/*.aux
-latex/*.log
-latex/*.out
-latex/*.fls
-latex/*.fdb_latexmk
-latex/*.toc
-latex/*.synctex.gz
+latex/**/*.aux
+latex/**/*.log
+latex/**/*.out
+latex/**/*.fls
+latex/**/*.fdb_latexmk
+latex/**/*.toc
+latex/**/*.synctex.gz
 
 # Compiled binaries
 code/prop43/prop43_proof
+code/prop49/prop49_proof_180
+code/prop49/prop49_proof_256
+code/prop510/prop510_proof
 code/prop62/prop62_proof
+code/prop65/prop65_proof
+code/prop612/prop612_proof

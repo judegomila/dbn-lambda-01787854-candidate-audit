@@ -3,7 +3,7 @@
  *
  * The computation constituting the computer-assisted proof of
  * Proposition 4.3 of the review manuscript
- * (dan/latex/gomila-proof-exposition.tex).
+ * (dan-reworking/latex/exposition/gomila-proof-exposition.tex).
  *
  * PROVENANCE AND MODIFICATIONS
  * ----------------------------

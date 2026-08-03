@@ -1,0 +1,4 @@
+lhs = (1/4) log(q(X)/N^2)      = [2.240581300856760320768012e-7 +/- 2.50e-32]
+rhs = h(X,ymin)_+ / (2 X^2)    = [6.351388495469059480710458e-27 +/- 2.36e-52]
+[PASS] (1/4) log(q(X)/N^2) > h(X,ymin)_+/(2 X^2)
+RESULT PASS: certified tail-exponent inequality (Proposition 6.5)
