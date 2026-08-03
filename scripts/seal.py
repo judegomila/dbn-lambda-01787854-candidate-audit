@@ -4,7 +4,7 @@
 The stable tree is the repository tree after excluding only:
 
 * repository-local transient roots: .git, .venv, replay, and tmp;
-* unsealed content roots: dan-reworking (see below);
+* unsealed content roots: dan-reworking and research (see below);
 * Python cache directories named __pycache__; and
 * SHA256SUMS itself (a manifest cannot contain its own digest).
 
@@ -20,12 +20,21 @@ An excluded root is not descended into at all, so none of the checks above
 apply anywhere inside it: such a subtree may contain symlinks, special
 files, stray build products, and files absent from SHA256SUMS.
 
-The transient roots hold generated or ephemeral state.  dan-reworking is
-different in kind: it is durable content, an in-progress referee workspace
-excluded so that its author can iterate without resealing the audited
-artifact on every rebuild.  Nothing under it is attested by SHA256SUMS or
-by verify.sh, and it is outside the reviewed surface.  See REVIEW_SCOPE.md
-for scope and THIRD_PARTY.md for the third-party material it carries.
+The transient roots hold generated or ephemeral state.  The unsealed
+content roots are different in kind: they hold durable content, kept out
+of the seal so that active work can iterate without resealing the audited
+artifact on every rebuild.  Nothing under them is attested by SHA256SUMS
+or by verify.sh, and they are outside the reviewed surface.
+
+* dan-reworking is the referee's in-progress workspace.
+* research is the exploratory lane: work that is deliberately not part of
+  the candidate and is not evidence for it.
+
+Neither is a place to park material that the candidate relies on.  When a
+program under either root becomes load-bearing it must be promoted into
+the sealed tree, as independent/ records for the recomputation programs.
+See REVIEW_SCOPE.md for scope and THIRD_PARTY.md for third-party material
+these roots carry.
 """
 
 from __future__ import annotations
@@ -42,7 +51,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parent.parent
 MANIFEST_NAME = "SHA256SUMS"
 TRANSIENT_ROOTS = {".git", ".venv", "replay", "tmp"}
-UNSEALED_CONTENT_ROOTS = {"dan-reworking"}
+UNSEALED_CONTENT_ROOTS = {"dan-reworking", "research"}
 EXCLUDED_ROOTS = TRANSIENT_ROOTS | UNSEALED_CONTENT_ROOTS
 EXCLUDED_DIR_NAMES = {"__pycache__"}
 FORBIDDEN_FILE_NAMES = {".DS_Store"}
