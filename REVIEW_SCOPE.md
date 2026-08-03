@@ -301,27 +301,46 @@ depth before merging: apply the `full-ci` label and re-run. Note that a
 `quick` pass therefore does not by itself evidence a fresh replay; only
 `main` results and labelled pull requests do.
 
-## Unsealed referee workspace
+## Unsealed workspaces
 
-`dan-reworking/` is an in-progress referee workspace contributed by a
-reviewer with write access. It is **outside the sealed review surface**:
+Two top-level roots are **outside the sealed review surface**:
 
-- it is excluded from `SHA256SUMS`, so `scripts/seal.py --check` neither
-  hashes nor descends into it, and the stable-file count it reports excludes
-  every file under it;
-- `verify.sh` does not read it, and no verifier asserts anything about its
-  contents; and
-- it is excluded so that a reviewer can iterate on a manuscript without
-  resealing the audited artifact on every rebuild.
+- `dan-reworking/` — the referee's in-progress workspace, contributed by a
+  reviewer with write access; and
+- `research/` — the exploratory lane, holding work that is deliberately not
+  part of the candidate.
 
-Nothing under `dan-reworking/` is evidence for the candidate. Where it
-restates or reworks the argument, the sealed files remain authoritative: the
-exposition bound by `verifiers/verify_external_exposition.py` is
+For both:
+
+- they are excluded from `SHA256SUMS`, so `scripts/seal.py --check` neither
+  hashes nor descends into them, and the stable-file count it reports
+  excludes every file under them;
+- `verify.sh` does not read them, and no verifier asserts anything about
+  their contents; and
+- they are excluded so that active work can iterate without resealing the
+  audited artifact on every rebuild.
+
+**Nothing under either root is evidence for the candidate.** Where a file
+there restates or reworks the argument, the sealed files remain
+authoritative: the exposition bound by
+`verifiers/verify_external_exposition.py` is
 `paper/external/gomila-proof-exposition.pdf`, identified by exact size and
-SHA-256. A reworked copy carrying the same filename elsewhere in the tree is
+SHA-256, and the recomputation programs the audit attests are those under
+`independent/`. A copy carrying the same filename elsewhere in the tree is
 not the sealed artifact.
 
-Third-party material it carries is recorded in `THIRD_PARTY.md`.
+Neither root may hold anything the candidate relies on. A program that
+becomes load-bearing must be promoted into the sealed tree first; see
+`independent/README.md` for how that promotion is recorded.
+
+Programs under `research/` are expected to print their own status line
+disclaiming sealed status, as the dynamic-boundary lane does:
+
+```text
+STATUS: UNSEALED RESEARCH ONLY; no improved Lambda bound certified.
+```
+
+Third-party material these roots carry is recorded in `THIRD_PARTY.md`.
 
 ## What is not claimed
 
