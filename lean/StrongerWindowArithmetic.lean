@@ -3,7 +3,7 @@
   stronger-window (static re-anchor) research lane for the de Bruijn–Newman
   candidate bound Λ ≤ 0.1787854.
 
-  The research lane (dan-reworking/code/dynamic_boundary_research/) claims:
+  The research lane (research/dynamic_boundary/) claims:
 
     CLAIM 1.  The candidate's objective is the exact rational identity
               t₀ + y₀²/2 = 0.1787854 with t₀ = 16125/100000 = 129/800 and

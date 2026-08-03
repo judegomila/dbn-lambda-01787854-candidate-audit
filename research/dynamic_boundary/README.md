@@ -118,10 +118,10 @@ From the repository root:
 ```sh
 cd dan-reworking/code
 python3 -B -m unittest -v \
-  dynamic_boundary_research.test_dynamic_boundary_research
-python3 -B -m dynamic_boundary_research geometry
-python3 -B -m dynamic_boundary_research landing 691008
-python3 -B -m dynamic_boundary_research rank \
+  dynamic_boundary.test_dynamic_boundary_research
+python3 -B -m dynamic_boundary geometry
+python3 -B -m dynamic_boundary landing 691008
+python3 -B -m dynamic_boundary rank \
   --first 690988 --last 691020
 ```
 
@@ -142,7 +142,7 @@ regenerates the matrix at \(X_*\), and runs the existing closed-slab program:
 
 ```sh
 ACKNOWLEDGE_UNPROVED_NEW_SITE_TAIL=1 \
-  dan-reworking/code/dynamic_boundary_research/run_static_reanchor_pilot.sh \
+  research/dynamic_boundary/run_static_reanchor_pilot.sh \
   replay/static-reanchor-691008
 ```
 
