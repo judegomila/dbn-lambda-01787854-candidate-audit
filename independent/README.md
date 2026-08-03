@@ -92,6 +92,24 @@ as the record of how it was invoked, and nine sweep outputs totalling
 roughly three hours of compute cannot presently be regenerated from
 what is in the tree.
 
+### Promotion candidates not yet promoted
+
+`dan-reworking/code/` now also holds `prop49`, `prop510`, `prop612` and
+`prop65`, which discharge the manuscript's remaining gaps. They are not
+promoted here yet and nothing in `verify.sh` runs them.
+
+Their reproducibility is markedly better than `prop43`'s: `prop49` and
+`prop65` take no arguments at all, and `prop510` takes an optional
+precision defaulting to 320 bits and refusing anything below 256. Only
+`prop612` carries a residual gap — it requires four arguments
+(`ts te y0 Prt`) and its report records three of them
+(`X = 6000000185827…828`, `N = 690988`, `y0 = 0.1809`, `t = 0…0.16125`)
+but not `Prt`. From the source `Prt` controls output rather than the
+arithmetic, so it likely does not change the certified values, but the
+report cannot be reproduced byte-for-byte without it.
+
+### The `prop43` gap, continued
+
 Resolving it needs the exact nine invocations from the author. Once
 recorded here, the intended shape is a dedicated workflow job sharding
 the nine runs across parallel runners — roughly 22 minutes of wall time
