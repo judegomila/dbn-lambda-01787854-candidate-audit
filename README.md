@@ -41,6 +41,29 @@ not as an unconditional result.
 
 This positive upper bound is not a proof of RH.
 
+## Which document should I read?
+
+The package contains several prose documents. They are not interchangeable
+and only some are sealed. **Sealed** means covered by `SHA256SUMS` and
+therefore attested by `verify.sh`; unsealed material is working state that
+may change without a reseal and is not evidence for the candidate.
+
+| Document | Sealed | Read it for |
+|---|---|---|
+| [`output/pdf/dbn_lambda_01787854_candidate_audit.pdf`](output/pdf/dbn_lambda_01787854_candidate_audit.pdf) | yes | The release-grade referee manuscript. Generated deterministically from `paper/generate_paper.py`. **The package's own account of itself.** |
+| [`paper/external/gomila-proof-exposition.pdf`](paper/external/gomila-proof-exposition.pdf) | yes | A supplied theorem-style exposition, pinned by exact size and SHA-256 in `verifiers/verify_external_exposition.py`. Read [`paper/external/README.md`](paper/external/README.md) **first**: it is the mandatory cross-check and records corrections required in a revised version. |
+| `dan-reworking/latex/exposition/` | no | The referee's in-progress reworking of that exposition, with LaTeX source. Further developed than the sealed PDF, but not attested. |
+| `dan-reworking/latex/research-paper/` | no | The referee's separate research write-up. Not attested. |
+| [`PROOF_NOTE.md`](PROOF_NOTE.md) | yes | The complete theorem chain in the repository's own terms. |
+
+Authority runs top to bottom: where a reworked document disagrees with a
+sealed one, the sealed artifact is what the audit attests. Two files share
+the basename `gomila-proof-exposition.pdf` and **have different contents**;
+only the copy under `paper/external/` is pinned.
+
+Nothing in this table is a substitute for `OPEN_REVIEW_QUESTIONS.md`, which
+records the decisions actually being asked of a referee.
+
 ## Background reading (to understand the setting)
 
 Readers new to the de Bruijn--Newman constant \(\Lambda\) and the heat-flow
