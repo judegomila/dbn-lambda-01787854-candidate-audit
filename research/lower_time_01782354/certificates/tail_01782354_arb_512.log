@@ -1,0 +1,55 @@
+P1113 lower-time Arb verifier: precision=512, N1=4050000, M=153814
+[PASS] exact rational target and y-hull containments
+[PASS] exact target identity t0+y0^2/2 = 891177/5000000
+[PASS] exact final-height identity 1-2*t0 = 3393/5000
+[PASS] domain: 0 < t <= 1/2
+[PASS] domain: 0 < ybox <= yext <= 1
+[PASS] domain: N1 > MHEAD > MERR > 1
+[PASS] P1113 has lambda_1 = 1
+[PASS] exact P1113 vector normalization sum|lambda|=9918746/1000000
+[PASS] domain: X_N(t) > 200 and all error denominators positive
+[PASS] domain: log(N^2-t/16) > 2
+[PASS] domain: 0 < t/(16N^2) < 1
+[PASS] SC1: sigma1 > (t/2) log N on box and extended hull
+[PASS] SC2: sigma2 > (t/2) log N on box and extended hull
+[PASS] SC3: sigma1,sigma2 > 1 on extended hull
+[PASS] window log gate: N(1-t/(16N^2)) > 1
+[PASS] delta and kappa cutoff monotonicity premises: t>=0, X_N>12
+[PASS] sigma N-slope t/2 is positive
+[PASS] G N-monotonicity premises: y>0 and N^2-t/16>0
+[PASS] GN-TR: every fixed-left routed cap decreases for all N>=N1
+[PASS] OVW: floor(N/d)>=N/(d+1), and moving caps decrease by sigma>1
+[PASS] Mmax is strictly positive
+[PASS] GN-AB: fixed-left MHEAD A-cap decreases for all N>=N1
+[PASS] YM: D decreases above the lower y-box
+[PASS] GN-error: both MERR=3000 caps decrease for all N>=N1
+[PASS] Delta N-monotonicity gate: (t^2/16)L(L-2)+0.626 > 0
+[PASS] eC0 quotient N-monotonicity gate: 3 < 10.44 and X_N>12
+[PASS] P corridor 0.169319 < P < 0.169322
+[PASS] TR corridor 0.263610 < TR < 0.263614
+[PASS] OV corridor 0.038778 < OV < 0.038781
+[PASS] Mmax corridor 1.608212 < Mmax < 1.608216
+[PASS] AB corridor 0.326169 < AB < 0.326172
+[PASS] D corridor 0.996262 < D < 0.996265
+[PASS] P interval width is smaller than 1-D
+[PASS] decisive contraction D < 1
+[PASS] flow corridor 0.0023230 < flow < 0.0023236
+[PASS] error corridor 1.0936e-8 < err < 1.0939e-8
+[PASS] decisive normalized margin flow > error > 0
+
+Directed Arb enclosures:
+P upper point = [0.169320219971365341434744557048 +/- 2.09e-32]
+TR upper point = [0.263611987848164458787955405615 +/- 2.74e-31]
+OV upper point = [0.0387794152015244503204652334568 +/- 2.09e-32]
+Mmax upper point = [1.60821383284285683891440530330 +/- 2.75e-30]
+AB upper point = [0.326170556810124404020067206620 +/- 3.81e-31]
+D upper point = [0.996263624349153199188926591862 +/- 1.55e-31]
+flow lower point = [0.00232330774337512661728362037096 +/- 1.91e-33]
+eAB upper point = [4.51333005760573093864789401113e-13 +/- 3.72e-43]
+eC0 upper point = [1.09368537629106477027107757749e-8 +/- 3.60e-39]
+error upper point = [1.09373050959164082758046405643e-8 +/- 4.71e-39]
+flow-error lower point = [0.00232329680607003070087534456632 +/- 1.35e-33]
+P enclosure width = [5.39755276585118792809225851670e-9 +/- 9.25e-40]
+
+TOTAL CHECKS: 37; FAILURES: 0
+RESULT: ALL ARB LOWER-TIME TAIL CHECKS PASS

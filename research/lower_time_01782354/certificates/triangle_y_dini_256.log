@@ -1,0 +1,21 @@
+LEG P13 N=690988..728999
+ROW precision=256 t=16070/100000 y2=87677/2500000 ybox=[0.18727199470289196,0.82377181306475888] sigma_prime>=1/2 gamma_log_prime<0 kernel_cross_term_gate=enabled
+PASS P={2,3,5,7,11,13} N=690988..728999 kernel_cross_term=PASS patterns=729 rects=961621 splits=960163 h_nonpositive=310818 ratio_ub=0.9999999980092249 worst={gmask=53,r=(11,13],L=[16.010827093922515,16.037602045316895],y=[0.41601411692668794,0.42595942658859209],branch=0}
+RESULT PASS: direct-Triangle mass is nonincreasing on the full y interval for the requested leg
+LEG P11 N=729000..774999
+ROW precision=256 t=16070/100000 y2=87677/2500000 ybox=[0.18727199470289196,0.82377181306475888] sigma_prime>=1/2 gamma_log_prime<0 kernel_cross_term_gate=enabled
+PASS P={2,3,5,7,11} N=729000..774999 kernel_cross_term=PASS patterns=243 rects=298058 splits=297572 h_nonpositive=94060 ratio_ub=0.99999975651650019 worst={gmask=15,r=(0,1],L=[2.0187974481615534,2.0313035827615873],y=[0.25688916233622117,0.26186181716717327],branch=1}
+RESULT PASS: direct-Triangle mass is nonincreasing on the full y interval for the requested leg
+LEG P7 N=775000..849999
+ROW precision=256 t=16070/100000 y2=87677/2500000 ybox=[0.18727199470289196,0.82377181306475888] sigma_prime>=1/2 gamma_log_prime<0 kernel_cross_term_gate=enabled
+PASS P={2,3,5,7} N=775000..849999 kernel_cross_term=PASS patterns=81 rects=51855 splits=51693 h_nonpositive=15217 ratio_ub=0.99996539011102148 worst={gmask=15,r=(0,1],L=[4.8901543648141619,4.9152861443606062],y=[0.28672509132193369,0.2966704009838379],branch=1}
+RESULT PASS: direct-Triangle mass is nonincreasing on the full y interval for the requested leg
+LEG P5 N=850000..1074999
+ROW precision=256 t=16070/100000 y2=87677/2500000 ybox=[0.18727199470289196,0.82377181306475888] sigma_prime>=1/2 gamma_log_prime<0 kernel_cross_term_gate=enabled
+PASS P={2,3,5} N=850000..1074999 kernel_cross_term=PASS patterns=27 rects=9278 splits=9224 h_nonpositive=4379 ratio_ub=0.99996376465955339 worst={gmask=7,r=(0,1],L=[1.5664179490206682,1.5790740471143307],y=[0.19473097694932012,0.19721730436479615],branch=1}
+RESULT PASS: direct-Triangle mass is nonincreasing on the full y interval for the requested leg
+LEG P23 N=1075000..4050000
+ROW precision=256 t=16070/100000 y2=87677/2500000 ybox=[0.18727199470289196,0.82377181306475888] sigma_prime>=1/2 gamma_log_prime<0 kernel_cross_term_gate=enabled
+PASS P={2,3} N=1075000..4050000 kernel_cross_term=PASS patterns=9 rects=237 splits=219 h_nonpositive=81 ratio_ub=0.98727251712965358 worst={gmask=3,r=(0,1],L=[3.5794843140865602,3.9918181903049339],y=[0.26683447199812538,0.34639694929335874],branch=1}
+RESULT PASS: direct-Triangle mass is nonincreasing on the full y interval for the requested leg
+RESULT PASS: exact lower-time five-leg Triangle y-Dini schedule
