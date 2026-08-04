@@ -2,7 +2,7 @@
 
 ## Status
 
-This directory is deliberately under `dan-reworking/`, which the repository
+This directory is deliberately under `research/`, which the repository
 seal excludes.  Nothing here is consumed by `verify.sh`, and no output from
 these programs is evidence for the sealed `0.1787854` candidate.
 
@@ -116,7 +116,7 @@ recommended first computation.
 From the repository root:
 
 ```sh
-cd dan-reworking/code
+cd research
 python3 -B -m unittest -v \
   dynamic_boundary.test_dynamic_boundary_research
 python3 -B -m dynamic_boundary geometry

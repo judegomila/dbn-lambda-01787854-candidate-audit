@@ -53,7 +53,7 @@ may change without a reseal and is not evidence for the candidate.
 | [`output/pdf/dbn_lambda_01787854_candidate_audit.pdf`](output/pdf/dbn_lambda_01787854_candidate_audit.pdf) | yes | The release-grade referee manuscript. Generated deterministically from `paper/generate_paper.py`. **The package's own account of itself.** |
 | [`paper/external/gomila-proof-exposition.pdf`](paper/external/gomila-proof-exposition.pdf) | yes | A supplied theorem-style exposition, pinned by exact size and SHA-256 in `verifiers/verify_external_exposition.py`. Read [`paper/external/README.md`](paper/external/README.md) **first**: it is the mandatory cross-check and records corrections required in a revised version. |
 | `dan-reworking/latex/exposition/` | no | The referee's in-progress reworking of that exposition, with LaTeX source. Further developed than the sealed PDF, but not attested. |
-| `dan-reworking/latex/research-paper/` | no | The referee's separate research write-up. Not attested. |
+| `dan-reworking/latex/research-paper/` | no | The same mathematics written as a research article — bylined `Jude Gomila and [additional authors TBD]`, declarative (“We prove…”). **It carries no status caveat in its body**, so unlike every other document here it does not, on its own, say that the result is unreviewed. Not attested. |
 | [`PROOF_NOTE.md`](PROOF_NOTE.md) | yes | The complete theorem chain in the repository's own terms. |
 
 Authority runs top to bottom: where a reworked document disagrees with a

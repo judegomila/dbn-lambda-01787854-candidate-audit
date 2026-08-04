@@ -80,7 +80,7 @@ certificate. The proof has not been peer reviewed. In the course of
 the review recorded here, every analytic lemma has been given a
 complete verified proof; all statements quoted from the published
 literature have been checked against the arXiv sources of the cited
-papers; and each of the five computer-assisted components has been
+papers; and each of the seven computer-assisted components has been
 independently reproduced, by programs reviewed line by line against
 the corresponding statements, running on an independently built
 toolchain and reading no stored data. The verification status is
@@ -202,7 +202,7 @@ error bound (Proposition~\ref{prop:barriererr}), the tail-exponent
 inequality (Proposition~\ref{prop:tailexp}), and the barrier prism
 decomposition (Proposition~\ref{prop:prismcert}) --- has been
 reproduced on an independent toolchain, by a standalone program
-(supplementary directory \texttt{code/}) that reads no stored data
+(supplementary directory \texttt{dan-reworking/code/}) that reads no stored data
 and was reviewed line by line against the corresponding statement;
 the proofs are given with the respective propositions. No
 unverified steps remain flagged; the earlier framed \emph{gap /
@@ -2500,6 +2500,24 @@ Lemmas~\ref{lem:sigmaslope}--\ref{lem:cells} with
 Proposition~\ref{prop:dinicells}, respectively. No analytic items
 remain.
 
+Two of these reductions have additionally been machine-checked. The
+extension of a lower bound on $(0,t_0]$ to the closed endpoint
+$t=0$ used in Lemma~\ref{lem:tzero}, and the reduction of the
+zeros of $H_t$ to those of $H_t/B_t$ on a region where
+$B_t\neq0$, are formalised in Lean~4 with \texttt{mathlib} in the
+repository's \texttt{lean/} directory. The formalisation is
+\texttt{sorry}-free and depends only on the three standard
+\texttt{mathlib} axioms
+(\texttt{propext}, \texttt{Classical.choice}, \texttt{Quot.sound});
+in particular $B_t\neq0$ is obtained there structurally, from the
+closed form of $M_0$, rather than from a numerical lower bound on
+$\lVert M_0\rVert$. What is formalised is the reduction logic
+together with the nonvanishing; the identification of the
+formalised closed form with the implementation remains an ordinary
+review item, as does the joint continuity of the true $H_t$ up to
+$t=0$, whose Lean statement is in place but whose concrete
+instantiation is not yet discharged.
+
 \emph{Computer-assisted components.} Each of the 
 propositions whose proofs are computer-assisted --- \ref{prop:sweep} (window sweep),
 \ref{prop:dinicells} (Dini cells), \ref{prop:finiteerr}
@@ -2508,7 +2526,7 @@ inequalities), \ref{prop:barriererr} (barrier-box error bound),
 \ref{prop:tailexp} (tail-exponent inequality) and
 \ref{prop:prismcert} (prism decomposition) --- has been
 independently reproduced by a standalone program included as
-supplementary material (directory \texttt{code/}), derived from
+supplementary material (directory \texttt{dan-reworking/code/}; the promoted copies are sealed under \texttt{independent/}), derived from
 Gomila's sources as documented in each program's header, reviewed
 line by line against the corresponding statement in this paper,
 compiled against an independently built FLINT/Arb toolchain,
@@ -2543,6 +2561,19 @@ correctness of the FLINT/Arb library, of the compiler, and of the
 line-by-line correspondence between the supplementary programs and
 the statements of this paper, which the review has checked and
 which any reader can re-audit from the included sources.
+
+One caveat on re-execution, as distinct from re-reading. Six of the
+seven programs can be re-run directly from what is supplied:
+Propositions~\ref{prop:dinicells} and~\ref{prop:tailexp} take no
+arguments, Proposition~\ref{prop:tailcert} takes an optional
+precision defaulting to $320$ bits, and the remaining reports
+record the parameters used. The exception is
+Proposition~\ref{prop:sweep}, whose program takes twelve positional
+arguments of which the stored sweep outputs record only the range,
+the mollifier type, the $t$-box and the weight; the remaining
+arguments are not recorded, so those nine runs cannot presently be
+regenerated from the supplied material alone. The sources are
+complete and auditable by reading; the invocations are not.
 
 % ===============================================================
 \begin{thebibliography}{9}
