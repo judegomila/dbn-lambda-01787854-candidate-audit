@@ -1,0 +1,12 @@
+purpose=exploratory complete finite Triangle replay for 0.1782354
+started_utc=2026-08-02T02:37:22Z
+repository_commit=8ba17791a42e57fe502050121275b09f21ebf5c5
+repository_dirty=true
+producer_sha256=b8a7c664306c219d0faf82a33cdced70188b1beff151a334cb84cb46d0749792
+container_image=dbn21a-flint
+container_image_id=sha256:bedf7303c0be0d35d658d3893cf9f8424aab9f55bc4167644ddf3df564a16538
+target_t=1607/10000
+target_y2=87677/2500000
+target_lambda=891177/5000000
+finite_N=690988..4050000
+finished_utc=2026-08-02T02:42:43Z

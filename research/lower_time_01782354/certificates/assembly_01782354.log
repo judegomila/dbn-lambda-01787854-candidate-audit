@@ -1,0 +1,42 @@
+--- P: executed prerequisite certificates
+[PASS] P1 all 3,359,013 lower-time finite rows  exit=0; RESULT PASS: full finite Triangle weld B=891177/5000000 rows=3359013 N=690988..4050000 gaps=0 overlaps=0 UNCERT=0 T_floor=0.000444808402 Emax=0.000000239372027867896139 binding_floor=0.000444569029972132
+[PASS] P2 direct singleton seam audit  exit=0; RESULT: LOWER-TIME DIRECT SINGLETON CERTIFICATES PASS
+[PASS] P3 native P13 Triangle-to-|f_t| binding  exit=0; RESULT: ALL PASS
+[PASS] P4 continuous lower-time window freeze and tail seam  exit=0; RESULT: ALL PASS; CERTIFIED WINDOW-FREEZE CONCLUSION: at t0=1607/10000, for every integer N in [690988,4050000] and every x in [x_N(t0),x_(N+1)(t0)), the producer's frozen gamma and kappa values are upper bounds and its frozen sigma value is a lower bound, uniformly for y in [sqrt(87677/2500000),sqrt(3393/5000)]. The criterion start X+sqrt(1-y0^2) lies strictly inside W_N0, so the finite windows cover from that closed start through x_(Nmid+1) with only the final right endpoint excluded.
+[PASS] P5 native normalizer/correction at 180 bits  exit=0; RESULT ALL PASS precision 180
+[PASS] P5 native normalizer/correction at 256 bits  exit=0; RESULT ALL PASS precision 256
+[PASS] P6 five-leg direct upper-Dini certificate at 256 bits  exit=0; RESULT PASS: direct-Triangle mass is nonincreasing on the full y interval for the requested leg; RESULT PASS: exact lower-time five-leg Triangle y-Dini schedule
+[PASS] P7 standalone 256/512-bit lower-time Arb tail  exit=0; RESULT: LOWER-TIME INDEPENDENT ARB TAIL REPLAY PASS
+[PASS] P8 stronger Linux 883-prism barrier certificate  exit=0; RESULT: ALL PASS; BARRIER CONCLUSION: H_t is zero-free on the complete closed slab [X,X+1] x [0.1809,1] x [0,0.16125].
+[PASS] P9 stronger macOS 883-prism barrier cross-check  exit=0; RESULT: ALL PASS; BARRIER CONCLUSION: H_t is zero-free on the complete closed slab [X,X+1] x [0.1809,1] x [0,0.16125].
+[PASS] P10 exact H0-to-zeta symmetry/sign map  exit=0; RESULT: CRITERION SIGN MAP PASS
+--- A: exact candidate and criterion domain
+[PASS] A1 exact candidate identity
+[PASS] A2 exact decimal
+[PASS] A3 theorem time domain
+[PASS] A4 final-height interval
+[PASS] A5 curved canopy
+[PASS] A6 theorem abscissa domain
+--- I: Theorem 1.2 hypothesis (i)
+[CITED THEOREM INPUT] Platt--Trudgian verifies RH through T_PT=3000175332800.
+[PASS] I1 X/2 is within verified height
+[PASS] I2 exact verified-height margin
+--- II: hypothesis (ii), final-time right half-line
+[PASS] II1 finite row count
+[PASS] II2 tail lower box straddles y0
+[PASS] II3 tail extended box minimally covers final height
+[PASS] II4 finite and tail overlap at N=4050000  finite=[x*,x_4050001), tail=[x_4050000,infinity)
+--- III: hypothesis (iii), inherited closed barrier
+[PASS] III1 barrier floor lies below y0
+[PASS] III2 exact barrier-floor margin
+[PASS] III3 new time lies in stronger barrier
+[PASS] III4 new curved barrier is a strict subset
+--- W: canonical criterion weld
+[PASS] W1 hypothesis (i)
+[PASS] W2 hypothesis (ii)
+[PASS] W3 hypothesis (iii)
+[PASS] W4 final rational substitution
+TOTAL CHECKS RUN: 31
+RESULT: LOWER-TIME UNCONDITIONAL CANDIDATE ASSEMBLY PASS
+CONCLUSION: Lambda <= 891177/5000000 = 0.1782354.
+STATUS: unreviewed computer-assisted proof candidate; not an established theorem.

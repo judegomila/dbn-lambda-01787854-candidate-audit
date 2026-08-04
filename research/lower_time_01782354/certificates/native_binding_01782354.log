@@ -1,0 +1,19 @@
+--- A: structural source contract
+[PASS] A1 full replay compiles the direct Triangle branch
+[PASS] A2 bt definition is exp((t/4) log^2 n)
+[PASS] A3 real Euler coefficients include every supported prime
+[PASS] A3b P13 is the exact shifted P11 recurrence
+[PASS] A4 bA0 forms the two exact real convolutions
+[PASS] A5 direct weight is |B| + gamma |A|
+[PASS] A6 mollifier bound is sum |lambda_d| d^-sigma
+[PASS] A7 final value has exactly one division then correction subtraction
+[PASS] A8 target error path uses x-6.66 for equation (23)
+[PASS] A9 target e_C0 path uses x-12 for equation (24)
+[PASS] A10 P13 normalizer is the exact positive Euler factor
+--- B: deterministic complex convolution and inequality stress test
+[PASS] B1 expected stress-case count
+[PASS] B2 first exact convolution in all cases  max floating residual=2.221e-16
+[PASS] B3 conjugated second exact convolution in all cases  max floating residual=4.441e-16
+[PASS] B4 derived lower bound survives complex gamma and kappa  minimum floating slack=3.065e-02
+TOTAL CHECKS RUN: 15
+RESULT: ALL PASS

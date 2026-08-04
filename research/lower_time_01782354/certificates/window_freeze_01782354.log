@@ -1,0 +1,53 @@
+--- A: exact target and elementary enclosures
+[PASS] A1 exact y ceiling
+[PASS] A2 target domain
+[PASS] A3 exact y0 square bracket  0.187271994702891975 < y0 < 0.187271994702891976
+[PASS] A4 exact ymax square bracket  0.823771813064758850 < ymax < 0.823771813064758851
+[PASS] A5 exact criterion-radius bracket  0.982308098307246981 < sqrt(1-y0^2) < 0.982308098307246982
+[PASS] A6 rational Machin enclosure is ordered
+[PASS] A7 rational pi enclosure is narrow  width < 1e-100
+[PASS] A8 independent interval pi overlaps exact Machin bracket
+[PASS] A9 independent interval square roots fit exact brackets
+--- B: exact site and half-open window coverage
+[PASS] B1 first q_N is positive
+[PASS] B2 paper-domain denominators are positive
+[PASS] B3 target start is strictly right of x_N0  margin > 5377393.987424462185
+[PASS] B4 target start is strictly left of x_(N0+1)  margin > 11989041.175095784575
+[PASS] B5 target start belongs to the closed-left/open-right N0 window
+[PASS] B6 symbolic consecutive-window identity  q_(N+1)-q_N = 2N+1 > 0 for every N>=690988
+[PASS] B7 finite row count is exact
+[PASS] B8 finite leg endpoints are consecutive  combined with B6: union of half-open windows is [x*,x_(Nmid+1))
+[PASS] B9 right edge of the finite union is well ordered  x_(Nmid+1) > 206119995789640.750841
+[PASS] B10 independent interval site margins are strict  left >= [5377393.987424462185268315062810536310925256081079462139285980900848086379657474427082695530974665107107086192213190123484114, 5377393.987424462185268315062810536310925256081079462139285980900848086379657474427082695530974665107107086192213190123484114], right >= [11989041.17509578457597523899676729391865135021908138032932798311052703039518331058610520720431262656992797407240825990059593, 11989041.17509578457597523899676729391865135021908138032932798311052703039518331058610520720431262656992797407240825990059593]
+--- C: universal x-monotonicity and freeze directions
+[PASS] C1 gamma derivative hypotheses
+[PASS] C2 kappa derivative hypotheses
+[PASS] C3 positive-part atom has nonnegative coefficient
+[PASS] C4 log part of sigma is strictly increasing
+[PASS] C5 correction x^-2 max(0,h) is nonincreasing  h_x=-8y(1+y)/x^3 <= 0
+[PASS] C6 frozen directions  G(x)<=G_N, K(x)<=K_N, Sigma(x)>=Sigma_N on every W_N
+[PASS] C7 boundary convention is fail-closed  W_N=[x_N,x_(N+1)); x_(N+1) belongs to W_(N+1), where all three frozen bounds reset in the safer direction
+[PASS] C8 interval gamma derivative is strictly negative  upper=[-0.000000000000000000001644046311400448599559835417370887565344709854986644100361337405244320880733351922611780949952341743595149506570180016355011, -0.000000000000000000001644046311400448599559835417370887565344709854986644100361337405244320880733351922611780949952341743595149506570180016355011]
+[PASS] C9 interval kappa derivative is strictly negative  upper=[-0.0000000000000000000000000000003541754607928348148893733867364905195602803432259632763871748496470262904873755267600132935117687281014983049502057196918024, -0.0000000000000000000000000000003541754607928348148893733867364905195602803432259632763871748496470262904873755267600132935117687281014983049502057196918024]
+[PASS] C10 interval sigma derivative lower bound is strictly positive  lower=[0.0000000000000001949107355940433648776286338827383727014234460394656540785042786848051652037403815681904944618194121886414529348888355630528, 0.0000000000000001949107355940433648776286338827383727014234460394656540785042786848051652037403815681904944618194121886414529348888355630528]
+[PASS] C11 first frozen corner is numerically regular  G_N0=[0.08092027208085031378719070903431066906497676192583454790369790173954755675250911419158850284230910766008999534190180320272826, 0.08092027208085031378719070903431066906497676192583454790369790173954755675250911419158850284230910766008999534190180320330915] K_N0=[0.000000000000002507886299041612053772547056976943082737234888335601466418160564837222128643083583317778253101878144220354975271916950818247, 0.000000000000002507886299041612053772547056976943082737234888335601466418160564837222128643083583317778253101878144220354975271916950829253] Sigma_N0=[1.674012273476245515581725564551595679797864331207361398043452255582019704167522211549882619909892869918837459481973496535549, 1.674012273476245515581725564551595679797864331207361398043452255582019704167522211549882619909892869918837459481973496538647]
+--- S: optional producer/source binding
+[PASS] S0 producer source exists  /Users/judegomila/Documents/Rienmann/newman_lambda_01787854_candidate/src/lemma_sweep_p23571113.c
+[PASS] S1 full-sweep driver exists  /Users/judegomila/Documents/Rienmann/newman_lambda_01787854_candidate/scripts/run_finite_01782354.sh
+[PASS] S2 x_N = 4*pi*N^2 - pi*t/4
+[PASS] S3 log(x_N/4pi) is the frozen logarithm
+[PASS] S4 sigma base is (1+y)/2 + (t/4)log(q_N)
+[PASS] S5 sigma logarithmic increment is t log(q_N)/4
+[PASS] S6 sigma h atom is 1-3y+4y(1+y)/x_N^2
+[PASS] S7 sigma positive-part correction is frozen at x_N
+[PASS] S8 kappa bound is t*y/[2(x_N-6)]
+[PASS] S9 gamma bound is exp(y/50-y log(q_N)/2)
+[PASS] S10 exact lower-time t,y row is present
+[PASS] S11 all five prime modes and exact endpoints are present
+[PASS] S12 lower-time Arb tail verifier exists
+[PASS] S13 tail domain starts at the closed finite endpoint  finite and tail overlap at N=4050000
+[PASS] S14 window-freeze theorem exists  /Users/judegomila/Documents/Rienmann/newman_lambda_01787854_candidate/WINDOW_FREEZE_THEOREM.md
+[PASS] S15 theorem states the corrected sigma formula
+TOTAL CHECKS RUN: 46
+RESULT: ALL PASS
+CERTIFIED WINDOW-FREEZE CONCLUSION: at t0=1607/10000, for every integer N in [690988,4050000] and every x in [x_N(t0),x_(N+1)(t0)), the producer's frozen gamma and kappa values are upper bounds and its frozen sigma value is a lower bound, uniformly for y in [sqrt(87677/2500000),sqrt(3393/5000)]. The criterion start X+sqrt(1-y0^2) lies strictly inside W_N0, so the finite windows cover from that closed start through x_(Nmid+1) with only the final right endpoint excluded.

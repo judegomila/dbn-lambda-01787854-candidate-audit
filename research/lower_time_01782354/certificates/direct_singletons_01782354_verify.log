@@ -1,0 +1,5 @@
+[PASS] 22 direct singletons dominate the amortized seam rows
+[PASS] all 11 shard starts reproduce exactly
+[PASS] global finite floor anchor N=850000 is 0.000444808402
+[PASS] finite/tail overlap N=4050000 direct=0.304317995055 finite=0.301339561446
+RESULT: LOWER-TIME DIRECT SINGLETON CERTIFICATES PASS
