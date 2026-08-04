@@ -8,7 +8,7 @@ Imported from the orphan branch `codex/extension-work-01782354`
 common ancestor** with `main`: it predates the referee review, the
 `independent/` promotions, the Lean formalisation and the depth-split CI,
 and lacks 129 files that `main` has. It could not be merged; this is an
-extraction of the 33 files it adds.
+extraction of the 46 files it adds.
 
 ## What the extension proposes
 
@@ -31,7 +31,8 @@ one worth trying — retuning at lower `t0` rather than steering the boundary.
 ## What has been checked here
 
 `verify_lower_time_claims.py` re-derives every displayed rational in exact
-arithmetic and re-verifies the archive. 20 checks, all passing:
+arithmetic, re-verifies the archive, and pins the margin comparison and the
+pinned-container result below. 30 checks, all passing:
 
 - all five parameter identities are exact, including the `11/20000` gain;
 - the Polymath Theorem 1.2 domain conditions hold at the new parameters
@@ -47,7 +48,56 @@ arithmetic and re-verifies the archive. 20 checks, all passing:
 **This is the arithmetic and the archive, not the mathematics.** Nothing
 here validates the finite, tail or barrier computations themselves.
 
-## Three findings that need resolving before promotion
+## Re-verified under this repository's pinned provenance
+
+The assembly was re-run inside the sealed review container on 2026-08-04.
+Transcript and metadata under `pinned-container-run/`.
+
+```
+container      dbn-lambda-01787854-review, linux/amd64
+base digest    sha256:52df9b1ee71626e0088f7d400d5c6b5f7bb916f8f0c82b474289a4ece6cf3faf
+snapshot       20260723T000000Z
+flags          --network none --read-only --cap-drop ALL --security-opt no-new-privileges
+source tree    3962701, clean checkout
+result         31 checks, 0 fail  ->  Lambda <= 891177/5000000 = 0.1782354
+wall clock     10m23s (amd64 under emulation on aarch64)
+```
+
+This was not a paper re-check. The full prerequisite chain executed: P1
+parsed and verified all 3,359,013 finite rows with `gaps=0 overlaps=0
+UNCERT=0`; **P7 performed a live 256/512-bit Arb tail replay**; P8 and P9
+certified the 883-prism barrier on Linux and macOS; P5 ran the normalizer at
+180 and 256 bits; P6 the five-leg Dini schedule at 256.
+
+**This resolves finding 2 below.** The result no longer rests only on
+`dbn21a-flint`.
+
+## The margin position, which is the opposite of what was expected
+
+The improvement was expected to be paid for out of the thin margins. It is
+not. Values from P1 of the pinned run, against the sealed lane's own gate:
+
+| | sealed `0.1787854` | this claim `0.1782354` |
+|---|---|---|
+| `T_floor` | `0.000000791366` | `0.000444808402` |
+| `Emax` | `0.000000233494905212337849` | `0.000000239372027867896139` |
+| **binding margin** | **`5.5787×10⁻⁷`** | **`4.4457×10⁻⁴`** |
+
+The binding margin is **797× larger**, from a `T_floor` 562× larger, while
+`Emax` grows only 2.5% as the finite range widens.
+
+The cause is the mollifier, not the time. This lane uses
+`src/lemma_sweep_p23571113.c`, a **P13** schedule, where the sealed lane uses
+`p235711`. The extra prime buys far more floor than the lower `t0` costs. The
+sealed claim's thinnest quantity — the finite post-error margin of
+`5.6×10⁻⁷` — is not this claim's binding constraint at all.
+
+Both the margin comparison and the pinned run are asserted as checks in
+`verify_lower_time_claims.py` (30 checks) rather than only stated here, so
+that a later change to either makes the check fail instead of leaving this
+document stale.
+
+## Two findings that remain
 
 ### 1. The complete finite replay came from a dirty working tree
 
@@ -63,7 +113,9 @@ recoverable from any commit. This is the same defect class as
 `independent/prop43`'s unrecorded invocations, and more consequential,
 because it applies to the headline evidence rather than one lane.
 
-### 2. It was produced in a different container from the sealed one
+### 2. RESOLVED -- it was produced in a different container from the sealed one
+
+Superseded by the pinned-container run above; retained for the record.
 
 | | image | pinned |
 |---|---|---|

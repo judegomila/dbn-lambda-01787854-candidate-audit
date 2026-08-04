@@ -1,0 +1,16 @@
+purpose=re-verify the 0.1782354 assembly under this repository's pinned provenance
+run_by=verify_assembly_01782354.py, executed inside the sealed review container
+started_utc=2026-08-04T22:45:47Z
+finished_utc=2026-08-04T22:56:10Z
+wall_clock=10m23s
+container_image=dbn-lambda-01787854-review
+container_platform=linux/amd64
+container_base_digest=sha256:52df9b1ee71626e0088f7d400d5c6b5f7bb916f8f0c82b474289a4ece6cf3faf
+container_ubuntu_snapshot=20260723T000000Z
+host_arch=aarch64 (amd64 image run under emulation)
+docker_flags=--network none --read-only --cap-drop ALL --security-opt no-new-privileges --tmpfs /tmp
+source_tree=codex/extension-work-01782354 at 3962701, clean checkout (not dirty)
+evidence=certificates/lower_time_01782354 as archived
+invocation=python3 verifiers/verify_assembly_01782354.py certificates/lower_time_01782354 certificates/lower_time_01782354/direct_singletons_01782354.log.gz
+result=RESULT: LOWER-TIME UNCONDITIONAL CANDIDATE ASSEMBLY PASS
+checks=31 pass, 0 fail

@@ -165,8 +165,70 @@ def check_provenance_caveats() -> None:
     )
 
 
+def check_margin_comparison() -> None:
+    """Position the new claim's binding margin against the sealed one.
+
+    Recorded as checks because it is the most consequential quantitative
+    fact about this extension and the opposite of what was expected: the
+    lowered time does not eat into the thin margins, because this lane uses
+    a P13 mollifier schedule (src/lemma_sweep_p23571113.c) rather than the
+    sealed lane's P11, which buys far more floor than the lower time costs.
+
+    Values are those reported by P1 of the pinned-container run archived
+    under pinned-container-run/, and by the sealed lane's own finite gate.
+    """
+
+    t_floor_sealed = F(791366, 10**12)
+    emax_sealed = F(233494905212337849, 10**24)
+    t_floor_new = F(444808402, 10**12)
+    emax_new = F(239372027867896139, 10**24)
+
+    binding_sealed = t_floor_sealed - emax_sealed
+    binding_new = t_floor_new - emax_new
+
+    check("sealed binding margin is positive", binding_sealed > 0)
+    check("new binding margin is positive", binding_new > 0)
+    check(
+        "new binding margin matches the pinned run's reported binding_floor",
+        binding_new == F(444569029972132103861, 10**24),
+    )
+    check(
+        "new binding margin exceeds the sealed one by more than 500x",
+        binding_new > 500 * binding_sealed,
+    )
+    check(
+        "Emax grows by less than 5 percent at the wider finite range",
+        emax_new < emax_sealed * F(105, 100),
+    )
+
+
+def check_pinned_run() -> None:
+    """The archived pinned-container transcript must still say what it said."""
+
+    log = HERE / "pinned-container-run" / "assembly_01782354_pinned_container.log"
+    check("pinned-container transcript is present", log.is_file())
+    if not log.is_file():
+        return
+    text = log.read_text(encoding="utf-8", errors="replace")
+    check(
+        "pinned run reports the assembly PASS",
+        "RESULT: LOWER-TIME UNCONDITIONAL CANDIDATE ASSEMBLY PASS" in text,
+    )
+    check("pinned run contains no FAIL", "[FAIL]" not in text)
+    check(
+        "pinned run executed the live Arb tail replay",
+        "LOWER-TIME INDEPENDENT ARB TAIL REPLAY PASS" in text,
+    )
+    check(
+        "pinned run verified all 3,359,013 finite rows with no gaps or uncertainty",
+        "rows=3359013" in text and "gaps=0" in text and "UNCERT=0" in text,
+    )
+
+
 def main() -> int:
     check_parameter_arithmetic()
+    check_margin_comparison()
+    check_pinned_run()
     check_archive_integrity()
     check_assembly_transcript()
     check_provenance_caveats()
