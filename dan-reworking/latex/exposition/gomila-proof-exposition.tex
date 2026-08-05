@@ -2562,18 +2562,26 @@ line-by-line correspondence between the supplementary programs and
 the statements of this paper, which the review has checked and
 which any reader can re-audit from the included sources.
 
-One caveat on re-execution, as distinct from re-reading. Six of the
-seven programs can be re-run directly from what is supplied:
+A note on re-execution, as distinct from re-reading. All seven
+programs can be re-run from what is supplied.
 Propositions~\ref{prop:dinicells} and~\ref{prop:tailexp} take no
-arguments, Proposition~\ref{prop:tailcert} takes an optional
-precision defaulting to $320$ bits, and the remaining reports
-record the parameters used. The exception is
-Proposition~\ref{prop:sweep}, whose program takes twelve positional
-arguments of which the stored sweep outputs record only the range,
-the mollifier type, the $t$-box and the weight; the remaining
-arguments are not recorded, so those nine runs cannot presently be
-regenerated from the supplied material alone. The sources are
-complete and auditable by reading; the invocations are not.
+arguments; Proposition~\ref{prop:tailcert} takes an optional
+precision defaulting to $320$ bits; the report of
+Proposition~\ref{prop:prismcert} records the three parameters that
+affect its arithmetic, its fourth argument controlling only output
+verbosity; and the remaining reports record the parameters used.
+
+Proposition~\ref{prop:sweep} deserves a word, since its program
+takes twelve positional arguments and its stored sweep outputs
+record only the range, the mollifier type, the $t$-box and the
+weight. The remaining arguments are nonetheless fully determined:
+they are fixed by the schedule in the repository's own
+\texttt{scripts/run\_full\_sweep.sh}, which specifies for each
+mollifier band the working precision, the Taylor order and the
+half-width, and which is itself part of the sealed inventory. That
+schedule, rather than any particular sharding of it, is the
+authoritative specification for a replay; it is transcribed in
+\texttt{independent/prop43/INVOCATIONS.md}.
 
 % ===============================================================
 \begin{thebibliography}{9}
