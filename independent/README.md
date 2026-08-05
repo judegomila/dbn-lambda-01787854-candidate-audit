@@ -70,27 +70,23 @@ Only one, to `prop410/prop410_proof.py`:
 
 `prop410` and `prop62` run automatically as part of `./verify.sh`.
 
-### `prop43` is sealed but not yet executable — open gap
+### `prop43` — invocations recovered
 
-`prop43_proof.c` is sealed here, but nothing runs it, and it cannot
-currently be run reproducibly. Its interface is
+`prop43_proof.c` is sealed and now has a documented, complete invocation
+set: see [`prop43/INVOCATIONS.md`](prop43/INVOCATIONS.md).
 
-```
-usage: prop43_proof Nstart Nend tlo_num thi_num t_den y2num y2den \
-                    mtype prec K hw mode [stride]
-```
+The seven arguments previously described here as unrecorded were never lost.
+They are in `scripts/run_full_sweep.sh`, which is sealed and has always been
+on `main`; only the mapping from the stored sweeps to that schedule was
+missing. Eight of the nine stored runs correspond to canonical bands exactly.
+The one residue is which `prec K hw` triple the author used inside each
+re-sharded `p23_s*` run, and it does not affect reproducibility: the
+canonical schedule is authoritative, and the stored runs are corroboration
+produced under a different sharding.
 
-The stored run artifacts under `dan-reworking/code/prop43/runs/` record
-the N range, the mollifier type, the t-box
-(`161250000/1000000000 .. 161250001/1000000000`) and the triangle
-weight — but **not** `y2num`, `y2den`, `prec`, `K`, `hw`, `mode` or
-`stride`, and no command line is saved anywhere in the repository.
-
-This is a reproducibility gap in its own right. A program whose stated
-virtue is that it reads no stored certificates is only as reproducible
-as the record of how it was invoked, and nine sweep outputs totalling
-roughly three hours of compute cannot presently be regenerated from
-what is in the tree.
+Nothing runs it yet. At roughly three hours single-threaded it belongs in a
+dedicated workflow job sharding the bands across parallel runners, on
+dispatch and a schedule, never on the merge path.
 
 ### `prop612`'s fourth argument is output-only
 
@@ -129,10 +125,3 @@ but not `Prt`. From the source `Prt` controls output rather than the
 arithmetic, so it likely does not change the certified values, but the
 report cannot be reproduced byte-for-byte without it.
 
-### The `prop43` gap, continued
-
-Resolving it needs the exact nine invocations from the author. Once
-recorded here, the intended shape is a dedicated workflow job sharding
-the nine runs across parallel runners — roughly 22 minutes of wall time
-for about three hours of billed compute — fired on manual dispatch and
-a schedule, never on the merge path.
