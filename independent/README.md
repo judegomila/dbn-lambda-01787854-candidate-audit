@@ -88,6 +88,27 @@ Nothing runs it yet. At roughly three hours single-threaded it belongs in a
 dedicated workflow job sharding the bands across parallel runners, on
 dispatch and a schedule, never on the merge path.
 
+### `prop612`'s fourth argument is output-only
+
+Determined from the program's own help text and every use of the variable,
+not from asking its author:
+
+> With parameter Prt the output can be controlled:
+> 0 = prints rectangle summary only, 1 = prints full details.
+
+All five occurrences of `prt` in `prop612_proof.c` are `if (prt==1)` guards
+around `flint_printf` calls. It never enters the arithmetic, so it cannot
+affect a certified value.
+
+The stored report shows detailed output, so it was produced with `Prt = 1`.
+With `ts`, `te` and `y0` recorded in the transcript, the full invocation is
+
+```
+prop612_proof 0 0.16125 0.1809 1
+```
+
+`prop612` therefore has no outstanding blocker to promotion.
+
 ### Promotion candidates not yet promoted
 
 `dan-reworking/code/` now also holds `prop49`, `prop510`, `prop612` and

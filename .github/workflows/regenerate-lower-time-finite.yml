@@ -1,0 +1,142 @@
+name: Regenerate lower-time finite corpus
+
+# The 0.1782354 research lane's archived finite corpus was produced from a
+# dirty tree in an unpinned container (see
+# research/lower_time_01782354/ASSESSMENT.md, findings 1 and 3).  This job
+# regenerates it from a committed tree in the pinned review image, sharded so
+# the wall clock is tolerable, and records each shard's exact invocation.
+#
+# Deliberately NOT on the merge path: the bands together cost roughly three
+# hours of runner time.  Dispatch only.
+
+on:
+  workflow_dispatch:
+    inputs:
+      t0_numerator:
+        description: 't0 numerator over 100000 (16070 = 0.1607)'
+        required: true
+        default: '16070'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: regenerate-lower-time-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REVIEW_IMAGE: dbn-lambda-01787854-review
+  REVIEW_BUILD_MANIFEST_SHA256: 5566fe4ad23c9d0612a76d46c6886c978bd90fc610e40cf11b9330d49ad9cfa4
+  REVIEW_BASE_DIGEST: sha256:52df9b1ee71626e0088f7d400d5c6b5f7bb916f8f0c82b474289a4ece6cf3faf
+  REVIEW_UBUNTU_SNAPSHOT: 20260723T000000Z
+  REVIEW_SOURCE_URL: https://github.com/judegomila/dbn-lambda-01787854-candidate-audit
+
+jobs:
+  shard:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Bands exactly as research/lower_time_01782354/scripts/run_finite_01782354.sh
+          # invokes them.  mtype names the largest mollifier prime.
+          - { name: p23571113, lo: 690988,  hi: 728999,  mtype: 7, prec: 220, k: 14, hw: '0.005'   }
+          - { name: p235711,   lo: 729000,  hi: 774999,  mtype: 6, prec: 220, k: 14, hw: '0.005'   }
+          - { name: p2357,     lo: 775000,  hi: 849999,  mtype: 5, prec: 220, k: 14, hw: '0.005'   }
+          - { name: p235,      lo: 850000,  hi: 1074999, mtype: 4, prec: 220, k: 14, hw: '0.005'   }
+          - { name: p23_a,     lo: 1075000, hi: 1100000, mtype: 3, prec: 240, k: 16, hw: '0.00025' }
+          - { name: p23_b,     lo: 1100001, hi: 1300000, mtype: 3, prec: 220, k: 14, hw: '0.01'    }
+          - { name: p23_c,     lo: 1300001, hi: 1700000, mtype: 3, prec: 220, k: 14, hw: '0.01'    }
+          - { name: p23_d,     lo: 1700001, hi: 2200000, mtype: 3, prec: 220, k: 14, hw: '0.01'    }
+          - { name: p23_e,     lo: 2200001, hi: 2800000, mtype: 3, prec: 220, k: 14, hw: '0.01'    }
+          - { name: p23_f,     lo: 2800001, hi: 3300000, mtype: 3, prec: 220, k: 14, hw: '0.01'    }
+          - { name: p23_g,     lo: 3300001, hi: 4050000, mtype: 3, prec: 220, k: 14, hw: '0.01'    }
+    steps:
+      - name: Check out sealed review package
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Refuse to run from a dirty tree
+        run: |
+          # The defect this job exists to fix.  A regeneration whose source
+          # state is not recoverable from a commit is no better than the
+          # archive it replaces.
+          if [ -n "$(git status --porcelain --untracked-files=all)" ]; then
+            echo "error: working tree is not clean; refusing to regenerate" >&2
+            git status --porcelain --untracked-files=all >&2
+            exit 1
+          fi
+          echo "tree is clean at $(git rev-parse HEAD)"
+
+      - name: Verify reviewed container build inputs
+        run: |
+          manifest_sha=$(sha256sum scripts/REVIEW_CONTAINER_INPUTS.sha256 | awk '{print $1}')
+          test "$manifest_sha" = "$REVIEW_BUILD_MANIFEST_SHA256"
+          sha256sum --strict --check scripts/REVIEW_CONTAINER_INPUTS.sha256
+
+      - name: Build and assert the pinned review container
+        run: |
+          set -o pipefail
+          docker build --pull=false --progress=plain --platform linux/amd64 \
+            -t "$REVIEW_IMAGE" .
+          test "$(docker image inspect --format '{{.Os}}/{{.Architecture}}' "$REVIEW_IMAGE")" = linux/amd64
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.base.digest"}}' "$REVIEW_IMAGE")" = "$REVIEW_BASE_DIGEST"
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.dbn.ubuntu-snapshot"}}' "$REVIEW_IMAGE")" = "$REVIEW_UBUNTU_SNAPSHOT"
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.source"}}' "$REVIEW_IMAGE")" = "$REVIEW_SOURCE_URL"
+
+      - name: Regenerate shard ${{ matrix.name }}
+        env:
+          T0: ${{ github.event.inputs.t0_numerator }}
+          LO: ${{ matrix.lo }}
+          HI: ${{ matrix.hi }}
+          MTYPE: ${{ matrix.mtype }}
+          PREC: ${{ matrix.prec }}
+          K: ${{ matrix.k }}
+          HW: ${{ matrix.hw }}
+        run: |
+          set -o pipefail
+          mkdir -p out
+          producer=research/lower_time_01782354/src/lemma_sweep_p23571113.c
+          # Record the invocation before running it, not after.  This is the
+          # other half of finding 1: an unrecorded invocation makes a result
+          # reproducible only in principle.
+          {
+            echo "shard=${{ matrix.name }}"
+            echo "repository_commit=$(git rev-parse HEAD)"
+            echo "repository_dirty=false"
+            echo "producer=$producer"
+            echo "producer_sha256=$(sha256sum "$producer" | awk '{print $1}')"
+            echo "container_image=$REVIEW_IMAGE"
+            echo "container_base_digest=$REVIEW_BASE_DIGEST"
+            echo "invocation=triangle $LO $HI $T0 $T0 100000 350708 10000000 $MTYPE $PREC $K $HW t"
+          } > "out/${{ matrix.name }}_INVOCATION.txt"
+          docker run --rm --network none --read-only --cap-drop ALL \
+            --security-opt no-new-privileges \
+            --user "$(id -u):$(id -g)" \
+            --tmpfs /tmp:rw,exec,nosuid,size=2g \
+            --volume "$PWD/$producer:/work/producer.c:ro" \
+            --volume "$PWD/out:/out" \
+            "$REVIEW_IMAGE" bash -lc "
+              set -euo pipefail
+              gcc -O3 -std=c17 -Wall -Wextra -Werror -pedantic \
+                -DTRIANGLE_WEIGHT /work/producer.c -o /tmp/triangle -lflint -lm
+              /tmp/triangle $LO $HI $T0 $T0 100000 350708 10000000 \
+                $MTYPE $PREC $K $HW t | gzip -9 > /out/${{ matrix.name }}_${LO}_${HI}.log.gz
+            "
+          gunzip -c "out/${{ matrix.name }}_${LO}_${HI}.log.gz" | grep -c UNCERT > out/uncert_count.txt || true
+          echo "UNCERT rows: $(cat out/uncert_count.txt)"
+          if [ "$(cat out/uncert_count.txt)" != "0" ]; then
+            echo "error: shard produced UNCERT rows; failing closed" >&2
+            exit 1
+          fi
+          sha256sum out/*.log.gz > "out/${{ matrix.name }}_SHA256SUMS"
+
+      - name: Upload shard
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: lower-time-finite-${{ matrix.name }}-${{ github.sha }}
+          path: out/
+          if-no-files-found: error
