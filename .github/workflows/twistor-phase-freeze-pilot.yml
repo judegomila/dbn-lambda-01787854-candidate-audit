@@ -1,0 +1,123 @@
+name: Twistor phase-freeze pilot
+
+# Unsealed research workflow. It is isolated from the reviewed candidate and
+# never feeds the repository's sealed verification surface.
+on:
+  push:
+    branches:
+      - agent/twistor-phase-freeze-under-015
+    paths:
+      - research/twistor_phase_freeze/**
+      - .github/workflows/twistor-phase-freeze-pilot.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: twistor-phase-freeze-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REVIEW_IMAGE: dbn-lambda-01787854-review
+  REVIEW_BUILD_MANIFEST_SHA256: 5566fe4ad23c9d0612a76d46c6886c978bd90fc610e40cf11b9330d49ad9cfa4
+  REVIEW_BASE_DIGEST: sha256:52df9b1ee71626e0088f7d400d5c6b5f7bb916f8f0c82b474289a4ece6cf3faf
+  REVIEW_UBUNTU_SNAPSHOT: 20260723T000000Z
+  REVIEW_SOURCE_URL: https://github.com/judegomila/dbn-lambda-01787854-candidate-audit
+
+jobs:
+  sharp-singletons:
+    name: sharp singleton t=${{ matrix.tnum }}/100000
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # The first row is the complete first-pass test for a bound below
+          # 0.15. Deeper times initially probe the known P5/P23 bottlenecks;
+          # the expensive P13 row is promoted only if t=0.13 survives.
+          - tnum: '13000'
+            rows: '690988 7;850000 4;1075000 3;4050000 3'
+          - tnum: '12500'
+            rows: '850000 4;1075000 3;4050000 3'
+          - tnum: '12000'
+            rows: '850000 4;1075000 3;4050000 3'
+
+    steps:
+      - name: Check out research branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Refuse a dirty source tree
+        run: |
+          test -z "$(git status --porcelain --untracked-files=all)"
+          echo "source commit: $(git rev-parse HEAD)"
+
+      - name: Verify pinned container inputs
+        run: |
+          manifest_sha=$(sha256sum scripts/REVIEW_CONTAINER_INPUTS.sha256 | awk '{print $1}')
+          test "$manifest_sha" = "$REVIEW_BUILD_MANIFEST_SHA256"
+          sha256sum --strict --check scripts/REVIEW_CONTAINER_INPUTS.sha256
+
+      - name: Build and assert pinned review container
+        run: |
+          set -o pipefail
+          docker build --pull=false --progress=plain --platform linux/amd64 \
+            -t "$REVIEW_IMAGE" .
+          test "$(docker image inspect --format '{{.Os}}/{{.Architecture}}' "$REVIEW_IMAGE")" = linux/amd64
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.base.digest"}}' "$REVIEW_IMAGE")" = "$REVIEW_BASE_DIGEST"
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.dbn.ubuntu-snapshot"}}' "$REVIEW_IMAGE")" = "$REVIEW_UBUNTU_SNAPSHOT"
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.source"}}' "$REVIEW_IMAGE")" = "$REVIEW_SOURCE_URL"
+
+      - name: Run sharp two-channel singleton probe
+        env:
+          TNUM: ${{ matrix.tnum }}
+          ROWS: ${{ matrix.rows }}
+        run: |
+          set -o pipefail
+          mkdir -p out
+          docker run --rm --network none --read-only --cap-drop ALL \
+            --security-opt no-new-privileges \
+            --user "$(id -u):$(id -g)" \
+            --tmpfs /tmp:rw,exec,nosuid,size=2g \
+            --env PROBE_TIMES="$TNUM" \
+            --env PROBE_ROWS="$ROWS" \
+            --volume "$PWD:/work/repo:ro" \
+            --volume "$PWD/out:/out" \
+            "$REVIEW_IMAGE" bash -lc '
+              set -euo pipefail
+              cd /work/repo
+              research/twistor_phase_freeze/run_sharp_probe.sh /out
+            '
+          cat out/summary.tsv
+
+      - name: Record provenance
+        if: always()
+        env:
+          TNUM: ${{ matrix.tnum }}
+          ROWS: ${{ matrix.rows }}
+        run: |
+          mkdir -p out
+          {
+            echo "status=UNSEALED_RESEARCH_ONLY"
+            echo "repository_commit=$(git rev-parse HEAD)"
+            echo "repository_dirty=$(test -z "$(git status --porcelain --untracked-files=all)" && echo false || echo true)"
+            echo "producer=research/lower_time_01782354/src/lemma_sweep_p23571113.c"
+            echo "producer_sha256=$(sha256sum research/lower_time_01782354/src/lemma_sweep_p23571113.c | awk '{print $1}')"
+            echo "probe_script_sha256=$(sha256sum research/twistor_phase_freeze/run_sharp_probe.sh | awk '{print $1}')"
+            echo "time_numerator=$TNUM"
+            echo "time_denominator=100000"
+            echo "rows=$ROWS"
+            echo "container_base_digest=$REVIEW_BASE_DIGEST"
+          } > out/PROVENANCE.txt
+          sha256sum out/* > out/SHA256SUMS
+
+      - name: Upload unsealed probe transcript
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: twistor-sharp-t${{ matrix.tnum }}-${{ github.sha }}
+          path: out/
+          if-no-files-found: error
