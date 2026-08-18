@@ -9,6 +9,13 @@ on:
     paths:
       - research/twistor_phase_freeze/**
       - .github/workflows/twistor-phase-freeze-pilot.yml
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+    paths:
+      - research/twistor_phase_freeze/**
+      - .github/workflows/twistor-phase-freeze-pilot.yml
   workflow_dispatch:
 
 permissions:
