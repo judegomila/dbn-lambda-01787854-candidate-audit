@@ -1,0 +1,25 @@
+{
+  "minima": [
+    {"lambda_objective": 0.1375354, "n": 690988, "sampled_min_abs_ef": 0.9386013418283717, "sampled_min_abs_fraction": 0.25, "sampled_min_re_ef": 0.9350535714519249, "sampled_min_re_fraction": 0.25, "t": 0.12},
+    {"lambda_objective": 0.1375354, "n": 850000, "sampled_min_abs_ef": 0.9146643986820653, "sampled_min_abs_fraction": 0.999, "sampled_min_re_ef": 0.9146128490178768, "sampled_min_re_fraction": 0.999, "t": 0.12},
+    {"lambda_objective": 0.1375354, "n": 1075000, "sampled_min_abs_ef": 0.9752298546551728, "sampled_min_abs_fraction": 0.75, "sampled_min_re_ef": 0.971455211656367, "sampled_min_re_fraction": 0.75, "t": 0.12},
+    {"lambda_objective": 0.1375354, "n": 2000000, "sampled_min_abs_ef": 0.9155028489546123, "sampled_min_abs_fraction": 0.25, "sampled_min_re_ef": 0.9153746681704424, "sampled_min_re_fraction": 0.25, "t": 0.12},
+    {"lambda_objective": 0.1375354, "n": 4050000, "sampled_min_abs_ef": 0.9464290875419133, "sampled_min_abs_fraction": 0.75, "sampled_min_re_ef": 0.94512924861861, "sampled_min_re_fraction": 0.75, "t": 0.12},
+    {"lambda_objective": 0.1425354, "n": 690988, "sampled_min_abs_ef": 0.9398354245049775, "sampled_min_abs_fraction": 0.25, "sampled_min_re_ef": 0.9364335160318709, "sampled_min_re_fraction": 0.25, "t": 0.125},
+    {"lambda_objective": 0.1425354, "n": 850000, "sampled_min_abs_ef": 0.9153374150393813, "sampled_min_abs_fraction": 0.999, "sampled_min_re_ef": 0.915254275380549, "sampled_min_re_fraction": 0.999, "t": 0.125},
+    {"lambda_objective": 0.1425354, "n": 1075000, "sampled_min_abs_ef": 0.9703426730374113, "sampled_min_abs_fraction": 0.75, "sampled_min_re_ef": 0.9669833720094362, "sampled_min_re_fraction": 0.75, "t": 0.125},
+    {"lambda_objective": 0.1425354, "n": 2000000, "sampled_min_abs_ef": 0.9264029423553055, "sampled_min_abs_fraction": 0.25, "sampled_min_re_ef": 0.9258722990862934, "sampled_min_re_fraction": 0.25, "t": 0.125},
+    {"lambda_objective": 0.1425354, "n": 4050000, "sampled_min_abs_ef": 0.9516304712716698, "sampled_min_abs_fraction": 0.75, "sampled_min_re_ef": 0.9503261355032843, "sampled_min_re_fraction": 0.75, "t": 0.125},
+    {"lambda_objective": 0.1475354, "n": 690988, "sampled_min_abs_ef": 0.9408717838429254, "sampled_min_abs_fraction": 0.25, "sampled_min_re_ef": 0.9376038569129798, "sampled_min_re_fraction": 0.25, "t": 0.13},
+    {"lambda_objective": 0.1475354, "n": 850000, "sampled_min_abs_ef": 0.9152306283073636, "sampled_min_abs_fraction": 0.999, "sampled_min_re_ef": 0.9151759469128825, "sampled_min_re_fraction": 0.999, "t": 0.13},
+    {"lambda_objective": 0.1475354, "n": 1075000, "sampled_min_abs_ef": 0.9698708736466785, "sampled_min_abs_fraction": 0.75, "sampled_min_re_ef": 0.9666486392748483, "sampled_min_re_fraction": 0.75, "t": 0.13},
+    {"lambda_objective": 0.1475354, "n": 2000000, "sampled_min_abs_ef": 0.9277963066138868, "sampled_min_abs_fraction": 0.25, "sampled_min_re_ef": 0.9272537613599073, "sampled_min_re_fraction": 0.25, "t": 0.13},
+    {"lambda_objective": 0.1475354, "n": 4050000, "sampled_min_abs_ef": 0.9564690721175649, "sampled_min_abs_fraction": 0.75, "sampled_min_re_ef": 0.9551591871231284, "sampled_min_re_fraction": 0.75, "t": 0.13}
+  ],
+  "rows": 75,
+  "sample_fractions": [0, 0.25, 0.5, 0.75, 0.999],
+  "status": "NONRIGOROUS_SAMPLED_DIAGNOSTIC_ONLY",
+  "warning": "Finite sampling and IEEE double precision do not certify nonvanishing or a de Bruijn--Newman bound.",
+  "y": 0.18727199470289196,
+  "y2": 0.0350708
+}
