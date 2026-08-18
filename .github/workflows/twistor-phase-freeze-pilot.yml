@@ -96,7 +96,7 @@ jobs:
             "$REVIEW_IMAGE" bash -lc '
               set -euo pipefail
               cd /work/repo
-              research/twistor_phase_freeze/run_sharp_probe.sh /out
+              bash research/twistor_phase_freeze/run_sharp_probe.sh /out
             '
           cat out/summary.tsv
 
