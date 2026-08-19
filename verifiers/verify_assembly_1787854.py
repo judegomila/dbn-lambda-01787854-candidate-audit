@@ -180,6 +180,11 @@ p16 = prerequisite(
     [PYTHON, "verifiers/verify_triangle_y_dini_logs.py"],
     ("RESULT: SEALED TRIANGLE Y-DINI CERTIFICATES PASS",),
 )
+p17 = prerequisite(
+    "P17 authoritative 256/512-bit FLINT/Arb Proposition 4.10 error budget",
+    [PYTHON, "verifiers/verify_prop410_arb_logs.py"],
+    ("RESULT: SEALED ARB PROP410 CERTIFICATES PASS",),
+)
 print("--- A: exact candidate and criterion domain")
 a1 = check("A1 exact candidate identity", T0 + Y0_SQUARED / 2 == BOUND)
 a2 = check("A2 exact decimal is 0.1787854", BOUND == F(1_787_854, 10_000_000))
@@ -285,6 +290,7 @@ check(
             p11,
             p15,
             p16,
+            p17,
             a3,
             a4,
             ii1,

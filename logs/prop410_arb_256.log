@@ -1,0 +1,64 @@
+Prop410 Arb verifier: precision=256, N0=690988, m0=2000
+PARAM t0 = 129/800
+PARAM tbox_lo = 161250000/1000000000
+PARAM tbox_hi = 161250001/1000000000
+PARAM y0^2 = 87677/2500000
+PARAM ymax^2 = 271/400
+PARAM N0 = 690988
+PARAM m0 = 2000
+PARAM Tmin = 791366/1000000000000
+PARAM budget_Emax = 234/1000000000
+PARAM stated_eAB = 206/100000000000000
+PARAM stated_eC0 = 233492848188649183/10^24
+PARAM stated_Emax = 233494905212337849/10^24
+[PASS] exact candidate identity t0+y0^2/2 = 893927/5000000
+[PASS] exact t-box: t0 = tbox_lo < tbox_hi <= 1/4
+[PASS] exact y0^2 identity 87677/2500000 = 350708/10^7
+[PASS] exact floor exceeds coarse budget: 791366/10^12 > 234/10^9
+[PASS] domain: 0 < t/(16 N0^2) < 1 and 1 - t/(16 N0^2) > 0
+[PASS] domain: x0 > 12, x0 > 6.66, x0 > 6
+[PASS] domain: log N0 - log m0 > 0
+[PASS] domain: N0 - 1/8 > 0
+[PASS] gate G0_positive_part: 8/x0^2 < 3 y0
+[PASS] gate sigma1_positive: sigma1 > 0
+[PASS] gate Y1_negative: Y1 < 0
+[PASS] gate kappa_domain: 0 < kappa < 1
+[PASS] gate G2a_ratio: N0^2/(N0^2-t/16) > 1
+[PASS] gate U1_log_domain: log(N0^2-t/16) > 2
+[PASS] gate U2_logN: log N0 > 1/2
+[PASS] gate U3a_tail_decrease: (1+y0)/2 - delta1 > 0
+[PASS] gate Y_range (exact): 0 < y0^2 < ymax^2 <= 1
+[PASS] gate U3b_first_endpoint: g_t1 < 0
+[PASS] gate U3c_second_endpoint: g_t2 < 0
+[PASS] gate U5_last_factor (exact): 3/10.50 < 1
+[PASS] majorant domain: log n > 0 for all head terms, log m0 > 0
+[PASS] majorant domain: tlo > 0 and lower(log0^2) > 0
+[PASS] eAB corridor 2.057e-12 < eAB < 2.058e-12
+[PASS] eC0 corridor 2.33492848e-7 < eC0 < 2.33492849e-7
+[PASS] Emax corridor 2.33494905e-7 < Emax < 2.33494906e-7
+[PASS] decisive eAB < 206/10^14
+[PASS] decisive eC0 < 233492848188649183/10^24
+[PASS] decisive Emax < 233494905212337849/10^24
+[PASS] decisive coarse budget Emax < 234/10^9
+[PASS] decisive finite margin Tmin - Emax > 0
+[PASS] decisive binding floor Tmin - Emax > 557/10^9
+
+Directed Arb enclosures:
+delta1 upper point = [8.50899889846674112562624108396e-16 +/- 1.44e-46]
+kappa upper point = [1.34375117103022394299760353737e-14 +/- 4.84e-44]
+sigma1 enclosure = [1.67770989321524226316357665287 +/- 3.37e-9]
+Y1 enclosure = [-6.70293886823147901130462711684 +/- 3.28e-23]
+g_t1 enclosure = [-0.441735640408169908607809683727 +/- 1.91e-9]
+g_t2 enclosure = [-0.506622770922606166492249723339 +/- 3.37e-9]
+U1max upper point = [3.00202962917846556019239760834e-13 +/- 5.73e-44]
+Pmax upper point = [2.02020134002695090625827654559 +/- 3.60e-30]
+head upper point = [1.44876762495760296178674790494 +/- 5.88e-31]
+cap upper point = [0.943027908358772718191521507425 +/- 2.70e-32]
+Smax upper point = [3.39179553331637567997826941236 +/- 4.44e-30]
+eAB upper point = [2.05702368866621449147357372171e-12 +/- 4.68e-42]
+eC0 upper point = [2.33492848188649182679145092376e-7 +/- 3.70e-37]
+Emax upper point = [2.33494905212337848893636565949e-7 +/- 3.53e-37]
+Tmin-Emax lower point = [5.57871094787662151106363434051e-7 +/- 3.53e-37]
+
+TOTAL CHECKS: 31; FAILURES: 0
+RESULT: ALL ARB PROP410 CHECKS PASS

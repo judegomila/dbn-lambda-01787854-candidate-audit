@@ -960,18 +960,29 @@ display.)
 \end{proposition}
 
 \begin{proof}
-The proof is computer-assisted; the program
-\texttt{prop410\_proof.py}, included with this paper as
-supplementary material (directory \texttt{code/prop410}), computes
-outward-rounded interval
-enclosures ($220$-bit precision) of majorants of the right-hand
-sides of equation (23) of \cite{Polymath} and of the corollary
-\eqref{eq:ec0}. Its only inputs are the exact rational parameters
-$t_0$, $y_0^2$ and $N_0=690988$ (the enclosures are computed over
-the rational interval $[t_0,\,t_0+10^{-9}]$, which contains $t_0$);
-it reads no stored data, and every acceptance condition below is a
-strict inequality between exact rational endpoints, checked in
-exact arithmetic.
+The proof is computer-assisted.  The authoritative program is the
+standalone FLINT/Arb implementation
+\texttt{verify\_prop410\_arb.c}, included with this paper as
+supplementary material (directory \texttt{code/prop410}) and run
+independently at $256$ and $512$ bits; it computes rigorous
+directed Arb ball enclosures of majorants of the right-hand sides
+of equation (23) of \cite{Polymath} and of the corollary
+\eqref{eq:ec0}.  The \texttt{mpmath} interval program
+\texttt{prop410\_proof.py} ($220$-bit precision) computes the same
+majorants and is retained as corroboration; it shares its
+numerical backend with the audit repository's original verifier
+and is therefore a same-backend replay rather than an independent
+numerical implementation.  The programs' only inputs are the exact
+rational parameters $t_0$, $y_0^2$ and $N_0=690988$ (the
+enclosures are computed over the rational interval
+$[t_0,\,t_0+10^{-9}]$, which contains $t_0$); they read no stored
+data.  Every acceptance condition below fails closed: in the Arb
+program each decisive inequality subtracts the exact rational
+bound and requires the entire resulting ball to be strictly on the
+winning side, so an overlapping or indeterminate comparison is a
+failure, and every decimal constant of the formulas is constructed
+from an exact rational ($0.02=1/50$, $0.626=313/500$,
+$1.24=31/25$, $6.66=333/50$, $10.50=21/2$, $0.125=1/8$).
 
 A single evaluation dominates the whole region $x\ge x_*$,
 $y_0\le y\le\sqrt{1-2t_0}$, $t=t_0$ by the following monotonicity
@@ -1046,13 +1057,18 @@ dominate every window; both rate inequalities are checked by the
 program. The product of the three bounds is the
 program's quantity \texttt{error\_ab}.
 
-The program checks the twelve domain and sign conditions
-required above, computes the enclosures of
-\texttt{error\_ab}, \texttt{error\_c0} and of their interval sum,
-and establishes the three displayed inequalities by exact rational
-comparison of the outward-rounded upper endpoints against the
-displayed constants. The run completes in under a second; a
-human-readable report of all intermediate enclosures is written to
+Both programs check the twelve domain and sign conditions
+required above and compute the enclosures of
+\texttt{error\_ab}, \texttt{error\_c0} and of their sum.  The
+authoritative Arb program establishes the three displayed
+inequalities as strict ball inequalities against the exact
+rational constants, identically at $256$ and $512$ bits; the
+\texttt{mpmath} replay reproduces the same digits by exact
+rational comparison of outward-rounded upper endpoints.  Each run
+completes in under a second; the Arb transcripts are
+\texttt{code/prop410/runs/prop410\_arb\_report\_256.txt} and
+\texttt{code/prop410/runs/prop410\_arb\_report\_512.txt}, and the
+replay's report is
 \texttt{code/prop410/runs/prop410\_report.txt}.
 \end{proof}
 
@@ -2452,7 +2468,7 @@ cells), \ref{prop:finiteerr} (finite-region error bound),
 \ref{prop:tailcert} (tail cutoff inequalities),
 \ref{prop:barriererr} (barrier-box error bound),
 \ref{prop:tailexp} (tail-exponent inequality) and
-\ref{prop:prismcert} (prism decomposition) --- are proved by seven
+\ref{prop:prismcert} (prism decomposition) --- are proved by eight
 standalone programs included with this paper as supplementary
 material (directory \texttt{code/}, with the outputs of the runs
 in the \texttt{runs/} subdirectories). The programs share a common
@@ -2464,8 +2480,11 @@ entering Theorem~\ref{thm:main} is either proved analytically in
 this paper or computed from the exact inputs by one of the
 programs;
 \item all nonexact arithmetic is rigorous interval arithmetic ---
-FLINT/Arb ball arithmetic in the six C programs, outward-rounded
-\texttt{mpmath} interval arithmetic in the one Python program ---
+FLINT/Arb ball arithmetic in the seven C programs, outward-rounded
+\texttt{mpmath} interval arithmetic in the one Python program (the
+corroborating same-backend replay of
+Proposition~\ref{prop:finiteerr}, whose authoritative program is
+its Arb implementation) ---
 with directed endpoint extraction wherever a one-sided bound is
 formed;
 \item every acceptance condition is a strict directed comparison
@@ -2476,7 +2495,7 @@ comparison aborts the run;
 propositions is compared explicitly against an exact rational, so
 the statements assert no more than the programs establish.
 \end{itemize}
-The total running time of all seven programs is under one hour on
+The total running time of all eight programs is under one hour on
 a single laptop core (the window sweep of
 Proposition~\ref{prop:sweep} accounts for most of it; every other
 program finishes in seconds to minutes), so full replication of

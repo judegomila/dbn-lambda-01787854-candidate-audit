@@ -110,7 +110,8 @@ Read:
 - `WINDOW_FREEZE_THEOREM.md`;
 - `provenance/TRIANGLE_Y_DINI_THEOREM.independent.md`;
 - `provenance/TRIANGLE_NORMALIZER_CORR_MONOTONICITY.md`;
-- `src/lemma_sweep_p235711.c`; and
+- `src/lemma_sweep_p235711.c`;
+- `verifiers/verify_prop410_arb.c` and `PROP410_ARB_PROVENANCE.md`; and
 - the corresponding verifiers under `verifiers/`.
 
 The core obligations are:
@@ -127,6 +128,15 @@ The core obligations are:
 The target effective-error path derives \(x-12,\ 10.50\) directly from
 Proposition 6.6(vi).  It consumes neither the displayed \(10.44\) in equation
 (24) nor the historical \(x-6.66\) substitution.
+
+The uniform effective-error budget \(E_{\max}\) is certified
+authoritatively by the standalone FLINT/Arb program
+`verifiers/verify_prop410_arb.c` at 256 and 512 bits, strictly parsed by
+`verifiers/verify_prop410_arb_logs.py` as assembly prerequisite P17.  The
+`mpmath.iv` budget inside `verifiers/verify_finite_and_binding.py` and its
+derived copy `independent/prop410/prop410_proof.py` are same-backend
+corroboration; the proof of Proposition 4.10 no longer depends on
+`mpmath.iv` alone.
 
 ### 4. Infinite final-time lane
 
@@ -264,15 +274,22 @@ implementation.
 ## Independent recomputation and cross-check
 
 `independent/` holds self-contained programs that recompute published
-quantities by a second, independently written route. They are sealed and
+quantities by a second route. They are sealed and
 `verifiers/verify_independent_crosscheck.py` executes them as part of
-`verify.sh`.
+`verify.sh`.  Two of them (`prop43`, `prop62`) are independent
+implementations; `prop410/prop410_proof.py` is a same-backend replay — it
+shares `mpmath.iv` and a line-for-line identical `effective_error_budget()`
+with `verifiers/verify_finite_and_binding.py`, so it corroborates the
+published digits without supplying cross-backend independence.  The
+authoritative Proposition 4.10 certification is the FLINT/Arb lane above.
 
 They close a specific gap. Two sharp constants were stated in prose but
 machine-checked only through weaker bounds:
 
 - `E_max = 0.000000233494905212337849`, where
-  `verify_finite_and_binding.py` gates on `error_max < 234/10**9`; and
+  `verify_finite_and_binding.py` gates on `error_max < 234/10**9` (the
+  displayed digits are now also machine-checked authoritatively by the
+  Arb lane's P17); and
 - `0.000356523011600040`, where
   `barrier/src/verify_uniform_error_01787854.c` gates on the loose
   `0.00125` allowance.

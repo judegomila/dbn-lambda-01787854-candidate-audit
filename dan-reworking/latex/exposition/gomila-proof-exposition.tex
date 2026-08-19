@@ -983,19 +983,33 @@ of the two displayed bounds, which are rounded upward for display.)
 \end{proposition}
 
 \begin{proof}
-The proof is computer-assisted; the verification program
-\texttt{prop410\_proof.py}, included with this manuscript as
-supplementary material (directory \texttt{code/prop410}; derived
+The proof is computer-assisted.  The authoritative verification
+program is the standalone FLINT/Arb implementation
+\texttt{verify\_prop410\_arb.c}, included with this manuscript as
+supplementary material (directory \texttt{code/prop410}; sealed in
+the audit repository as \texttt{verifiers/verify\_prop410\_arb.c})
+and run independently at $256$ and $512$ bits.  It computes
+rigorous directed Arb ball enclosures of majorants of the
+right-hand sides of equation (23) of \cite{Polymath} and of the
+corollary \eqref{eq:ec0}.  The earlier \texttt{mpmath} interval
+program \texttt{prop410\_proof.py} ($220$-bit precision; derived
 from Gomila's source as documented in its header and reviewed line
-by line as part of this audit), computes outward-rounded interval
-enclosures ($220$-bit precision) of majorants of the right-hand
-sides of equation (23) of \cite{Polymath} and of the corollary
-\eqref{eq:ec0}. Its only inputs are the exact rational parameters
+by line as part of this audit) computes the same majorants and is
+retained alongside it as corroboration; because it shares the
+\texttt{mpmath.iv} backend and a line-for-line identical budget
+routine with the repository's original verifier, it is a
+same-backend replay, not an independent numerical implementation.
+The programs' only inputs are the exact rational parameters
 $t_0$, $y_0^2$ and $N_0=690988$ (the enclosures are computed over
-the rational interval $[t_0,\,t_0+10^{-9}]$, which contains $t_0$);
-it reads no stored data, and every acceptance condition below is a
-strict inequality between exact rational endpoints, checked in
-exact arithmetic.
+the rational interval $[t_0,\,t_0+10^{-9}]$, which contains
+$t_0$); they read no stored data.  Every acceptance condition
+below fails closed: in the Arb program each decisive inequality
+subtracts the exact rational bound and requires the entire
+resulting ball to be strictly on the winning side, so an
+overlapping or indeterminate comparison is a failure, and every
+decimal constant of the formulas is constructed from an exact
+rational ($0.02=1/50$, $0.626=313/500$, $1.24=31/25$,
+$6.66=333/50$, $10.50=21/2$, $0.125=1/8$).
 
 A single evaluation dominates the whole region $x\ge x_*$,
 $y_0\le y\le\sqrt{1-2t_0}$, $t=t_0$ by the following monotonicity
@@ -1069,13 +1083,18 @@ and that $\delta_N\le\delta_1$), so their values at $N=N_0$
 dominate every window. The product of the three bounds is the
 program's quantity \texttt{error\_ab}.
 
-The program certifies the twelve domain and sign conditions
-required above, computes the enclosures of
-\texttt{error\_ab}, \texttt{error\_c0} and of their interval sum,
-and establishes the three displayed inequalities by exact rational
-comparison of the outward-rounded upper endpoints against the
-displayed constants. The run completes in under a second; a
-human-readable report of all intermediate enclosures is written to
+Both programs certify the twelve domain and sign conditions
+required above and compute the enclosures of
+\texttt{error\_ab}, \texttt{error\_c0} and of their sum.  The
+authoritative Arb program establishes the three displayed
+inequalities as strict ball inequalities against the exact
+rational constants, identically at $256$ and $512$ bits; the
+\texttt{mpmath} replay reproduces the same digits by exact
+rational comparison of outward-rounded upper endpoints.  Each run
+completes in under a second; the Arb transcripts are
+\texttt{code/prop410/runs/prop410\_arb\_report\_256.txt} and
+\texttt{code/prop410/runs/prop410\_arb\_report\_512.txt}, and the
+replay's report is
 \texttt{code/prop410/runs/prop410\_report.txt}.
 \end{proof}
 
@@ -2562,11 +2581,13 @@ line-by-line correspondence between the supplementary programs and
 the statements of this paper, which the review has checked and
 which any reader can re-audit from the included sources.
 
-A note on re-execution, as distinct from re-reading. All seven
+A note on re-execution, as distinct from re-reading. All eight
 programs can be re-run from what is supplied.
 Propositions~\ref{prop:dinicells} and~\ref{prop:tailexp} take no
 arguments; Proposition~\ref{prop:tailcert} takes an optional
-precision defaulting to $320$ bits; the report of
+precision defaulting to $320$ bits; the Arb program of
+Proposition~\ref{prop:finiteerr} requires an explicit precision
+and refuses anything below $256$ bits; the report of
 Proposition~\ref{prop:prismcert} records the three parameters that
 affect its arithmetic, its fourth argument controlling only output
 verbosity; and the remaining reports record the parameters used.

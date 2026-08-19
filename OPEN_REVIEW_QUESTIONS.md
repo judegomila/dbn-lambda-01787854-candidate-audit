@@ -172,6 +172,17 @@ source-lineage evidence, not the sole justification.
 
 ## Priority 7: implementation independence and reproducibility
 
+The previously open numerical-backend blocker for Proposition 4.10 — that
+both programs computing the finite-region error budget shared one
+`mpmath.iv` backend, so exact endpoint comparison was conditional on that
+single library's outward rounding of transcendental interval operations —
+is closed: `verifiers/verify_prop410_arb.c` now certifies the budget
+authoritatively in FLINT/Arb at 256 and 512 bits (assembly prerequisite
+P17), and the `mpmath` path is recorded as same-backend corroboration.
+The remaining referee task for that lane is the proof-to-code map of the
+Arb program against the Proposition 4.10 formulas, including its directed
+endpoint/majorant substitutions (documented in the program header).
+
 Please reproduce at least the decisive small margins in a different build
 environment. Ideally:
 

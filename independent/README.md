@@ -3,9 +3,18 @@
 Self-contained programs that recompute quantities the candidate also
 derives by its own route. Each one reads no stored certificates: it
 calculates from exact rational inputs and prints a certified bound.
-Their value is cross-implementation agreement — if two independently
-written implementations produce the same digits, neither route's
-implementation error is silently load-bearing.
+
+Their value varies by program and is recorded honestly below. `prop43`
+and `prop62` are independently written implementations, so agreement
+means neither route's implementation error is silently load-bearing.
+`prop410/prop410_proof.py` is a **same-backend replay**: it shares
+`mpmath.iv` (and a line-for-line identical `effective_error_budget()`)
+with `verifiers/verify_finite_and_binding.py`, so its agreement
+corroborates the published digits but cannot detect an error inside
+`mpmath.iv` itself. Cross-backend independence for Proposition 4.10 is
+supplied by the authoritative FLINT/Arb program
+`../verifiers/verify_prop410_arb.c` (assembly prerequisite P17; see
+`../PROP410_ARB_PROVENANCE.md`).
 
 These are sealed. `SHA256SUMS` covers them and
 `verifiers/verify_independent_crosscheck.py` executes them.
@@ -28,7 +37,7 @@ program is a deliberate step, not an automatic sync.
 | Program | Proposition | Derived from | Cost |
 |---|---|---|---|
 | `prop43/prop43_proof.c` | 4.3 | `src/lemma_sweep_p235711.c` | ~3 h over nine shards |
-| `prop410/prop410_proof.py` | 4.10 | `verifiers/verify_finite_and_binding.py` | < 1 s |
+| `prop410/prop410_proof.py` | 4.10 | `verifiers/verify_finite_and_binding.py` (same backend) | < 1 s |
 | `prop62/prop62_proof.c` | 6.2 | `barrier/src/verify_uniform_error_01787854.c` | < 1 s |
 
 Each program's own header records its derivation and what was removed
@@ -52,16 +61,22 @@ a seal failure.
 
 This is corroboration, not proof. A pass means two implementations agree
 and the published digits are reproducible. It does not establish either
-proposition, and it does not upgrade the candidate's review status.
+proposition, and it does not upgrade the candidate's review status. For
+`prop410` in particular the agreement is between two copies of one
+`mpmath.iv` calculation, which is why the authoritative Proposition 4.10
+certification was moved to the cross-backend Arb program.
 
 ## Modifications made during promotion
 
-Only one, to `prop410/prop410_proof.py`:
+Two, both to `prop410/prop410_proof.py`:
 
 - the report directory is now overridable via `PROP410_OUTPUT_DIR`,
   defaulting to the original `runs/`. The review container mounts the
   repository read-only, so the hardcoded path was unwritable there. The
   certified arithmetic and the exit status are untouched.
+- a STATUS paragraph was added to the module docstring recording that the
+  program is a same-backend replay and that the authoritative
+  certification is `verifiers/verify_prop410_arb.c`. No code changed.
 
 `prop43_proof.c` and `prop62_proof.c` are byte-identical to their
 `dan-reworking/` originals at the promotion commit.

@@ -64,7 +64,7 @@ closed barrier box.
 | finite/tail overlap | \(N=3840000\) | complete shared window |
 | finite rows | \(3840000-690988+1\) | \(3149013\) |
 | global stored \(T\)-floor | \(791366/10^{12}\) | \(0.000000791366\) |
-| effective-error upper \(E_{\max}\) | — | \(0.000000233494905212337849\) |
+| effective-error upper \(E_{\max}\) | — | \(0.000000233494905212337849\) (Arb-certified, P17) |
 | finite nonvanishing margin | — | \(\ge0.000000557871094787\) |
 | worst Dini ratio upper | — | \(\le0.99999860767275095\) |
 | correction logarithmic-rate upper | — | \(-1.3631121547576400\) |
@@ -138,6 +138,8 @@ image ID: sha256:bedf7303c0be0d35d658d3893cf9f8424aab9f55bc4167644ddf3df564a1653
 Python dependency: mpmath 1.4.1
 ```
 
-The standalone tail and barrier primary checkers use FLINT/Arb. See
-`ENVIRONMENT.txt`, `Dockerfile`, and the replay scripts for the complete
+The standalone tail, barrier, and Proposition 4.10 error-budget primary
+checkers use FLINT/Arb; the `mpmath` finite error budget is same-backend
+corroboration. See `ENVIRONMENT.txt`, `Dockerfile`,
+`PROP410_ARB_PROVENANCE.md`, and the replay scripts for the complete
 toolchain record.

@@ -76,6 +76,7 @@ grep -q "RESULT: ALL PASS" "$scratch/tail_160.log"
 grep -q "RESULT: ALL PASS" "$scratch/tail_256.log"
 
 RUN_SANITIZERS=1 ./scripts/run_tail_arb.sh "$scratch/tail_arb"
+RUN_SANITIZERS=1 ./scripts/run_prop410_arb.sh "$scratch/prop410_arb"
 ./scripts/run_direct_singletons.sh "$scratch/direct_singletons"
 ./scripts/run_barrier_replay.sh "$scratch/barrier"
 

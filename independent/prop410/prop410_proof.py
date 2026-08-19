@@ -1,7 +1,19 @@
 #!/usr/bin/env python3
 """prop410_proof.py
 
-The computation constituting the computer-assisted proof of
+STATUS
+------
+Non-authoritative same-backend replay.  This program and
+verifiers/verify_finite_and_binding.py share one numerical backend
+(mpmath.iv) and a line-for-line identical effective_error_budget(), so
+its agreement corroborates the published digits but is not an
+independent numerical implementation and cannot detect an error inside
+mpmath.iv itself.  The authoritative certification of Proposition 4.10
+is the standalone FLINT/Arb program verifiers/verify_prop410_arb.c,
+whose sealed 256/512-bit transcripts are parsed as assembly
+prerequisite P17.
+
+The computation below replays the effective-error budget of
 Proposition 4.10 of the review manuscript
 (dan-reworking/latex/exposition/gomila-proof-exposition.tex): the uniform bound
 on the effective-approximation error terms of Theorem 1.3 over the
