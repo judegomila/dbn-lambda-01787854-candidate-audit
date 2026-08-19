@@ -128,3 +128,81 @@ jobs:
           name: twistor-sharp-t${{ matrix.tnum }}-${{ github.sha }}
           path: out/
           if-no-files-found: error
+
+  certified-scalar-obstruction:
+    name: certified scalar obstruction at 0.14
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+
+    steps:
+      - name: Check out research branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Refuse a dirty source tree
+        run: |
+          test -z "$(git status --porcelain --untracked-files=all)"
+          echo "source commit: $(git rev-parse HEAD)"
+
+      - name: Verify pinned container inputs
+        run: |
+          manifest_sha=$(sha256sum scripts/REVIEW_CONTAINER_INPUTS.sha256 | awk '{print $1}')
+          test "$manifest_sha" = "$REVIEW_BUILD_MANIFEST_SHA256"
+          sha256sum --strict --check scripts/REVIEW_CONTAINER_INPUTS.sha256
+
+      - name: Build and assert pinned review container
+        run: |
+          set -o pipefail
+          docker build --pull=false --progress=plain --platform linux/amd64 \
+            -t "$REVIEW_IMAGE" .
+          test "$(docker image inspect --format '{{.Os}}/{{.Architecture}}' "$REVIEW_IMAGE")" = linux/amd64
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.base.digest"}}' "$REVIEW_IMAGE")" = "$REVIEW_BASE_DIGEST"
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.dbn.ubuntu-snapshot"}}' "$REVIEW_IMAGE")" = "$REVIEW_UBUNTU_SNAPSHOT"
+          test "$(docker image inspect --format '{{index .Config.Labels "org.opencontainers.image.source"}}' "$REVIEW_IMAGE")" = "$REVIEW_SOURCE_URL"
+
+      - name: Run fail-closed 256/512-bit Arb audit
+        run: |
+          set -o pipefail
+          mkdir -p certified-out
+          docker run --rm --network none --read-only --cap-drop ALL \
+            --security-opt no-new-privileges \
+            --user "$(id -u):$(id -g)" \
+            --tmpfs /tmp:rw,exec,nosuid,size=2g \
+            --volume "$PWD:/work/repo:ro" \
+            --volume "$PWD/certified-out:/out" \
+            "$REVIEW_IMAGE" bash -lc '
+              set -euo pipefail
+              cd /work/repo/research/twistor_phase_freeze/certified
+              sha256sum --strict --check MANIFEST.sha256
+              python3 -m unittest -v tests/test_contract.py
+              cd /work/repo
+              bash research/twistor_phase_freeze/certified/scripts/run_certified_pilot.sh /out
+            '
+          cat certified-out/coupled_scalar_256.log
+          cat certified-out/coupled_scalar_512.log
+
+      - name: Record certified-pilot provenance
+        if: always()
+        run: |
+          mkdir -p certified-out
+          {
+            echo "status=CERTIFIED_NEGATIVE_PILOT_ONLY"
+            echo "repository_commit=$(git rev-parse HEAD)"
+            echo "repository_dirty=$(test -z "$(git status --porcelain --untracked-files=all)" && echo false || echo true)"
+            echo "target=7/50"
+            echo "t0=24727519/200000000"
+            echo "y0=1809/10000"
+            echo "cutoff=4050000"
+            echo "head=153814"
+            echo "container_base_digest=$REVIEW_BASE_DIGEST"
+          } > certified-out/PROVENANCE.txt
+          sha256sum certified-out/* > certified-out/SHA256SUMS
+
+      - name: Upload certified negative pilot
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: twistor-certified-obstruction-${{ github.sha }}
+          path: certified-out/
+          if-no-files-found: error
