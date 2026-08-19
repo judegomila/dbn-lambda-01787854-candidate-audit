@@ -1,0 +1,25 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+The documentation, data, certificates, and transcripts original to this
+repository — including the Markdown documents, the stored proof
+certificates and logs (certificates/, logs/, provenance/), and the
+generated referee manuscript under output/pdf/ — are licensed under the
+Creative Commons Attribution 4.0 International license.
+
+Full legal code: https://creativecommons.org/licenses/by/4.0/legalcode
+Human-readable summary: https://creativecommons.org/licenses/by/4.0/
+
+You are free to share and adapt this material for any purpose, provided
+you give appropriate credit (see CITATION.md), link to the license, and
+indicate if changes were made.
+
+Exceptions (not covered by this license):
+
+- third-party material under vendor/, references/, and paper/external/,
+  which remains under its own recorded terms (see THIRD_PARTY.md);
+- the authored manuscripts
+  gomila_dbn_lambda_01787854_proof_candidate_AUTHORLINE.pdf and the
+  in-progress co-authored manuscripts under dan-reworking/, for which all
+  rights are reserved pending finalization of the author list and venue;
+- the recomputation programs under independent/, authored by Dan Romik,
+  pending the author's license confirmation.

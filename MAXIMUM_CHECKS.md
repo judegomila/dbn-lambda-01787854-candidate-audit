@@ -377,7 +377,7 @@ Before the repository is handed to a reviewer, the exact release commit must:
 4. pass the GitHub `full-review` job; and
 5. pass the GitHub `complete-finite-replay` job, regenerating and comparing
    all \(3,149,013\) finite rows; and
-6. after tagging, pass `Publish verified private review image`, which builds
+6. after tagging, pass `Publish verified review image`, which builds
    once, runs both replay lanes against that exact image, and records its
    registry digest for the immutable release.
 

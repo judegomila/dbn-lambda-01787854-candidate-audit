@@ -1,11 +1,11 @@
 # Computer-assisted proof candidate for $\Lambda\le0.1787854$
 
-> **Status.** This private repository presents a **computer-assisted
-> candidate for an unconditional proof**. It is designed to use no unproved
-> conjecture, but its cited-theorem applications, new lemmas, proof-to-code
-> correspondence, and interval computations have not yet been independently
-> validated. Therefore the bound below is not an established theorem and is
-> not a public announcement.
+> **Status.** This repository presents a **computer-assisted candidate
+> for an unconditional proof**, published openly to invite independent
+> review. It is designed to use no unproved conjecture, but its
+> cited-theorem applications, new lemmas, proof-to-code correspondence,
+> and interval computations have not yet been independently validated.
+> Therefore the bound below is not an established theorem.
 
 The primary paper is
 [`gomila_dbn_lambda_01787854_proof_candidate_AUTHORLINE.pdf`](gomila_dbn_lambda_01787854_proof_candidate_AUTHORLINE.pdf).
@@ -78,10 +78,11 @@ Meixner--Pollaczek, and continuous Hahn expansions of $\xi$, connects Turán's
 classical program on the location of the zeta zeros with the separate
 de Bruijn--Newman program, and gives an accessible account of the objects this
 candidate manipulates: $\xi$, its heat-flow deformation $H_t$, and the
-reality-of-zeros criterion whose threshold is $\Lambda$. The exact PDF is
-bundled as `references/romik-1902.06330-orthogonal-polynomial-xi.pdf`
-(arXiv non-exclusive-distribution license; author retains copyright); see
-[`BIBLIOGRAPHY.md`](BIBLIOGRAPHY.md) entry 4.
+reality-of-zeros criterion whose threshold is $\Lambda$. The exact
+reviewed PDF is identified by SHA-256 in `references/README.md` (arXiv
+non-exclusive-distribution license, so it is not redistributed here;
+author retains copyright); see [`BIBLIOGRAPHY.md`](BIBLIOGRAPHY.md)
+entry 4.
 
 The precise object used by the proof is the Polymath15 normalization
 $H_0(z)=\tfrac18\,\xi(\tfrac12+\tfrac{iz}{2})$ and its heat flow $H_t$; the
@@ -232,7 +233,7 @@ dependency blueprint, boundary matrix, mutation catalogue, and independent
 recomputation standard. They should also read
 [`CITATION.md`](CITATION.md), [`REVIEW_TERMS.md`](REVIEW_TERMS.md), and
 [`THIRD_PARTY.md`](THIRD_PARTY.md). [`SECURITY.md`](SECURITY.md) states the
-private reporting, execution, integrity, and secret-handling boundaries.
+security reporting, execution, integrity, and secret-handling boundaries.
 [`CONTAINER_IMAGE.md`](CONTAINER_IMAGE.md) specifies the pinned local build
 and release-attested OCI digest verification.
 
@@ -334,12 +335,28 @@ shards.
 - `references/`: the versioned upstream proof record.
 - `ADVERSARIAL_REVIEW_PROTOCOL.md`: falsification and independent-sign-off
   protocol.
-- `SECURITY.md`: private reporting and execution policy.
+- `SECURITY.md`: security reporting and execution policy.
 - `CONTAINER_IMAGE.md`: canonical container and exact verified image binding.
 - `paper/`: deterministic source for the referee manuscript.
 - `paper/external/`: supplied theorem-style exposition and its mandatory
   repository cross-check.
 - `output/pdf/`: release-grade referee manuscript.
+
+## License
+
+- Source code original to this repository: [MIT](LICENSE).
+- Documentation, data, certificates, and transcripts original to this
+  repository: [CC BY 4.0](LICENSE-DOCS).
+- Third-party material under `vendor/`, `references/`, and
+  `paper/external/` remains under its own recorded terms; see
+  [`THIRD_PARTY.md`](THIRD_PARTY.md).
+- Exceptions (all rights reserved pending author agreements): the
+  authored manuscripts
+  `gomila_dbn_lambda_01787854_proof_candidate_AUTHORLINE.pdf` and
+  `dan-reworking/`, and the `independent/` programs authored by
+  Dan Romik. See `LICENSE-DOCS` for details.
+
+Cite via [`CITATION.md`](CITATION.md).
 
 The proper description of this repository remains: **a computer-assisted
 candidate for an unconditional proof**, awaiting independent mathematical
