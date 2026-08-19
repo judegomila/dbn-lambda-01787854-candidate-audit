@@ -30,10 +30,13 @@ proofs, and their run outputs.
   proposition references apply to both. Final section is "Remarks
   on the computer-assisted components". Keep the two manuscripts'
   mathematical content in sync when editing either.
-- `papers/` — the arXiv `.tex` sources of the two cited papers
-  (Polymath, arXiv:1904.12438v2; Platt–Trudgian, arXiv:2004.09765v1),
+- `papers/` — removed before public release: it held the arXiv
+  `.tex` sources of the two cited papers (Polymath,
+  arXiv:1904.12438v2; Platt–Trudgian, arXiv:2004.09765v1),
   downloaded so citations could be verified against sources rather
-  than PDF renderings.
+  than PDF renderings. arXiv's non-exclusive-distribution license
+  does not permit redistribution here; re-download from the exact
+  arXiv versions if needed.
 - `code/prop43/` — the verification program for Proposition 4.3
   (`prop43_proof.c`, derived from `src/lemma_sweep_p235711.c` as
   documented in its header) and the complete fresh-run outputs in

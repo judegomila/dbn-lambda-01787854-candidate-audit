@@ -1,4 +1,4 @@
-name: Publish verified private review image
+name: Publish verified review image
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: private-review-image-${{ github.ref }}
+  group: review-image-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -120,7 +120,7 @@ jobs:
           )
           printf 'digest=%s\n' "$digest" >> "$GITHUB_OUTPUT"
           {
-            echo "### Verified private review image"
+            echo "### Verified review image"
             echo
             echo "\`${IMAGE_NAME}@${digest}\`"
           } >> "$GITHUB_STEP_SUMMARY"
@@ -129,7 +129,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: verified-private-image-${{ github.ref_name }}-attempt-${{ github.run_attempt }}
+          name: verified-image-${{ github.ref_name }}-attempt-${{ github.run_attempt }}
           path: |
             replay/tag-full-review/
             replay/tag-full-sweep/

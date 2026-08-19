@@ -1,8 +1,8 @@
-# Security and private-review policy
+# Security and review policy
 
 ## Scope
 
-This private repository is a referee package, not an application or service.
+This repository is a referee package, not an application or service.
 The supported review target is the exact commit identified by the current
 review tag. Other commits, copied files, or locally modified trees are outside
 the release claim.
@@ -10,9 +10,11 @@ the release claim.
 ## Reporting
 
 Report suspected credential exposure, malicious artifacts, unsafe execution,
-or proof-certificate tampering privately to the repository owner through the
-agreed review channel. Do not open a public disclosure while the repository
-and mathematical result remain under private review.
+or proof-certificate tampering privately to the repository owner via
+GitHub's private vulnerability reporting for this repository (or, failing
+that, a direct channel to the owner) before any public disclosure, so a
+correction or advisory can accompany the report. Mathematical errors are
+not security issues: raise those openly as issues or referee findings.
 
 ## Execution boundary
 

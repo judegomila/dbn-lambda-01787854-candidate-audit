@@ -29,7 +29,7 @@ The repository's replay scripts reject an image whose recorded snapshot,
 architecture, or reviewed build-input identity does not match the sealed
 release.
 
-## Published verified private image
+## Published verified review image
 
 The release-tag workflow in `.github/workflows/publish-verified-image.yml`
 builds one image, runs the stored/critical replay and the complete
@@ -47,10 +47,14 @@ the digest produced by the tag workflow's single tested build. That exact
 artifact and attached to the immutable GitHub release. GitHub's release
 attestation binds the review tag, commit, PDF, seal, and digest record.
 
-The package and repository remain private. Keyless public-transparency-log
-signing is deliberately deferred so that the private repository identity is
-not disclosed through a public Sigstore log. No signing key or repository
-secret is required.
+The GHCR container package has its own visibility setting, independent of
+the repository's: while it remains access-controlled, pulling it requires
+the authenticated flow below, and the complete offline image archive
+attached to the release provides the same bytes without registry access.
+Keyless public-transparency-log signing was deferred while the repository
+was private and can now be adopted; the release contract meanwhile binds
+the image by its recorded digest. No signing key or repository secret is
+required.
 
 ## Complete offline image archive
 
@@ -75,13 +79,13 @@ loaded, the image can be run offline by its config digest
 `sha256:CONFIG_DIGEST` with the same read-only, no-network invocation below.
 
 `scripts/fetch_release_image_oci.py` independently reconstructs this archive
-from the exact private GHCR digest.  It reads a GitHub token only from
+from the exact GHCR digest.  It reads a GitHub token only from
 standard input, strips registry authorization on cross-host redirects, checks
 each downloaded descriptor, and never stores the token in the archive.
 
-An authorized reviewer can authenticate to the private registry and pull the
-recorded immutable digest. The GitHub token used for `docker login` must have
-`read:packages` access:
+While the GHCR package is access-controlled, an authorized reviewer can
+authenticate to the registry and pull the recorded immutable digest. The
+GitHub token used for `docker login` must have `read:packages` access:
 
 ```sh
 gh release download review-01787854-v3 --pattern REVIEW_IMAGE.txt --clobber

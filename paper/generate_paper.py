@@ -60,7 +60,7 @@ class ReleaseCanvas(canvas.Canvas):
             "of Lambda <= 0.1787854"
         )
         self.setAuthor("Jude Gomila")
-        self.setSubject("Private referee manuscript and reproducibility record")
+        self.setSubject("Referee manuscript and reproducibility record")
         self.setCreator("ReportLab; source paper/generate_paper.py")
         self.setKeywords(
             "de Bruijn-Newman constant, computer-assisted proof, "
@@ -127,7 +127,7 @@ def draw_page(canv: canvas.Canvas, doc: BaseDocTemplate) -> None:
     canv.drawString(
         doc.leftMargin,
         height - 0.36 * inch,
-        "LAMBDA 0.1787854 - PRIVATE CANDIDATE REVIEW",
+        "LAMBDA 0.1787854 - CANDIDATE REVIEW",
     )
     canv.drawRightString(
         width - doc.rightMargin, height - 0.36 * inch, RELEASE_DATE
@@ -478,7 +478,7 @@ def build_story() -> list:
     story.append(Spacer(1, 0.18 * inch))
     story.append(
         p(
-            "PRIVATE REFEREE MANUSCRIPT &nbsp;&nbsp; / &nbsp;&nbsp; "
+            "REFEREE MANUSCRIPT &nbsp;&nbsp; / &nbsp;&nbsp; "
             + RELEASE_DATE.upper(),
             "CoverMeta",
         )
@@ -563,7 +563,7 @@ def build_story() -> list:
     story.append(h1("Abstract and review status"))
     story.append(
         p(
-            "This manuscript presents a private referee package for a proposed "
+            "This manuscript presents a referee package for a proposed "
             "computer-assisted upper bound on the de Bruijn-Newman constant. "
             "The proposed argument instantiates Theorem 1.2 of D. H. J. "
             "Polymath with exact parameters, uses the published "
@@ -1622,7 +1622,7 @@ Lambda <= 893927/5000000 = 0.1787854
     story.append(
         callout(
             "Release disposition",
-            "Suitable for private adversarial review as a candidate for an "
+            "Suitable for open adversarial review as a candidate for an "
             "unconditional computer-assisted proof. Not suitable for a claim "
             "of theorem acceptance until independent mathematical and "
             "computational reports are complete.",
@@ -1631,7 +1631,7 @@ Lambda <= 893927/5000000 = 0.1787854
     )
     story.append(h2("Recommended next actions"))
     for item in [
-        "give the reviewer access to this private repository at one exact review commit;",
+        "review this repository at one exact review commit;",
         "freeze that review commit and retain all GitHub replay artifacts;",
         "obtain a line-by-line theorem report and a separate clean-environment computation report;",
         "repair every finding and rerun the complete seal and producer suite;",
@@ -1650,7 +1650,7 @@ Lambda <= 893927/5000000 = 0.1787854
             "Sciences 6, 31 (2019), "
             '<link href="https://arxiv.org/abs/1904.12438v2">'
             "arXiv:1904.12438v2</link>. "
-            "Repository copy: references/polymath-1904.12438v2.pdf."
+            "Reviewed file SHA-256 recorded in references/README.md."
         ),
         (
             "[2] D. Platt and T. Trudgian, <i>The Riemann hypothesis is true "
@@ -1659,8 +1659,8 @@ Lambda <= 893927/5000000 = 0.1787854
             '<link href="https://doi.org/10.1112/blms.12460">'
             "DOI 10.1112/blms.12460</link>, "
             '<link href="https://arxiv.org/abs/2004.09765v1">'
-            "arXiv:2004.09765v1</link>. Repository copy: "
-            "references/platt-trudgian-2004.09765v1.pdf."
+            "arXiv:2004.09765v1</link>. "
+            "Reviewed file SHA-256 recorded in references/README.md."
         ),
         (
             "[3] Mosaic Intelligence, <i>A certified unconditional upper "
@@ -1806,7 +1806,7 @@ Lambda <= 893927/5000000 = 0.1787854
                     "ADVERSARIAL_REVIEW_PROTOCOL.md",
                     "Dependency blueprint and falsification protocol",
                 ],
-                ["SECURITY.md", "Private reporting and execution policy"],
+                ["SECURITY.md", "Security reporting and execution policy"],
                 [
                     "CONTAINER_IMAGE.md",
                     "Pinned environment and exact verified image binding",
@@ -1867,7 +1867,7 @@ def generate() -> None:
             "of Lambda <= 0.1787854"
         ),
         author="Jude Gomila",
-        subject="Private referee manuscript and reproducibility record",
+        subject="Referee manuscript and reproducibility record",
         creator="ReportLab; source paper/generate_paper.py",
         keywords=(
             "de Bruijn-Newman constant, computer-assisted proof, "

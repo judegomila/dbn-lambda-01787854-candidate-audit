@@ -2,7 +2,7 @@
 
 ## Review status
 
-This is a private referee package for the **unreviewed computer-assisted
+This is a referee package for the **unreviewed computer-assisted
 candidate for an unconditional proof**
 
 \[

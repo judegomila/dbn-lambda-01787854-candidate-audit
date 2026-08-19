@@ -45,14 +45,15 @@ as solely CC BY 4.0.
 
 ## Reference PDFs
 
-For exact private-review provenance, `references/` includes the three PDFs
-named in `BIBLIOGRAPHY.md`.  The Polymath and Platt--Trudgian preprints were
-downloaded from the exact arXiv versions recorded in
-`references/README.md`; copyright remains with their respective authors or
-publishers.  Their inclusion here is not a claim that this repository can
-relicense them.  Reassess or remove those two files before any public
-redistribution if the applicable arXiv license or permission does not permit
-the intended release.
+`references/` includes only the redistributable Zenodo PDF
+(`dbn21a-main.pdf`, CC BY 4.0).  The Polymath, Platt--Trudgian, and Romik
+arXiv PDFs used for the review are distributed by arXiv under its
+non-exclusive-distribution 1.0 license, which does not grant this
+repository redistribution rights, so they were removed from the tree
+before public release.  `references/README.md` records the exact arXiv
+URLs and the SHA-256 hashes of the reviewed files so byte-identical
+copies can be fetched and verified.  Copyright remains with their
+respective authors or publishers.
 
 ## mpmath
 
@@ -106,6 +107,7 @@ content. They are not the sealed exposition; see `REVIEW_SCOPE.md`.
 
 ## Repository-original material
 
-This notice records third-party rights only.  No public license has been
-selected for material original to this private review repository.  See
-`REVIEW_TERMS.md`.
+This notice records third-party rights only.  Material original to this
+repository is licensed as recorded in `LICENSE` (MIT, source code) and
+`LICENSE-DOCS` (CC BY 4.0, documentation and data), with the exceptions
+listed there.  See `REVIEW_TERMS.md`.
