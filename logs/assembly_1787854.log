@@ -14,6 +14,8 @@
 [PASS] P13 macOS/Clang/FLINT 3.6.0 883-prism cross-check  exit=0; RESULT: ALL PASS; BARRIER CONCLUSION: H_t is zero-free on the complete closed slab [X,X+1] x [0.1809,1] x [0,0.16125].
 [PASS] P14 exact H0-to-zeta symmetry/sign map  exit=0; RESULT: CRITERION SIGN MAP PASS
 [PASS] P15 conservative Proposition 6.6(vi) error-constant weld  exit=0; RESULT: CONSERVATIVE ERROR-CONSTANT WELD PASS
+[PASS] P16 sealed Arb Dini y-transfer (numerator y-monotonicity) certificates  exit=0; RESULT: SEALED TRIANGLE Y-DINI CERTIFICATES PASS
+[PASS] P17 authoritative 256/512-bit FLINT/Arb Proposition 4.10 error budget  exit=0; RESULT: SEALED ARB PROP410 CERTIFICATES PASS
 --- A: exact candidate and criterion domain
 [PASS] A1 exact candidate identity
 [PASS] A2 exact decimal is 0.1787854
@@ -45,7 +47,7 @@
 [PASS] W2 hypothesis (ii) finite+tail certificates and coverage predicates
 [PASS] W3 hypothesis (iii) dual barrier certificates and containment predicates
 [PASS] W4 final rational substitution
-TOTAL CHECKS RUN: 38
+TOTAL CHECKS RUN: 40
 RESULT: UNCONDITIONAL CANDIDATE ASSEMBLY PASS
 CONCLUSION: Lambda <= 893927/5000000 = 0.1787854.
 STATUS: unreviewed computer-assisted unconditional proof candidate; not an established theorem.

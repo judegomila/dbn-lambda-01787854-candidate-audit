@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
-"""Run the independent proof programs and bind their output to the package.
+"""Run the recomputation programs and bind their output to the package.
 
 The programs under independent/ are self-contained recomputations of
 quantities the candidate also derives by its own route.  They read no
 stored certificates: each one calculates from exact rational inputs and
-prints a certified upper bound.  Agreement between two independently
-derived implementations is corroboration that neither route's
-implementation error is silently load-bearing.
+prints a certified upper bound.  prop62 is an independently written
+implementation.  prop410 is a same-backend replay: it shares mpmath.iv
+and a line-for-line identical effective_error_budget() with
+verifiers/verify_finite_and_binding.py, so its agreement binds the
+published digits to a reproducible calculation without supplying
+cross-backend independence.  The authoritative Proposition 4.10
+certification is the FLINT/Arb lane parsed by
+verifiers/verify_prop410_arb_logs.py (assembly prerequisite P17).
 
 This verifier closes a specific gap.  The sharp constants
 
@@ -104,7 +109,7 @@ def run(command: list[str], scratch: Path, env: dict[str, str] | None = None) ->
 
 
 def verify_prop410(scratch: Path) -> None:
-    """Proposition 4.10: the finite-region effective-error budget."""
+    """Proposition 4.10 budget: same-backend mpmath replay (corroboration)."""
 
     program = INDEPENDENT / "prop410" / "prop410_proof.py"
     check("prop410 program is present", program.is_file())
@@ -187,8 +192,8 @@ def main() -> int:
         return 1
     print("RESULT: INDEPENDENT CROSS-CHECK PASS")
     print(
-        "STATUS: two-implementation agreement on published constants; "
-        "not a proof of either proposition."
+        "STATUS: agreement on published constants (prop62 cross-written, "
+        "prop410 same-backend replay); not a proof of either proposition."
     )
     return 0
 

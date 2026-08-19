@@ -75,6 +75,22 @@ T_{\min}-E_{\max}
 \ge0.000000557871094787>0.
 \]
 
+The uniform error budget behind \(E_{\max}\) is certified authoritatively
+by the standalone FLINT/Arb program `verifiers/verify_prop410_arb.c`,
+executed in the pinned container at 256 and 512 bits.  Every square root,
+logarithm, exponential, power, \(\pi\), the \(2\le n\le2000\) head sum,
+and every domain/sign gate is a rigorous Arb enclosure; each decisive
+inequality subtracts the exact rational bound and requires the whole
+resulting ball to be strictly negative or positive.  The sealed
+transcripts `logs/prop410_arb_256.log` and `logs/prop410_arb_512.log` are
+strictly parsed fail-closed (assembly prerequisite P17), and
+`verifiers/verify_prop410_arb_mutation.py` proves the parser rejects
+twenty distinct evidence mutations.  The `mpmath.iv` computation of the
+same budget (220 bits, inside `verifiers/verify_finite_and_binding.py`,
+replayed by `independent/prop410/prop410_proof.py`) is retained as
+same-backend corroboration; the certified digits agree across the two
+backends, two operating systems, two compilers, and FLINT 3.0.1/3.6.0.
+
 ## 2. Direct non-amortized finite checks
 
 Thirty direct 256-bit singleton evaluations were run independently of the

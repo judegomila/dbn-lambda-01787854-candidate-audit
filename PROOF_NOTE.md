@@ -325,6 +325,37 @@ Consequently
 Theorem 1.3 and nonvanishing of its factor \(B_{t_0}\) then give
 \(H_{t_0}\ne0\) on the finite region (4.5) and (4.12).
 
+### 4.5 Authoritative Arb backend for the error budget
+
+The bounds (4.15) and the margin (4.16) are certified authoritatively by
+the standalone FLINT/Arb program `verifiers/verify_prop410_arb.c`.  It
+recomputes the complete U1--U5 budget and every associated domain/sign
+gate from the exact rational inputs
+\(t\in[129/800,\,161250001/10^9]\), \(y_0^2=87677/2500000\),
+\(y_{\max}^2=271/400\), \(N_0=690988\), \(m_0=2000\) using rigorous Arb
+enclosures for every square root, logarithm, exponential, power, and
+\(\pi\); decimal constants enter as exact rationals
+(\(0.02=1/50\), \(0.626=313/500\), \(1.24=31/25\), \(6.66=333/50\),
+\(10.50=21/2\), \(0.125=1/8\)).  Each decisive inequality subtracts the
+exact rational bound and requires the entire resulting ball to be on the
+strict side, so an indeterminate comparison fails closed.  The program
+reads no stored certificate, requires its precision as an explicit
+argument, and refuses precision below 256 bits.  The sealed transcripts
+`logs/prop410_arb_256.log` and `logs/prop410_arb_512.log` were produced
+in the pinned review container and are strictly parsed by
+`verifiers/verify_prop410_arb_logs.py` (prerequisite P17 of the final
+assembly); `scripts/run_prop410_arb.sh` replays the calculation from
+source.
+
+The earlier `mpmath.iv` computation of the same budget (inside
+`verifiers/verify_finite_and_binding.py`, and its derived copy
+`independent/prop410/prop410_proof.py`) remains in place as
+non-authoritative corroboration.  The two Python programs share one
+backend and a line-for-line identical `effective_error_budget()`, so the
+second is a same-backend replay rather than an independent numerical
+implementation; cross-backend independence for Proposition 4.10 is
+supplied by the Arb program above.
+
 ## 5. Theorem 1.2 hypothesis (ii): infinite tail
 
 The tail begins at the closed cutoff

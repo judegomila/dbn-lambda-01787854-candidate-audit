@@ -998,6 +998,21 @@ conj(E) C0 = sum A_(N,n) n^(-conj(s_*))
             "checker verifies all six numerical consumers."
         )
     )
+    story.append(h2("Authoritative Arb error budget"))
+    story.append(
+        p(
+            "The uniform effective-error budget Emax and the finite margin "
+            "are certified authoritatively by the standalone FLINT/Arb "
+            "program verifiers/verify_prop410_arb.c, run at 256 and 512 bits "
+            "in the pinned container (transcripts logs/prop410_arb_256.log "
+            "and logs/prop410_arb_512.log, strictly parsed as assembly "
+            "prerequisite P17, with a twenty-mutation fail-closed suite). "
+            "Every decisive inequality subtracts the exact rational bound "
+            "and requires the whole resulting ball on the strict side. The "
+            "mpmath.iv computation of the same budget, and its copy under "
+            "independent/prop410/, are same-backend corroboration only."
+        )
+    )
     story.append(h2("All-y transfer"))
     story.append(
         p(
@@ -1701,7 +1716,8 @@ Lambda <= 893927/5000000 = 0.1787854
                 [
                     "Finite error",
                     "Emax &lt;= 0.000000233494905212337849",
-                    "logs/finite_and_binding.log",
+                    "logs/prop410_arb_256.log and _512.log (Arb, "
+                    "authoritative); logs/finite_and_binding.log",
                 ],
                 [
                     "Finite margin",
@@ -1745,7 +1761,7 @@ Lambda <= 893927/5000000 = 0.1787854
                 ],
                 [
                     "Final assembly",
-                    "38 fail-closed assembly gates",
+                    "40 fail-closed assembly gates",
                     "logs/assembly_1787854.log",
                 ],
             ],
