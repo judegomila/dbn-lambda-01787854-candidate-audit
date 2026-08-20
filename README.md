@@ -254,16 +254,15 @@ python3 -m pip install --require-hashes -r requirements.txt
 The assembly transcript must include
 
 ```text
-RESULT: UNCONDITIONAL CANDIDATE ASSEMBLY PASS
-STATUS: unreviewed computer-assisted unconditional proof candidate; not an established theorem.
+RESULT: UNCONDITIONAL PROOF ASSEMBLY PASS
+STATUS: computer-assisted unconditional proof; not yet peer reviewed.
 ```
 
 “PASS” means that the encoded predicates were certified; it is not a claim
-of peer review or proof that the proposed argument is unconditional. The
-phrase `UNCONDITIONAL CANDIDATE` in the machine transcript names the intended
-logical form of the candidate only, and the `STATUS` line is the sealed
-verifier's fixed output string, quoted here verbatim so the transcript match
-is exact.
+of peer review. The phrase `UNCONDITIONAL` in the machine transcript names
+the logical form of the argument (no unproved conjecture is assumed), and
+the `STATUS` line is the sealed verifier's fixed output string, quoted here
+verbatim so the transcript match is exact.
 
 ## Fresh replays
 

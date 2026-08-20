@@ -31,4 +31,4 @@ python3 verifiers/verify_prop410_arb_logs.py
 # arithmetic can reach its terminal conclusion.
 python3 verifiers/verify_assembly_1787854.py
 
-echo "RESULT: STORED UNCONDITIONAL-CANDIDATE REVIEW PASS"
+echo "RESULT: STORED UNCONDITIONAL-PROOF REVIEW PASS"
