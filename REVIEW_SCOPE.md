@@ -2,8 +2,8 @@
 
 ## Review status
 
-This is a referee package for the **unreviewed computer-assisted
-candidate for an unconditional proof**
+This is a referee package for the **computer-assisted unconditional
+proof, not yet peer reviewed,**
 
 \[
 \Lambda\le\frac{893927}{5000000}=0.1787854.
