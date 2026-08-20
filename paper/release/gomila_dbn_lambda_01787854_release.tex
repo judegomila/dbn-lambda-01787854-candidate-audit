@@ -1,0 +1,2628 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=1.15in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{xcolor}
+\usepackage{framed}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{placeins}
+\usepackage[protrusion=true,expansion=false]{microtype}
+\usepackage{enumitem}
+\usepackage{xurl}
+\usepackage{seqsplit}
+\usepackage[colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
+\hypersetup{
+  pdftitle={A computer-assisted proof of the bound Lambda <= 0.1787854},
+  pdfauthor={Jude Gomila},
+  pdfsubject={An explicit upper bound for the de Bruijn--Newman constant},
+  pdfkeywords={de Bruijn--Newman constant, Riemann xi function, interval arithmetic, computer-assisted proof}
+}
+
+% ---------------------------------------------------------------
+% Theorem environments
+% ---------------------------------------------------------------
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\LB}{\Lambda}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\calP}{\mathcal{P}}
+\newcommand{\calS}{\mathcal{S}}
+\newcommand{\CapT}{\operatorname{Cap}}
+\newcommand{\projectlink}[1]{\href{https://github.com/judegomila/dbn-lambda-01787854-candidate-audit/tree/6222740efae58d773a70ff929cf12a34932d2af0}{#1}}
+\newcommand{\programlink}[2]{\href{https://github.com/judegomila/dbn-lambda-01787854-candidate-audit/blob/6222740efae58d773a70ff929cf12a34932d2af0/#1}{#2}}
+\DeclareMathOperator{\Rea}{Re}
+\DeclareMathOperator{\Ima}{Im}
+\DeclareMathOperator{\sgn}{sgn}
+
+\emergencystretch=2em
+
+\title{A computer-assisted proof of the bound
+$\Lambda\le 0.1787854$ for the de Bruijn--Newman constant}
+\author{Jude Gomila \textnormal{---}
+{\small\textnormal{\emph{Special thanks to Dan Romik and Max Atkin}}}}
+\date{20 August 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent We prove that the de Bruijn--Newman constant satisfies
+\[
+\LB\le\frac{893927}{5000000}=0.1787854
+\]
+by applying the Polymath~15 barrier criterion at the exact parameters
+$X=6000000185827$, $t_0=129/800$, and
+$y_0^2=87677/2500000$.  The verified-height hypothesis follows from
+the theorem of Platt and Trudgian.  We establish the required nonvanishing of
+$H_{t_0}$ by a finite interval computation followed by analytic estimates for
+the remaining range.  For the barrier, a further interval computation follows
+the boundary of a rectangle through $883$ time intervals and proves that its winding number
+remains zero.  The programs used for the finite calculations are linked where
+they enter the proof and described in Appendix~\ref{sec:programs}.  Since the
+resulting upper bound is positive, it does not imply the Riemann hypothesis.
+\end{abstract}
+
+\begin{center}
+\begin{minipage}{0.88\textwidth}
+\begin{framed}
+\small
+\raggedright
+\noindent\textbf{Human--AI collaboration disclosure.}
+This paper was developed through an iterative collaboration between Jude
+Gomila and generative AI systems, with repeated cycles of mathematical
+exploration, program development, testing, criticism, and revision. Jude
+Gomila directed the work and accepts responsibility for the arguments,
+computations, programs, and final text. Further details appear at the end of
+the Introduction.
+\end{framed}
+\end{minipage}
+\end{center}
+
+% ===============================================================
+\section{Introduction}
+% ===============================================================
+
+\subsection{The de Bruijn--Newman constant}
+
+Let $\Phi$ denote the super-exponentially decaying function
+\[
+\Phi(u)=\sum_{n=1}^{\infty}
+\bigl(2\pi^2n^4e^{9u}-3\pi n^2e^{5u}\bigr)
+\exp\!\bigl(-\pi n^2e^{4u}\bigr),
+\]
+and for $t\in\R$ define the entire functions
+\begin{equation}\label{eq:Ht}
+H_t(z)=\int_0^\infty e^{tu^2}\Phi(u)\cos(zu)\,du .
+\end{equation}
+The function $H_0$ is a normalization of the Riemann $\xi$-function. With
+\[
+\xi(s)=\frac{s(s-1)}{2}\pi^{-s/2}\Gamma(s/2)\zeta(s)
+\]
+analytic continuation of the Fourier identity gives, for every $z\in\C$,
+$H_0(z)=\frac18\,\xi\!\bigl(\frac12+\frac{iz}2\bigr)$, so that the
+Riemann hypothesis (RH) is the statement that all zeros of $H_0$ are
+real. De Bruijn \cite{deBruijn} proved that $H_t$ has only real zeros for
+$t\ge\frac12$. Newman \cite{Newman} then proved that there is a finite
+constant $\LB\le\frac12$, the \emph{de Bruijn--Newman constant}, such that
+$H_t$ has only real zeros if and only if $t\ge\LB$. RH is equivalent to
+$\LB\le0$.
+
+Newman conjectured $\LB\ge0$, which was proved by Rodgers and Tao
+\cite{RodgersTao}. On the other side, de Bruijn's classical upper
+bound $\LB\le1/2$, its strict improvement by Ki, Kim and Lee
+\cite{KKL}, and subsequent numerical work led to the bound
+\begin{equation}\label{eq:polymathbound}
+\LB\le0.22
+\end{equation}
+of the Polymath~15 project \cite{Polymath}. Subsequently Platt and
+Trudgian observed \cite[Corollary~2]{PlattTrudgian} that their
+verification of RH to height $3\cdot10^{12}$
+(Section~\ref{sec:hypi} below), combined with the second row of the
+parameter table in \cite[Table~1, p.~65]{Polymath} (which requires
+verified height $H>2.51\cdot10^{12}$), yields the bound
+\begin{equation}\label{eq:ptbound}
+\LB\le0.2 ,
+\end{equation}
+which is the relevant peer-reviewed benchmark for the present
+argument. Platt and Trudgian further note
+that the next entry of the same table would give $\LB<0.19$, but only
+conditionally on a verified height slightly above $10^{13}$, beyond
+their theorem.  The value \eqref{eq:target} lies below both
+$0.2$ and $0.19$ while consuming only the established
+$3\cdot10^{12}$ verification height. A recent Zenodo preprint of
+Mosaic Intelligence \cite{Mosaic} claims the intermediate value
+$\LB\le0.1875$; it has not been peer reviewed. The value examined here is
+numerically smaller than both $0.2$ and $0.1875$.
+
+\subsection{Main result}
+
+\begin{theorem}\label{thm:main}
+The de Bruijn--Newman constant satisfies
+\[
+\LB\le\frac{893927}{5000000}=0.1787854 .
+\]
+\end{theorem}
+
+The proof instantiates the barrier criterion of
+\cite[Theorem~1.2]{Polymath} at the exact parameters
+\begin{equation}\label{eq:params}
+X=6000000185827,\qquad
+t_0=\frac{129}{800}=0.16125,\qquad
+y_0^2=\frac{87677}{2500000}=0.0350708,
+\end{equation}
+with $y_0>0$, so that
+\begin{equation}\label{eq:target}
+t_0+\frac{y_0^2}{2}=\frac{893927}{5000000}=0.1787854 .
+\end{equation}
+One checks the elementary inequalities
+$0<t_0<\tfrac12$, $0<y_0^2<1-2t_0=\tfrac{271}{400}$, and
+$y_0^2+2t_0=\tfrac{893927}{2500000}<1$, which place the parameters in
+the domain of the criterion.
+
+\subsection{Outline of the proof}\label{sec:status}
+
+The argument has four parts.
+\begin{enumerate}
+\item Section~\ref{sec:criterion} states the Polymath~15 criterion and the
+effective approximation to which we apply it.
+\item Section~\ref{sec:hypi} obtains the required verified height from the
+theorem of Platt and Trudgian.
+\item Sections~\ref{sec:finite} and~\ref{sec:tail} prove the required
+nonvanishing of $H_{t_0}$, first on a finite range and then on the infinite
+tail.
+\item Section~\ref{sec:barrier} proves the boundary nonvanishing needed for
+the barrier argument, and Section~\ref{sec:assembly} completes the proof.
+\end{enumerate}
+
+The finite parts of the proof use interval arithmetic.  At each such point we
+give the exact domain, the mathematical quantity evaluated, the strict
+inequality returned by the program, and a link to the source.  The programs
+use exact integer or rational inputs and outward-rounded FLINT/Arb balls
+\cite{JohanssonArb}; Appendix~\ref{sec:programs} collects the links and explains
+how the computations cover the required domains.  The source code is
+available in the \projectlink{project repository}.
+
+This preprint has not undergone independent peer review.
+
+\paragraph{Use of generative AI.}
+Generative AI systems, including Anthropic Claude and OpenAI ChatGPT/Codex,
+were used in repeated, human-directed cycles of mathematical exploration,
+program development, testing, criticism, and manuscript revision. Jude Gomila
+selected the arguments and computations included here and accepts
+responsibility for the mathematical claims, the programs, and the final text.
+
+
+
+% ===============================================================
+\section{The Polymath criterion and effective approximation}\label{sec:criterion}
+% ===============================================================
+
+\subsection{The barrier criterion}
+
+The logical skeleton of the proof is the following criterion.
+
+\begin{theorem}[{Polymath criterion, specialized from
+\cite[Theorem~1.2]{Polymath}}]\label{thm:criterion}
+Let $X>0$, $0<t_0<\tfrac12$ and
+$0<y_0<\sqrt{1-2t_0}$. Suppose that:
+\begin{enumerate}
+\item[\textup{(i)}] \textbf{(Verified height.)} There are no zeros
+$\zeta(\sigma+iT)=0$ with
+\[
+\frac{1+y_0}{2}\le\sigma\le1,\qquad 0\le T\le\frac X2 .
+\]
+\item[\textup{(ii)}] \textbf{(Final-time right region.)} There are no
+zeros $H_{t_0}(x+iy)=0$ with
+\[
+x\ge X+\sqrt{1-y_0^2},\qquad y_0\le y\le\sqrt{1-2t_0}.
+\]
+\item[\textup{(iii)}] \textbf{(Intermediate-time barrier.)} There are
+no zeros $H_t(x+iy)=0$ with
+\[
+X\le x\le X+\sqrt{1-y_0^2},\qquad
+\sqrt{y_0^2+2(t_0-t)}\le y\le\sqrt{1-2t},\qquad
+0\le t\le t_0 .
+\]
+\end{enumerate}
+Then
+\[
+\LB\le t_0+\frac{y_0^2}{2}.
+\]
+\end{theorem}
+
+Sections~\ref{sec:hypi}, \ref{sec:finite}--\ref{sec:tail}, and
+\ref{sec:barrier} establish hypotheses (i), (ii), and (iii), respectively,
+at the parameters \eqref{eq:params}.
+
+For hypothesis (i) one uses the normalization connecting $H_0$ to
+$\zeta$: a zero $H_0(x+iy)=0$ gives
+$\xi\bigl(\frac{1-y+ix}{2}\bigr)=0$; the functional equation
+$\xi(s)=\xi(1-s)$ followed by complex conjugation produces the
+representative zero $\xi\bigl(\frac{1+y+ix}{2}\bigr)=0$ with
+$\sigma=\frac{1+y}2\ge\frac{1+y_0}2$ and ordinate $T=\frac x2$, which
+is the region excluded in (i). (The functional equation and the
+reality symmetry $\overline{\xi(\bar s)}=\xi(s)$ are the classical
+inputs; the affine algebra of this ``sign map'' is elementary.)
+
+\subsection{The effective approximation}\label{sec:thm13}
+
+For $t>0$ write, following \cite{Polymath},
+\begin{equation}\label{eq:gt}
+g_t(z)=\frac{H_t(z)}{B_t(z)},
+\end{equation}
+where the normalizing factor is as follows.  Let $\operatorname{Log}$ be the
+standard branch of the logarithm, with branch cut $(-\infty,0]$ and
+imaginary part in $(-\pi,\pi]$, and on
+$\C\setminus(-\infty,1]$ define
+\begin{align}
+M_0(s)&=\frac{\sqrt{2\pi}}{16}\,s(s-1)\pi^{-s/2}
+ \exp\!\left(\left(\frac{s}{2}-\frac12\right)\operatorname{Log}\frac{s}{2}
+ -\frac{s}{2}\right),\label{eq:M0}\\
+\alpha(s)&=(\log M_0)'(s)
+ =\frac{1}{2s}+\frac{1}{s-1}+\frac12\operatorname{Log}\frac{s}{2\pi},
+ \label{eq:alpha}\\
+M_t(s)&=\exp\!\left(\frac t4\alpha(s)^2\right)M_0(s),
+\qquad
+B_t(x+iy)=M_t\!\left(\frac{1+y-ix}{2}\right).
+\label{eq:MtBt}
+\end{align}
+These are equations (6), (8)--(11) of \cite{Polymath}.  In particular
+$M_0$, and hence $M_t$, takes values in $\C\setminus\{0\}$ on its
+domain; since $(1+y-ix)/2$ is non-real whenever $x\neq0$, it avoids
+the branch cut. Therefore $B_t(x+iy)\neq0$ for all $t\ge0$, $x>0$ and
+$y>0$, as noted explicitly in \cite[\S1, after (11)]{Polymath}. This
+nonvanishing is used below both in the reduction of zero-freeness of
+$H_t$ to lower bounds on $|f_t|$ and in the argument-principle step
+of the barrier argument (Section~\ref{sec:barrier}).
+Theorem~1.3 of \cite{Polymath} provides, in the region
+\begin{equation}\label{eq:region}
+x\ge200,\qquad 0\le y\le1,\qquad 0<t\le\tfrac12,
+\end{equation}
+an approximation
+\begin{equation}\label{eq:thm13}
+g_t(x+iy)=f_t(x+iy)+O_{\le}\bigl(e_A+e_B+e_{C,0}\bigr),
+\end{equation}
+where $O_\le(E)$ denotes a quantity of absolute value at most $E$, the
+main term is the finite sum (equation (14) of \cite{Polymath})
+\begin{equation}\label{eq:ft}
+f_t(x+iy)
+=\sum_{n=1}^{N}b_t(n)\,n^{-s_*}
++\gamma\sum_{n=1}^{N}n^{y}\,b_t(n)\,n^{-\overline{s_*}-\kappa},
+\qquad
+b_t(n)=\exp\Bigl(\frac t4\log^2 n\Bigr),
+\end{equation}
+(we write $b_t(n)$ for the quantity denoted $b_n^t$ in
+\cite{Polymath}; all other symbols in \eqref{eq:ft} agree with the
+notation there, including the placement of $\kappa$ alongside the
+conjugated exponent $\overline{s_*}$ in the second sum)
+with:
+\begin{itemize}
+\item the window index
+$N=\bigl\lfloor\sqrt{\tfrac{x}{4\pi}+\tfrac{t}{16}}\bigr\rfloor$;
+\item the exact quantities (equations (16)--(18) of \cite{Polymath})
+\begin{align}
+\gamma&=\frac{M_t\bigl(\frac{1-y+ix}{2}\bigr)}
+ {M_t\bigl(\frac{1+y-ix}{2}\bigr)},\label{eq:gammaexact}\\
+s_*&=\frac{1+y-ix}{2}
+ +\frac t2\alpha\!\left(\frac{1+y-ix}{2}\right),
+ \label{eq:starexact}\\
+\kappa&=\frac t2\left[
+ \alpha\!\left(\frac{1-y+ix}{2}\right)
+ -\alpha\!\left(\frac{1+y+ix}{2}\right)\right],
+ \label{eq:kappaexact}
+\end{align}
+which satisfy, by equations (20)--(22) of \cite{Polymath}, the bounds
+\begin{align}
+|\gamma|&\ \le\ e^{0.02y}\Bigl(\frac{x}{4\pi}\Bigr)^{-y/2},
+\label{eq:gammabound}\\
+\Rea s_*&\ \ge\ \frac{1+y}{2}+\frac t4\log\frac{x}{4\pi}
+-\frac{t}{2x^2}\Bigl(1-3y+\frac{4y(1+y)}{x^2}\Bigr)_{\!+},
+\label{eq:resbound}\\
+|\kappa|&\ \le\ \frac{ty}{2(x-6)};
+\label{eq:kappabound}
+\end{align}
+\item and error terms $e_A,e_B,e_{C,0}$ with explicit majorants
+(equations (71)--(72) and (23)--(24) of \cite{Polymath}).
+\end{itemize}
+Since $B_t\ne0$, nonvanishing of $H_t$ on a region follows from the
+strict inequality $|f_t|>e_A+e_B+e_{C,0}$ there; this implication is
+itself stated in \cite{Polymath} as Corollary~1.4 (``Criterion for
+non-vanishing'').
+
+\subsection{The conservative error constant 10.50}\label{sec:weld}
+
+Our proof deliberately does \emph{not} use the constant $10.44$
+displayed in equation~(24) of \cite{Polymath} for the majorization of
+$e_{C,0}$.
+Instead it derives a
+slightly weaker bound directly from Proposition~6.6(vi) of
+\cite{Polymath}, which contains the expression
+\[
+\exp\!\left(\frac{3\bigl|\log\frac{x}{4\pi}+\frac{i\pi}2\bigr|+3.58}{x-8.52}\right)
+\left(1+\frac{1.24\,(3^y+3^{-y})}{N-0.125}+\frac{6.92}{x-12}\right).
+\]
+On the theorem domain $x\ge200$ one has $x-8.52>x-12>0$; applying
+$1+u\le e^u$ to the second factor and replacing the denominator
+$x-8.52$ by the smaller denominator $x-12$ yields the
+\emph{conservative corollary}
+\begin{equation}\label{eq:ec0}
+e_{C,0}\le
+\Bigl(\frac{x}{4\pi}\Bigr)^{-(1+y)/4}
+\exp\!\left(
+-\frac{t}{16}\log^2\frac{x}{4\pi}
++\frac{1.24\,(3^y+3^{-y})}{N-0.125}
++\frac{3\bigl|\log\frac{x}{4\pi}+\frac{i\pi}2\bigr|+10.50}{x-12}
+\right),
+\end{equation}
+with $3.58+6.92=\tfrac{21}2=10.50$ exactly. Every numerical error
+computation below (finite range, tail, and barrier) uses
+\eqref{eq:ec0}, and uses the denominator $x-6.66$, which appears in
+equation (23) and in Proposition~6.6(iv),(v) of \cite{Polymath}, for
+$e_A+e_B$.
+
+\begin{remark}\label{rem:1044}
+Equation (24) of \cite{Polymath} displays the bound \eqref{eq:ec0}
+with the constant $10.44$ in place of $10.50$. The sentence following
+Proposition~6.6 in \cite{Polymath} states that (24) is obtained from
+part (vi) of the proposition by ``the inequality $1+u\le\exp(u)$''
+followed by the bound $\frac{1}{x-8.52}\le\frac{1}{x-12}$; carrying
+out this recipe yields the constant $3.58+6.92=10.50$, and we are not
+aware of an argument in \cite{Polymath} producing the displayed
+$10.44$. Accordingly, our proof does not rely on (24): all error
+computations use only
+\eqref{eq:ec0}, which follows rigorously from Proposition~6.6(vi) by
+the two elementary steps just described, uniformly on the domain
+\eqref{eq:region}. (The weaker constant costs a factor
+$e^{0.06/(x-12)}$, which is utterly negligible at
+$x\approx6\times10^{12}$.)
+\end{remark}
+
+% ===============================================================
+\section{Hypothesis (i): the verified height}\label{sec:hypi}
+% ===============================================================
+
+Platt and Trudgian \cite[Theorem~1]{PlattTrudgian} proved that every
+nontrivial zero of $\zeta$ with ordinate in $(0,T_{\rm PT}]$,
+\[
+T_{\rm PT}=3000175332800,
+\]
+lies on the critical line; their computation accounts for the lowest
+$12\,363\,153\,437\,138$ nontrivial zeros. Counting sign changes of the
+completed zeta function on the critical line and using Turing's method to
+confirm completeness yields the off-line exclusion form used here.
+Hypothesis (i) of
+Theorem~\ref{thm:criterion} requires the absence of zeros with
+$\frac{1+y_0}{2}\le\sigma\le1$ and $0\le T\le X/2$. Since
+\[
+\frac X2=3000000092913.5,
+\qquad
+T_{\rm PT}-\frac X2=\frac{350479773}{2}>0,
+\]
+the verified region covers all ordinates $0<T\le X/2$ with margin
+$\approx1.75\times10^8$. On the segment $T=0$, $\tfrac12<\sigma<1$,
+one argues directly: the Dirichlet eta function satisfies
+$\eta(\sigma)=\sum_{n\ge1}(-1)^{n-1}n^{-\sigma}>0$ for
+$0<\sigma<1$ (group consecutive terms), while
+$\eta(\sigma)=(1-2^{1-\sigma})\zeta(\sigma)$ with
+$1-2^{1-\sigma}<0$; hence $\zeta(\sigma)<0\ne0$ there. At $\sigma=1$,
+$\zeta$ has a pole. This supplies hypothesis (i).
+
+We use the published Platt--Trudgian theorem as an input.
+
+% ===============================================================
+\section{Hypothesis (ii), finite range: the window scan}\label{sec:finite}
+% ===============================================================
+
+Hypothesis (ii) concerns nonvanishing of $H_{t_0}$ on
+\begin{equation}\label{eq:hypiiregion}
+x\ge x_*:=X+\sqrt{1-y_0^2},
+\qquad
+y_0\le y\le\sqrt{1-2t_0}.
+\end{equation}
+The proof splits this region at the abscissa corresponding to
+the window index $N_*=3840000$: the finite range
+$690988\le N\le3840000$ is handled in this section by
+$3{,}149{,}013$ individual interval computations, and
+the infinite range $N\ge3840000$ in Section~\ref{sec:tail} by a
+single analytic contraction argument. The two ranges overlap on a
+full window, eliminating endpoint risk.
+
+\subsection{Windows and the freeze lemma}\label{sec:freeze}
+
+At $t=t_0$ define
+\[
+x_N=4\pi\Bigl(N^2-\frac{t_0}{16}\Bigr),
+\qquad
+W_N=[x_N,x_{N+1}),
+\]
+so that $x\in W_N$ iff the window index of $x$ equals $N$. Exact
+rational Machin-type bounds for $\pi$ and exact integer square-root
+brackets give
+\begin{equation}\label{eq:xstarwindow}
+x_{690988}<x_*<x_{690989},
+\end{equation}
+with margins exceeding $5.37\times10^6$ and $1.19\times10^7$
+respectively; thus $x_*$ lies strictly inside $W_{690988}$, and the
+half-open windows tile $[x_*,\,x_{3840001})$ with no gaps or overlaps.
+
+The computations of Section~\ref{sec:stored} evaluate, for each
+$N$, the majorants of
+\eqref{eq:gammabound}--\eqref{eq:kappabound} \emph{frozen at the
+left edge} $x=x_N$ of the window.
+The following elementary lemma justifies this.
+
+\begin{lemma}[Window freeze]\label{lem:freeze}
+For $y_0\le y\le\sqrt{1-2t_0}$ define
+\begin{align*}
+G(x,y) &= e^{y/50}\Bigl(\frac{x}{4\pi}\Bigr)^{-y/2},
+\\
+K(x,y) &= \frac{t_0y}{2(x-6)},
+\\
+\Sigma(x,y) &= \frac{1+y}{2}+\frac{t_0}{4}\log\frac{x}{4\pi}
+-\frac{t_0}{2x^2}\Bigl(1-3y+\frac{4y(1+y)}{x^2}\Bigr)_{\!+}.
+\end{align*}
+Then for every $N$ in the finite range, every $x\in W_N$ and every $y$
+in the stated range,
+\[
+G(x,y)\le G(x_N,y),\qquad
+K(x,y)\le K(x_N,y),\qquad
+\Sigma(x,y)\ge\Sigma(x_N,y).
+\]
+\end{lemma}
+
+\begin{proof}
+$\partial_xG=-\frac{y}{2x}G<0$ and
+$\partial_xK=-\frac{t_0y}{2(x-6)^2}<0$ give the first two
+inequalities. For the third, write
+$h(x,y)=1-3y+A(y)/x^2$ with $A(y)=4y(1+y)\ge0$; then
+$h_x=-2A/x^3\le0$, so $h_+$ is nonincreasing in $x$, and since
+$x^{-2}$ is positive and decreasing, the product $x^{-2}h_+$ is
+nonincreasing. The logarithmic term is strictly increasing, so
+$\Sigma$ is strictly increasing in $x$, including across the kink
+$h=0$ (both one-sided derivatives there are positive).
+\end{proof}
+
+Note that $e^{y/50}=e^{0.02y}$, matching \eqref{eq:gammabound}; $G,K,\Sigma$
+frozen at $x_N$ are precisely the quantities $g_N$ (bound for
+$|\gamma|$), $k_N$ (bound for $|\kappa|$) and $\sigma_N$ (lower bound
+for $\Rea s_*$) used in the definitions of Section~\ref{sec:stored}.
+
+\subsection{The mollified lower bound for
+\texorpdfstring{$|f_{t_0}|$}{|f(t0)|}}\label{sec:native}
+
+Fix a window $N$, a height $y>0$, and a finite set of auxiliary primes
+$\calP$ with $D=\prod_{p\in\calP}p$. Let $g_N,k_N,\sigma_N$ be as
+above, and introduce the real \emph{Euler mollifier}
+\[
+E(s_*)=\prod_{p\in\calP}\bigl(1-b_{t_0}(p)\,p^{-s_*}\bigr)
+=\sum_{d\mid D}\lambda_d\,d^{-s_*},
+\qquad
+\lambda_d=(-1)^{\omega(d)}\prod_{p\mid d}b_{t_0}(p)\in\R .
+\]
+Define the convolved coefficients (for $1\le n\le DN$)
+\[
+B_{N,n}=\sum_{\substack{d\mid D,\ d\mid n\\ n/d\le N}}
+\lambda_d\,b_{t_0}(n/d),
+\qquad
+A_{N,n}=\sum_{\substack{d\mid D,\ d\mid n\\ n/d\le N}}
+\lambda_d\,b_{t_0}(n/d)\,(n/d)^y,
+\]
+so $B_{N,1}=A_{N,1}=1$, and set
+\[
+M_N=\sum_{d\mid D}|\lambda_d|\,d^{-\sigma_N},
+\qquad
+C_N=\sum_{m=2}^{N}b_{t_0}(m)\bigl(m^{k_N}-1\bigr)m^{y-\sigma_N},
+\]
+\begin{equation}\label{eq:LN}
+L_N=\frac{1-g_N-\sum_{n=2}^{DN}
+\bigl(|B_{N,n}|+g_N|A_{N,n}|\bigr)n^{-\sigma_N}}{M_N}
+\;-\;g_NC_N .
+\end{equation}
+
+\begin{lemma}[Mollified lower bound]\label{lem:native}
+If $L_N>0$, then $|f_{t_0}(x+iy)|\ge L_N$ for all $x\in W_N$.
+\end{lemma}
+
+\begin{proof}
+Write \eqref{eq:ft} as $f_t=A+\gamma C_\kappa$, where
+\[
+A=\sum_{m\le N}b_t(m)m^{-s_*},\qquad
+C_\kappa=\sum_{m\le N}m^yb_t(m)m^{-\overline{s_*}-\kappa}.
+\]
+Exact
+Dirichlet convolution gives the two identities
+\begin{equation}\label{eq:conv}
+E(s_*)\,A=\sum_{n=1}^{DN}B_{N,n}\,n^{-s_*},
+\qquad
+\overline{E(s_*)}\;C_0=\sum_{n=1}^{DN}A_{N,n}\,n^{-\overline{s_*}} ,
+\end{equation}
+where the second identity uses that the $\lambda_d$ are \emph{real}
+(so that $\overline{E(s_*)}=\sum_d\lambda_d d^{-\overline{s_*}}$).
+By the triangle inequality and $\Rea s_*\ge\sigma_N$,
+\[
+|EA|\ge1-\sum_{n=2}^{DN}|B_{N,n}|n^{-\sigma_N},
+\qquad
+|\overline EC_0|\le1+\sum_{n=2}^{DN}|A_{N,n}|n^{-\sigma_N}.
+\]
+For complex $\kappa$ with $|\kappa|\le k_N$,
+\begin{equation}\label{eq:kappaest}
+|m^{-\kappa}-1|=\bigl|e^{-\kappa\log m}-1\bigr|
+\le e^{|\kappa|\log m}-1\le m^{k_N}-1,
+\end{equation}
+whence $|\overline E\,(C_\kappa-C_0)|\le|E|\,C_N$. Combining, and
+using $|\gamma|\le g_N$,
+\[
+|E|\,|f_t|\;\ge\;Q_N-g_N|E|C_N,
+\qquad
+Q_N:=1-g_N-\sum_{n=2}^{DN}\bigl(|B_{N,n}|+g_N|A_{N,n}|\bigr)n^{-\sigma_N}.
+\]
+If $L_N>0$ then $Q_N=M_N(L_N+g_NC_N)>0$; the displayed inequality then
+forces $E\ne0$ (otherwise $0\ge Q_N>0$). Dividing by $|E|$ and using
+$|E|\le M_N$ together with $Q_N>0$,
+\[
+|f_t|\ \ge\ \frac{Q_N}{|E|}-g_NC_N
+\ \ge\ \frac{Q_N}{M_N}-g_NC_N=L_N. \qedhere
+\]
+\end{proof}
+
+The point of Lemma~\ref{lem:native} is that any per-window lower bound for
+$L_N$ uses the same normalization as the additive error in \eqref{eq:thm13}; no
+further Euler-factor conversion intervenes.
+
+\subsection{The lower bounds for \texorpdfstring{$L_N$}{L(N)}}\label{sec:stored}
+
+For each integer $N$ with $690988\le N\le 3840000$, define a set of
+auxiliary primes
+\begin{equation}\label{eq:PN}
+\calP(N)=
+\begin{cases}
+\{2,3,5,7,11\}, & 690988\le N\le728999,\\
+\{2,3,5,7\}, & 729000\le N\le818999,\\
+\{2,3,5\}, & 819000\le N\le1027999,\\
+\{2,3\}, & 1028000\le N\le3840000,
+\end{cases}
+\end{equation}
+and let $L_N$ denote the quantity \eqref{eq:LN} formed with the
+prime set $\calP(N)$, at $t=t_0$ and $y=y_0$, with the constants
+$g_N=G(x_N,y_0)$, $k_N=K(x_N,y_0)$, $\sigma_N=\Sigma(x_N,y_0)$
+frozen at the window's left edge as in Lemma~\ref{lem:freeze}. (The
+number of terms in $L_N$ grows with $|\calP(N)|$; the choice
+\eqref{eq:PN} uses the larger, more effective mollifiers only on the
+ranges of $N$ where they are needed.)
+
+\begin{proposition}[Lower bounds for $L_N$]\label{prop:finitewindows}
+For every integer $690988\le N\le3840000$,
+\[
+L_N\ \ge\ T_{\min}\ =\ 791366\times10^{-12}\ >\ 0 .
+\]
+More precisely, the minimum of $L_N$ over each of the four ranges in
+\eqref{eq:PN} is bounded below as listed in
+Table~\ref{tab:primesets}; the smallest certified lower bound is
+$T_{\min}$ and is obtained at $N=690988$.
+\end{proposition}
+
+\begin{table}[ht!]
+\centering
+\begin{tabular}{@{}llr@{}}
+\toprule
+$\calP(N)$ & range of $N$ & lower bound for $\min L_N$\\
+\midrule
+$\{2,3,5,7,11\}$ & $690988\le N\le728999$ & $0.000000791366$\\
+$\{2,3,5,7\}$    & $729000\le N\le818999$ & $0.000315112459$\\
+$\{2,3,5\}$      & $819000\le N\le1027999$ & $0.000305788807$\\
+$\{2,3\}$        & $1028000\le N\le3840000$ & $0.000309285478$\\
+\bottomrule
+\end{tabular}
+\caption{The auxiliary prime sets \eqref{eq:PN} and, for each of the
+four ranges of $N$, the lower bound for $\min_N L_N$
+established by the computation described in the proof of
+Proposition~\ref{prop:finitewindows}.}
+\label{tab:primesets}
+\end{table}
+\FloatBarrier
+
+\begin{proof}
+The proof is computer-assisted.  The
+\programlink{independent/prop43/prop43_proof.c}{finite-window program}
+computes, for every required integer $N$, an outward-rounded interval whose
+lower endpoint is a lower bound for the quantity $L_N$ in \eqref{eq:LN}.
+It has two evaluation modes.  The first evaluates every term of
+\eqref{eq:LN} directly.  The second groups consecutive values of $N$, freezes
+each weight at the endpoint that gives the larger majorant, expands the
+remaining smooth dependence in Taylor series, and adds an explicit Lagrange
+remainder.  The monotonicity of $g_N$ established in
+Lemma~\ref{lem:freeze} makes the frozen weights conservative.  Each computed
+lower endpoint is therefore rigorously no greater than the exact value of
+$L_N$.
+
+The calculation uses exact rational inputs and outward-rounded FLINT/Arb
+arithmetic at $256$ bits.  The four runs use the prime sets and integer ranges
+in \eqref{eq:PN} and together cover every one of the $3{,}149{,}013$ integers
+$690988\le N\le3840000$.  Every computed lower endpoint is positive; the
+smallest certified lower bound in each range is displayed in
+Table~\ref{tab:primesets}; across all four ranges the smallest is
+$791366\times10^{-12}$, obtained for $N=690988$.  This proves the
+proposition.
+\end{proof}
+
+\subsection{Transfer to the full height range}\label{sec:dini}
+
+Proposition~\ref{prop:finitewindows} concerns the single height $y=y_0$,
+while hypothesis (ii) requires nonvanishing for all
+$y\in[y_0,\sqrt{1-2t_0}]$. For fixed $N$ write $L_N(y)$ for the
+quantity \eqref{eq:LN} with its explicit $y$-dependence restored
+(the constants $g_N,k_N,\sigma_N$ frozen in $x$ as before, but
+evaluated at height $y$; likewise the coefficients $A_{N,n}$ and the
+sums $M_N,C_N$), so that $L_N=L_N(y_0)$. Throughout this subsection
+$t=t_0$ and $N$ are fixed, and we abbreviate
+\[
+q_N=N^2-\frac{t_0}{16},
+\qquad
+g=\frac1{50}-\frac12\log q_N\ (<0),
+\qquad
+\rho_N=\frac{t_0}{2(x_N-6)},
+\]
+so that $g_N(y)=e^{yg}$ exactly and $k_N(y)=\rho_Ny$. The bridge
+between Proposition~\ref{prop:finitewindows} and the full height range is
+the following statement.
+
+\begin{proposition}[Height transfer]\label{prop:transfer}
+For every integer $690988\le N\le3840000$ and every
+$y\in[y_0,\sqrt{1-2t_0}]$,
+\[
+L_N(y)\ \ge\ L_N(y_0).
+\]
+\end{proposition}
+
+The proof establishes three monotonicity statements: as $y$
+increases over $[y_0,\sqrt{1-2t_0}]$, (a) the majorant sum
+\[
+\mathcal F_{N,\calP}(y)
+=g_N(y)+\sum_{n=2}^{DN}
+\bigl(|B_{N,n}|+g_N(y)|A_{N,n}(y)|\bigr)n^{-\sigma_N(y)}
+\]
+subtracted in \eqref{eq:LN} is nonincreasing; (b) the mollifier
+bound $M_N(y)$ is positive and nonincreasing; and (c) the correction
+term $g_N(y)C_N(y)\ge0$ is nonincreasing. Statement (a) is the
+delicate one: the crude
+majorant obtained by discarding the negative term $g_N g|A|$ below
+is not monotone, and the proof must retain the cancellation between
+the $A$-side terms. We build it up in three lemmas and one
+computation.
+
+\begin{lemma}[Slope of the frozen exponent]\label{lem:sigmaslope}
+For $y_0\le y_1\le y_2\le\sqrt{1-2t_0}$,
+\[
+\sigma_N(y_2)-\sigma_N(y_1)\ \ge\ \tfrac12\,(y_2-y_1).
+\]
+\end{lemma}
+
+\begin{proof}
+$\sigma_N(y)=\frac{1+y}2+\frac{t_0}4\log q_N
+-\frac{t_0}{2x_N^2}\bigl(1-3y+\frac{4y(1+y)}{x_N^2}\bigr)_+$. The
+inner expression has $y$-derivative $-3+\frac{4(1+2y)}{x_N^2}<0$
+(as $4(1+2y)\le12<3x_N^2$), so its positive part is nonincreasing
+in $y$ and the subtracted term is nondecreasing; the explicit term
+$\frac{1+y}2$ contributes slope $\frac12$.
+\end{proof}
+
+\begin{lemma}[Monotone normalizer and correction]\label{lem:bc}
+On $[y_0,\sqrt{1-2t_0}]$: \textup{(b)} $M_N(y)$ is positive and
+nonincreasing; \textup{(c)} $g_N(y)C_N(y)$ is nonnegative and
+nonincreasing.
+\end{lemma}
+
+\begin{proof}
+(b) Each term $|\lambda_d|d^{-\sigma_N(y)}$ is positive; for
+$d\ge2$ it is nonincreasing by Lemma~\ref{lem:sigmaslope}, and the
+$d=1$ term is constant.
+
+(c) Nonnegativity is clear ($m^{k_N(y)}\ge1$). Fix
+$y_0\le y_1<y_2\le\sqrt{1-2t_0}$ and put $\Delta=y_2-y_1$. First,
+$g_N(y_2)=g_N(y_1)e^{g\Delta}$ exactly. Next, for each
+$2\le m\le N$, the term
+$b_t(m)\,(m^{\rho_Ny}-1)\,m^{\,y-\sigma_N(y)}$ of $C_N$ grows by at
+most the factor $e^{(\frac12\log m+\rho_N\log m+\frac1{y_0})\Delta}$:
+the exponent $y-\sigma_N(y)$ grows by at most $\frac12\Delta$
+(Lemma~\ref{lem:sigmaslope}); and by the mean value theorem applied
+to $y\mapsto\log(m^{\rho_Ny}-1)$, whose derivative is
+$\rho_N\log m\,\frac{e^z}{e^z-1}$ with $z=\rho_Ny\log m>0$, the
+bound $\frac{e^z}{e^z-1}\le1+\frac1z$ gives a growth rate at most
+$\rho_N\log m+\frac1{y}\le\rho_N\log m+\frac1{y_0}$. Since a sum of
+positive terms grows no faster than its fastest-growing term, and
+$m\le N$,
+\[
+g_N(y_2)C_N(y_2)\ \le\
+g_N(y_1)C_N(y_1)\,
+\exp\Bigl[\Bigl(g+\tfrac12\log N+\rho_N\log N
++\tfrac1{y_0}\Bigr)\Delta\Bigr].
+\]
+It remains to check that the rate is negative for every $N$ in the
+range. First, $g+\frac12\log N=\frac1{50}-\frac12\log\frac{q_N}N$
+and $\frac{q_N}N=N-\frac{t_0}{16N}>N-1\ge690987>e^{13.44}$ (as
+$e^{13.44}<442414\times1.5528<687000$), so
+$g+\frac12\log N<0.02-6.72$. Second,
+$\frac1{y_0}<\frac{10^7}{1872719}<5.3399$, since
+$y_0^2=\frac{350708}{10^7}>\bigl(\frac{1872719}{10^7}\bigr)^2
+=0.03507076\ldots$ gives $y_0>\frac{1872719}{10^7}$. Third,
+uniformly over the range,
+$\rho_N\log N\le\frac{t_0\log(3.84\times10^6)}{2(x_{690988}-6)}
+<\frac{0.17\times16}{10^{13}}<10^{-12}$. Hence the rate is at most
+$0.02+5.3399+10^{-12}-6.72<-1.36<0$.
+\end{proof}
+
+\begin{lemma}[Dini bound in divisor-cell form]\label{lem:dini}
+Let $2\le n\le DN$, $L=\log n$, and let
+$\mathcal D_{N,n}=\{d\mid D:\ d\mid n,\ n\le dN\}$ be the active
+divisor set (which does not depend on $y$), assumed nonempty. With
+$\ell_d=\log d$ and
+\begin{align*}
+r_d(L) &= \exp\Bigl\{\frac{t_0}4\Bigl(\sum_{p\mid d}\log^2p
++\ell_d^2-2L\ell_d\Bigr)\Bigr\},
+\\
+C_0 &= \sum_{d\in\mathcal D_{N,n}}(-1)^{\omega(d)}r_d(L),
+\\
+C(y) &= \sum_{d\in\mathcal D_{N,n}}(-1)^{\omega(d)}r_d(L)\,d^{-y},
+\\
+C'(y) &= -\sum_{d\in\mathcal D_{N,n}}(-1)^{\omega(d)}r_d(L)\,
+d^{-y}\ell_d,
+\end{align*}
+one has $B_{N,n}=b_t(n)\,C_0$,
+$A_{N,n}(y)=b_t(n)\,e^{yL}C(y)$ and
+$\frac{d}{dy}A_{N,n}(y)=b_t(n)\,e^{yL}(LC(y)+C'(y))$, and the upper
+right Dini derivative of the corresponding summand of
+$\mathcal F_{N,\calP}$ satisfies
+\[
+D^+_y\Bigl[\bigl(|B_{N,n}|+g_N(y)|A_{N,n}(y)|\bigr)
+n^{-\sigma_N(y)}\Bigr]
+\ \le\
+b_t(n)\,n^{-\sigma_N(y)}
+\Bigl(G\,h-\frac L2\,|C_0|\Bigr),
+\]
+where $G=G(y)=e^{y(g+L)}$ and
+$h=h(y)=|LC(y)+C'(y)|+\bigl(g-\tfrac L2\bigr)|C(y)|$.
+\end{lemma}
+
+\begin{proof}
+The identities follow from
+$\lambda_d\,b_t(n/d)=(-1)^{\omega(d)}b_t(n)\,r_d(L)$ --- indeed
+$\log b_t(n/d)=\frac{t_0}4(L-\ell_d)^2
+=\log b_t(n)+\frac{t_0}4(\ell_d^2-2L\ell_d)$ and
+$\lambda_d=(-1)^{\omega(d)}\exp(\frac{t_0}4\sum_{p\mid d}\log^2p)$
+--- together with $(n/d)^y=e^{yL}d^{-y}$; note also
+$g_N(y)e^{yL}=e^{y(g+L)}=G$. Since $A=A_{N,n}(y)$ is real-analytic
+in $y$,
+\[
+D^+_y\bigl\{g_N|A|\bigr\}
+=\begin{cases}
+g_N\bigl(g|A|+\operatorname{sgn}(A)A'\bigr),&A\neq0,\\
+g_N|A'|,&A=0,
+\end{cases}
+\ \le\ g_N\bigl(g|A|+|A'|\bigr)
+\]
+in both cases. Both factors of the summand are nonnegative and
+locally Lipschitz, $|B|$ is constant in $y$, and by
+Lemma~\ref{lem:sigmaslope},
+$D^+_y\,n^{-\sigma_N(y)}\le-\frac L2\,n^{-\sigma_N(y)}$; the
+product rule for upper Dini derivatives of nonnegative Lipschitz
+functions then gives
+\[
+D^+_y\bigl[(|B|+g_N|A|)n^{-\sigma_N}\bigr]
+\le n^{-\sigma_N}\Bigl(g_N\bigl(g|A|+|A'|\bigr)
+-\frac L2\bigl(|B|+g_N|A|\bigr)\Bigr).
+\]
+Substituting the identities and factoring out $b_t(n)>0$ yields the
+display.
+\end{proof}
+
+\begin{lemma}[Cell decomposition and $q$-freezing]\label{lem:cells}
+\textup{(i)} For $2\le n\le DN$ put $G_0=\gcd(n,D)$ and list the
+divisors of $G_0$ as $1=d_0<d_1<\dots<d_s$ (so $s+1=\tau(G_0)$),
+with $d_{-1}=0$. On the ratio sector $d_{j-1}<n/N\le d_j$
+($0\le j\le s$) the active set is exactly
+$\mathcal D_{N,n}=\{d_j,\dots,d_s\}$, and for $n/N>d_s$ it is
+empty (the summand vanishes identically). The number of pairs
+(mask, sector) with nonempty active set is
+$\sum_{G_0\mid D}\tau(G_0)=3^{|\calP|}$.
+
+\textup{(ii)} With $c=|C(y)|$ and
+$K=|LC(y)+C'(y)|-\frac L2c$, so that
+$G\,h_+=U(g):=e^{y(L+g)}\,[K+gc]_+$, the function
+$\tilde g\mapsto U(\tilde g)$ is nondecreasing.
+
+\textup{(iii)} On the sector of \textup{(i)}, within the range
+$N_{\min}\le N\le N_{\max}$ of the prime set,
+$q_N\ge\max\bigl(N_{\min}^2,\,e^{2L}/d_j^2\bigr)-\frac{t_0}{16}$;
+since $g$ is decreasing in $q_N$, replacing $g$ by its value at
+this smallest feasible $q_N$ can only increase $U(g)$.
+\end{lemma}
+
+\begin{proof}
+(i) $d\in\mathcal D_{N,n}$ iff $d\mid G_0$ and $n\le dN$, i.e.\
+$d\ge n/N$; on the stated sector these are exactly
+$d_j,\dots,d_s$. Summing $\tau(G_0)$ over the divisors $G_0$ of the
+squarefree $D$ gives $\prod_{p\in\calP}(\tau(1)+\tau(p))
+=3^{|\calP|}$. (ii) Where $K+\tilde gc>0$,
+$U'(\tilde g)=e^{y(L+\tilde g)}\bigl(y(K+\tilde gc)+c\bigr)\ge0$;
+where $K+\tilde gc\le0$, $U=0$; and $U$ is continuous. (iii)
+$n\le d_jN$ gives $N\ge e^L/d_j$, and $N\ge N_{\min}$; $q_N$ is
+increasing in $N$ and $g$ decreasing in $q_N$.
+\end{proof}
+
+By Lemma~\ref{lem:cells}, for each of the four prime sets the
+quantity $G\,h_+$ is bounded by an expression depending only on the
+cell, on $L$ and on $y$; the following finite family of
+inequalities is therefore checkable by a finite computation.
+
+\begin{proposition}[Cell inequalities]\label{prop:dinicells}
+For each of the four prime sets of \eqref{eq:PN}, every $N$ in the
+corresponding range, every $2\le n\le DN$ with
+$\mathcal D_{N,n}\neq\emptyset$, and every
+$y\in[y_0,\sqrt{1-2t_0}]$, in the notation of
+Lemma~\ref{lem:dini},
+\[
+G\,h_+\ \le\ \frac L2\,|C_0| .
+\]
+\end{proposition}
+
+\begin{proof}
+The
+\programlink{dan-reworking/code/prop49/prop49_proof.c}{height-transfer program}
+performs the finite calculation that follows.  For each prime set it
+enumerates the $3^{|\calP|}$
+(mask, ratio-sector) cells of Lemma~\ref{lem:cells}(i): for each
+divisor mask $G_0\mid D$ and each divisor $d_j$ of $G_0$, the
+active set $\{d_j,\dots,d_s\}$ with the sector constraint
+$d_{j-1}<n/N\le d_j$. The $(L,y)$-domain of the cell, namely
+\[
+L\in
+\begin{cases}
+[\log2,\,\log(N_{\max}d_0)],&j=0,\\
+[\max(\log2,\log(N_{\min}d_{j-1})),\,\log(N_{\max}d_j)],&j\ge1,
+\end{cases}
+\]
+and
+$y\in[y_0,\sqrt{1-2t_0}]$, is covered by closed rectangles with
+outward-padded rational endpoints.  Ball arithmetic proves that the exact
+logarithmic boundaries, $y_0$, and $\sqrt{1-2t_0}$ lie in this cover.  On
+each rectangle the program replaces $q_N$ by the smallest feasible
+value $\max\bigl(N_{\min}^2,e^{2L}/d_j^2\bigr)-\frac{t_0}{16}$
+(splitting the $L$-range at the transition point with overlapping
+rectangles; conservative by Lemma~\ref{lem:cells}(ii)--(iii)), and forms
+outward enclosures of $C_0$, $C(y)$, and $C'(y)$ from the exact identity
+$r_d(L)=e^{\frac{t_0}4(\sum_{p\mid d}\log^2p+\ell_d^2)}
+e^{-\frac{t_0}2L\ell_d}$, and establishes on each leaf either
+$h\le0$ or the strict inequality $G\,h_+<\frac L2|C_0|$.  A rectangle is
+bisected until one of these two alternatives follows.
+
+The calculation was repeated at $180$- and $256$-bit precision.  At both
+precisions every rectangle is decided, and the largest ratio satisfies
+\[
+\sup\ \frac{G\,h_+}{\frac L2|C_0|}\ \le\ 0.99999860767275095
+\ <\ 0.9999988\ <\ 1 ,
+\]
+the closing comparison being made against the fixed threshold
+$0.9999988$. The worst rectangle lies in the five-prime range at
+$L\approx1.042$--$1.054$, $y\approx0.1997$--$0.2022$.  Since the
+closed rectangles cover every cell and the upper ratio is strictly below
+$1$, the required inequality holds throughout the stated domain.
+\end{proof}
+
+\begin{proof}[Proof of Proposition~\ref{prop:transfer}]
+\emph{Statement (a).} For each $n$ with nonempty active set,
+Lemma~\ref{lem:dini} and Proposition~\ref{prop:dinicells} give
+$D^+_y\le b_t(n)n^{-\sigma_N}(G\,h-\frac L2|C_0|)\le0$ on
+$[y_0,\sqrt{1-2t_0}]$ (if $h\le0$ both terms are nonpositive;
+otherwise apply the proposition). Summands with empty active set
+vanish identically, and the standalone term $g_N(y)=e^{yg}$ is
+decreasing. Each summand is continuous, and a continuous function
+with nonpositive upper right Dini derivative on an interval is
+nonincreasing (if $f(y_2)>f(y_1)$, put
+$\eps=\frac{f(y_2)-f(y_1)}{2(y_2-y_1)}$ and let $y^*$ be the
+supremum of the set where $f(y)\le f(y_1)+\eps(y-y_1)$; then
+$y^*<y_2$ and $D^+f(y^*)\ge\eps>0$). Hence
+$\mathcal F_{N,\calP}$ is nonincreasing.
+
+\emph{Conclusion.} By Proposition~\ref{prop:finitewindows},
+$1-\mathcal F_{N,\calP}(y_0)=M_N(y_0)L_N(y_0)+M_N(y_0)\,
+g_N(y_0)C_N(y_0)\ge M_N(y_0)\,T_{\min}>0$. By (a) the numerator
+$1-\mathcal F_{N,\calP}(y)$ is nondecreasing, hence positive on the
+whole interval; by Lemma~\ref{lem:bc}(b) the denominator $M_N(y)$
+is positive and nonincreasing; so the quotient
+$(1-\mathcal F_{N,\calP}(y))/M_N(y)$ is nondecreasing. Subtracting
+the nonnegative nonincreasing correction $g_N(y)C_N(y)$
+(Lemma~\ref{lem:bc}(c)) preserves this, and
+$L_N(y)\ge L_N(y_0)$ follows.
+\end{proof}
+
+\subsection{Error bounds and the finite-range conclusion}
+\label{sec:finiteerr}
+
+The remaining ingredient is a uniform bound on the errors of
+Theorem~1.3 over the finite region.
+
+\begin{proposition}[Uniform error bound on the finite region]
+\label{prop:finiteerr}
+For all $x\ge x_*$ and $y_0\le y\le\sqrt{1-2t_0}$, the error terms
+of Theorem~1.3 at $t=t_0$, bounded using equation (23) of
+\cite{Polymath} for $e_A+e_B$ and the conservative corollary
+\eqref{eq:ec0} for $e_{C,0}$, satisfy
+\[
+e_A+e_B\le2.06\times10^{-12},\qquad
+e_{C,0}\le0.000000233492848188649183,
+\]
+and
+\[
+e_A+e_B+e_{C,0}\ \le\ E_{\max}:=0.000000233494905212337849 .
+\]
+(The third bound is established directly and is sharper than the
+sum of the two displayed bounds, which are rounded upward for
+display.)
+\end{proposition}
+
+\begin{proof}
+The analytic reduction is stated first at the exact time $t_0$.  The
+\programlink{verifiers/verify_prop410_arb.c}{finite-error program} evaluates
+the same majorants on the slightly larger rational time interval
+\[
+I_t=\left[\frac{129}{800},\frac{161250001}{10^9}\right],
+\]
+so its result is a conservative strengthening of the calculation needed here.
+All integers and rational constants are constructed exactly; square roots,
+logarithms, exponentials, powers, and $\pi$ are evaluated with
+outward-rounded FLINT/Arb balls.  Whenever an upper endpoint is reused in a
+monotone majorant, the program first converts that endpoint to an exact dyadic
+number, so no midpoint approximation enters the proof.
+
+Set $N_0:=690988$.  Evaluation at the smaller window edge
+\[
+x_0:=x_{N_0}=4\pi\Bigl(N_0^2-\frac{t_0}{16}\Bigr)<x_*
+\]
+(the strict inequality is \eqref{eq:xstarwindow}) dominates the whole region
+$x\ge x_*$, $y_0\le y\le\sqrt{1-2t_0}$, $t=t_0$.  The
+$x$-dependent factors used below are bounded at $x_0$; the dependence on the
+changing window index is handled separately in part~(iii).
+Write
+$\ell_0=\log\frac{x_0}{4\pi}
+=\log\bigl(N_0^2-\tfrac{t_0}{16}\bigr)$,
+\[
+\delta_1=\frac{t_0}4\log\Bigl(1-\frac{t_0}{16N_0^2}\Bigr)^{-1}
++\frac{t_0}{2x_0^2},
+\qquad
+\sigma_1=\frac{1+y_0}2+\frac{t_0}2\log N_0-\delta_1
+=\frac{1+y_0}2+\frac{t_0}4\ell_0-\frac{t_0}{2x_0^2}.
+\]
+More generally, for $N\ge N_0$ put
+\[
+\delta_N:=\frac{t_0}4\log\Bigl(1-\frac{t_0}{16N^2}\Bigr)^{-1}
+ +\frac{t_0}{2x_N^2},
+\qquad
+\widetilde\sigma_N:=\frac{1+y_0}2+\frac{t_0}2\log N-\delta_N.
+\]
+Thus $\widetilde\sigma_{N_0}=\sigma_1$. Both summands of
+$\delta_N$ decrease with $N$, so $\delta_N\le\delta_1$ and
+$\widetilde\sigma_N$ grows with $\log N$ at rate at least $t_0/2$.
+The exponent estimate used in part~(i) below also gives
+$\Rea s_*\ge\widetilde\sigma_N$ throughout window $W_N$.
+
+(i) \emph{The exponent.} In \eqref{eq:resbound} the positive part
+is at most $1$: since $y_0<1$ and
+$8/x^2\le 8/x_0^2<3y_0<3$,
+$\frac{4y(1+y)}{x^2}\le\frac{8y}{x^2}<3y$ for all $y\ge y_0$, and
+$\Rea s_*\ge\frac{1+y}2+\frac{t_0}4\log\frac x{4\pi}
+-\frac{t_0}{2x^2}\ge\sigma_1$ throughout the region.
+
+(ii) \emph{The bound \eqref{eq:ec0} for $e_{C,0}$.} Each factor is
+monotone in the favorable direction: the prefactor
+$(\frac x{4\pi})^{-(1+y)/4}$ decreases in $x$ and $y$, while
+$-\frac{t_0}{16}\log^2\frac x{4\pi}$ decreases in $x$ and is independent
+of $y$ (here $\ell_0>2$).  The factor $3^y+3^{-y}$ increases in $y$;
+$N-0.125$ increases with the window; and the final quotient
+decreases in $x$ because
+$3\,\frac{d}{dx}\bigl|\log\tfrac x{4\pi}+\tfrac{i\pi}2\bigr|
+\le\frac3x$ while the numerator exceeds $10.50>3$.
+Hence \eqref{eq:ec0} evaluated at $x=x_0$ and $N=N_0$, with $y=y_0$
+in the decreasing factors and $y=\sqrt{1-2t_0}$ in $3^y+3^{-y}$,
+bounds $e_{C,0}$ on the whole region; this evaluation is the
+program's quantity \texttt{error\_c0}.
+
+(iii) \emph{The bound (23) for $e_A+e_B$.} Since
+$4\pi n^2\le4\pi N^2\le x\,(1-\frac{t_0}{16N^2})^{-1}$ for every
+$n\le N$, the bounds \eqref{eq:gammabound} and \eqref{eq:kappabound}
+give, uniformly on the region,
+\[
+1+|\gamma|N^{|\kappa|}n^y\ \le\
+1+e^{0.02}\Bigl(1-\frac{t_0}{16N_0^2}\Bigr)^{-1/2}
+\exp\Bigl(\frac{t_0\log N_0}{2(x_0-6)}\Bigr)
+\]
+(the quantity $\log N/(x_N-6)$ decreases in $N$).  To control the
+logarithm in the last factor, put $r=x/(4\pi n^2)$.  Since $n\le N$ and
+$x\ge4\pi(N^2-t_0/16)$,
+\[
+r\ge1-\frac{t_0}{16N^2},\qquad r\le\frac{x}{4\pi}.
+\]
+Moreover,
+\[
+\frac{x}{4\pi}\left(1-\frac{t_0}{16N^2}\right)
+\ge \frac{(N^2-t_0/16)^2}{N^2}\ge1,
+\]
+where the last inequality follows from $N^2-t_0/16\ge N$.  Thus, whether
+$r$ is below or above $1$, one has
+$|\log r|\le\log(x/(4\pi))$.  Consequently
+$\log^2\frac{x}{4\pi n^2}\le\log^2\frac x{4\pi}$, and
+the monotonicity of $\log^2(\frac x{4\pi})/(x-6.66)$ in $x$
+(using $\ell_0>2$) bounds the last factor of (23) by
+$\exp\bigl(\frac{(t_0^2/16)\ell_0^2+0.626}{x_0-6.66}\bigr)-1$. For
+the middle factor, $\sum_{n=1}^{N}b_{t_0}(n)\,n^{-\Rea s_*}\le
+1+\sum_{n=2}^{m_0}b_{t_0}(n)\,n^{-\sigma_1}+T_N$ with $m_0=2000$,
+where
+$T_N:=\sum_{m_0<n\le N}b_{t_0}(n)n^{-\widetilde\sigma_N}$.
+The summand
+$\exp(\frac{t_0}4\log^2n-\widetilde\sigma_N\log n)$ decreases in $n$ on
+$n\le N$ because $\frac{1+y_0}2-\delta_1>0$, so
+$T_N\le\int_{\log m_0}^{\log N}e^{\psi(L)}\,dL$ with
+$\psi(L)=(1-\widetilde\sigma_N)L+\frac{t_0}4L^2$; since $\psi$ is convex,
+$T_N\le(\log N-\log m_0)\,
+\max\bigl(e^{\psi(\log m_0)},e^{\psi(\log N)}\bigr)$. Finally, the
+two rate inequalities
+\[
+\frac{t_0}2\log m_0\ >\ \Bigl(\log\frac{N_0}{m_0}\Bigr)^{-1},
+\qquad
+\frac{t_0}2\log N_0-\frac{1-y_0}2-\delta_1\ >\
+\Bigl(\log\frac{N_0}{m_0}\Bigr)^{-1},
+\]
+imply that each of the two endpoint products
+$(\log N-\log m_0)e^{\psi(\log m_0)}$ and
+$(\log N-\log m_0)e^{\psi(\log N)}$ is nonincreasing in $N$ for
+$N\ge N_0$ (using the growth of $\widetilde\sigma_N$ just noted
+and $\delta_N\le\delta_1$), so their values at $N=N_0$
+dominate every window; the program proves both rate inequalities. The
+product of the three bounds is its quantity \texttt{error\_ab}.
+
+The program implements the five majorants just described, proves all twelve
+domain and sign inequalities used in the monotonicity argument, and bounds the
+head sum for $2\le n\le2000$ term by term over the whole time interval $I_t$.
+It then compares the resulting balls with exact rational
+right-hand sides.  Put $\mathcal E=e_A+e_B+e_{C,0}$.  Runs at $256$ and
+$512$ bits give
+\[
+\begin{aligned}
+e_A+e_B&<2.05702368866622\times10^{-12},\\
+e_{C,0}&<\frac{233492848188649183}{10^{24}},\\
+\mathcal E&<\frac{233494905212337849}{10^{24}}=E_{\max},\\
+T_{\min}-\mathcal E&>5.5787109478766215\times10^{-7}.
+\end{aligned}
+\]
+Both runs also prove directly
+$\mathcal E<234\times10^{-9}$ and
+$T_{\min}-\mathcal E>557\times10^{-9}>0$.  Thus both precisions prove the
+same strict rational inequalities, and hence all three bounds in the
+statement.
+\end{proof}
+
+We can now state the conclusion of the finite range.
+
+\begin{proposition}[Nonvanishing at time $t_0$, finite range]
+\label{prop:finitelane}
+$H_{t_0}(x+iy)\neq0$ for all $x_*\le x<x_{3840001}$ and
+$y_0\le y\le\sqrt{1-2t_0}$.
+\end{proposition}
+
+\begin{proof}
+Let $x$ be in the stated range and let $N$ be its window index, so
+that $690988\le N\le3840000$ by \eqref{eq:xstarwindow}, and
+$x\in W_N$. For $y$ in the stated range, Lemma~\ref{lem:native}
+(applied with the height $y$, the prime set $\calP(N)$, and the
+frozen constants of Lemma~\ref{lem:freeze}), together with
+Propositions~\ref{prop:finitewindows} and~\ref{prop:transfer}, gives
+\[
+|f_{t_0}(x+iy)|\ \ge\ L_N(y)\ \ge\ L_N(y_0)\ \ge\ T_{\min}.
+\]
+Combining with Proposition~\ref{prop:finiteerr},
+\begin{equation}\label{eq:finitemargin}
+|f_{t_0}(x+iy)|-\bigl(e_A+e_B+e_{C,0}\bigr)
+\ \ge\ T_{\min}-E_{\max}
+\ \ge\ 0.000000557871094787\ >\ 0 .
+\end{equation}
+The point $(x,y,t_0)$ lies in the region \eqref{eq:region}, so
+\cite[Corollary~1.4]{Polymath} (the criterion for non-vanishing
+quoted in Section~\ref{sec:thm13}) yields
+$H_{t_0}(x+iy)\neq0$.
+\end{proof}
+
+% ===============================================================
+\section{Hypothesis (ii), infinite tail}\label{sec:tail}
+% ===============================================================
+
+This section proves nonvanishing of $H_t$ for \emph{all} windows
+$N\ge N_*=3840000$, all
+$t\in I_t=\bigl[\frac{129}{800},\frac{161250001}{10^9}\bigr]$ (a
+closed interval whose left endpoint is exactly $t_0$), and all
+$y\in[y_0,\sqrt{1-2t}]$, by a single interval computation at the
+cutoff $N_*$ combined with monotonicity arguments in $N$ and $y$.
+Since $t_0\in I_t$, this in particular covers the case $t=t_0$
+needed for hypothesis (ii); the last window $W_{3840000}$ of the
+finite range overlaps the tail's starting abscissa $x_{3840000}$, so
+the two ranges jointly cover all $x\ge x_*$.
+
+\subsection{Setup: mollifier and frozen exponents}
+
+Fix the sparse mollifier support
+$\calS=\{1,2,3,4,5,6,7,10,11,13,14\}$ and the exact rational vector
+\[
+\begin{array}{c|ccccccccccc}
+d&1&2&3&4&5&6&7&10&11&13&14\\ \hline
+\lambda_d&
+1&-\frac{1021}{1000}&-\frac{1054}{1000}&-\frac{9}{200}&
+-\frac{1119}{1000}&\frac{1001}{1000}&-\frac{1043}{1000}&
+\frac{128}{125}&-\frac{161}{200}&-\frac{447}{500}&\frac{456373}{500000}
+\end{array}
+\]
+($\lambda_1=1$; $\sum_d|\lambda_d|=9.918746$ exactly), and set
+$M_\lambda(z)=\sum_{d\in\calS}\lambda_d d^{-z}$. (Unlike the Euler-product
+mollifier of Section~\ref{sec:native}, this vector was chosen by numerical optimization;
+its only structural requirement is $\lambda_1=1$ and real entries.)
+Fix also the head lengths $M=153814$ and $M_{\rm err}=3000$.
+
+For $x\ge X_N(t):=4\pi\bigl(N^2-\frac t{16}\bigr)$ with window index
+$N\ge N_*$, set
+\[
+\delta(N,t)=\frac t4\bigl[-\log\bigl(1-\frac t{16N^2}\bigr)\bigr]
++\frac{t}{2X_N(t)^2},
+\qquad
+k(N,t)=\frac{t}{2(X_N(t)-6)}.
+\]
+Both functions decrease in $N$ for fixed $t$.  Define the frozen
+constants exactly by the compact-interval maxima
+\[
+\widehat\delta:=\max_{t\in I_t}\delta(N_*,t),
+\qquad
+\widehat k:=\max_{t\in I_t}k(N_*,t).
+\]
+They also increase in $t$ on $I_t$, so these maxima equal their values at
+$t=161250001/10^9$.
+The frozen exponents are then
+\[
+\sigma_1=\frac{1+y}{2}+\frac t2\log N-\widehat\delta,
+\qquad
+\sigma_2=\frac{1-y}{2}+\frac t2\log N-\widehat\delta-\widehat k,
+\qquad
+G=e^{0.02y}\Bigl(N^2-\frac t{16}\Bigr)^{-y/2}.
+\]
+\begin{lemma}[Frozen exponents]\label{lem:frozen}
+Let $N\ge N_*$, $t\in I_t$, $0<y\le1$, and let
+$x\in[X_N(t),X_{N+1}(t))$, so that $x$ has window index $N$. Then
+\[
+|\gamma|\le G,\qquad
+\Rea s_*\ge\sigma_1,\qquad
+|\kappa|\le\widehat k,
+\]
+and consequently each term of the second sum in \eqref{eq:ft}
+satisfies
+\[
+\bigl|n^y\,b_t(n)\,n^{-\overline{s_*}-\kappa}\bigr|
+\ \le\ b_t(n)\,n^{-\sigma_2}
+\qquad(1\le n\le N).
+\]
+\end{lemma}
+
+\begin{proof}
+Since $x\ge X_N(t)$ we have $x/4\pi\ge N^2-t/16$, and the three
+factors $(x/4\pi)^{-y/2}$, $x^{-2}$, $(x-6)^{-1}$ appearing in
+\eqref{eq:gammabound}--\eqref{eq:kappabound} are decreasing in $x$,
+hence maximal at the window's
+left edge. For $\gamma$ this gives
+$|\gamma|\le e^{0.02y}(N^2-t/16)^{-y/2}=G$ directly. For $\kappa$,
+using $y\le1$ and that $X_N(t)$ increases with $N$,
+\[
+|\kappa|\ \le\ \frac{ty}{2(x-6)}\ \le\ \frac{t}{2(X_N(t)-6)}
+\ =\ k(N,t)\ \le\ k(N_*,t)\ \le\ \widehat k .
+\]
+For $\Rea s_*$: by the exact identity
+\[
+\frac t4\log\Bigl(N^2-\frac t{16}\Bigr)
+=\frac t2\log N
+-\frac t4\Bigl[-\log\Bigl(1-\frac t{16N^2}\Bigr)\Bigr],
+\]
+the logarithmic term of \eqref{eq:resbound} is at least
+$\frac t2\log N$ minus the first summand of $\delta(N,t)$. The
+subtracted positive-part term of \eqref{eq:resbound} is at most
+$t/(2x^2)\le t/(2X_N(t)^2)$, the second summand of $\delta(N,t)$:
+indeed, on the domain $0\le y\le1$, $x\ge200$ one has
+$1-3y+4y(1+y)/x^2\le1$ (for $y>0$ this is $4(1+y)\le3x^2$, and at
+$y=0$ the left side equals $1$), so the positive part is at most
+$1$. Both summands of $\delta(N,t)$ decrease in $N$ (in the first,
+$t/16N^2$ decreases and $u\mapsto-\log(1-u)$ is increasing; in the
+second, $X_N(t)$ increases), so
+\[
+\Rea s_*\ \ge\ \frac{1+y}2+\frac t2\log N-\delta(N,t)
+\ \ge\ \frac{1+y}2+\frac t2\log N-\widehat\delta\ =\ \sigma_1 .
+\]
+Finally, for $1\le n\le N$,
+\[
+\bigl|n^y b_t(n)n^{-\overline{s_*}-\kappa}\bigr|
+= b_t(n)\,n^{\,y-\Rea s_*-\Rea\kappa}
+\le b_t(n)\,n^{\,y-\sigma_1+\widehat k}
+= b_t(n)\,n^{-\sigma_2},
+\]
+since $-\Rea\kappa\le|\kappa|\le\widehat k$ and
+$\sigma_2=\sigma_1-y-\widehat k$.
+\end{proof}
+
+\subsection{The endpoint-cap lemma}
+
+The analytic engine for tail sums is:
+
+\begin{lemma}[Endpoint cap]\label{lem:cap}
+For $1\le a<c$ set
+$E_{t,\sigma}(u)=\exp\bigl((1-\sigma)\log u+\frac t4\log^2u\bigr)$ and
+\[
+\CapT_t(a,c;\sigma)=\max\bigl(E_{t,\sigma}(a),E_{t,\sigma}(c)\bigr)\log\frac ca .
+\]
+If $\sigma>\frac t2\log c$, then for all integers $a\le J<K\le c$,
+\[
+\sum_{J<n\le K}b_t(n)\,n^{-\sigma}\ \le\ \CapT_t(a,c;\sigma).
+\]
+\end{lemma}
+
+\begin{proof}
+The logarithmic derivative of $b_t(u)u^{-\sigma}$ in $\log u$ is
+$\frac t2\log u-\sigma<0$ on $[a,c]$, so the summand decreases and the
+sum is at most $\int_a^c b_t(u)u^{-\sigma}du$. Substituting
+$v=\log u$ makes the integrand $\exp\bigl((1-\sigma)v+\frac t4v^2\bigr)$,
+which is log-convex in $v$, hence maximized at an endpoint of
+$[\log a,\log c]$; multiplying by the length $\log(c/a)$ of the
+$v$-interval gives the bound.
+\end{proof}
+
+\subsection{Exact convolution and the contraction
+\texorpdfstring{$D$}{D}}
+
+Define, for $N\ge N_*$ and $(x,y,t)$ with $x$ in the window of index
+$N$,
+\[
+P=\sum_{m=2}^{M}|c_m(t)|m^{-\sigma_1},
+\qquad
+c_m(t)=\sum_{\substack{d\in\calS\\ d\mid m}}\lambda_d\,b_t(m/d),
+\qquad
+M_{\max}=M_{\max}(N,t,y):=\sum_{d\in\calS}|\lambda_d|\,d^{-\sigma_1},
+\]
+\[
+\mathrm{TR}=\sum_{d\in\calS}|\lambda_d|\,d^{-\sigma_1}
+\CapT_t\bigl(\lfloor M/d\rfloor,N;\sigma_1\bigr),
+\qquad
+\mathrm{AB}=G\Bigl(\sum_{k\le M}b_t(k)k^{-\sigma_2}
++\CapT_t(M,N;\sigma_2)\Bigr),
+\]
+together with the nonnegative ``overshoot'' term
+\[
+\mathrm{OV}=\sum_{\substack{d\in\calS\\ d>1}}
+|\lambda_d|\,d^{-\sigma_1}\,
+\CapT_t\Bigl(\frac{N}{d+1},\,N;\sigma_1\Bigr)
+\]
+(included for compatibility with the program of
+Proposition~\ref{prop:tailcutoff}; see the remark after the proof),
+and set
+\begin{equation}\label{eq:D}
+D\ =\ D(N,t,y)\ :=\ P+\mathrm{TR}+\mathrm{OV}+M_{\max}\,\mathrm{AB}.
+\end{equation}
+
+\begin{lemma}[Mollified contraction bound]\label{lem:contraction}
+Assume the cap-validity conditions
+\begin{equation}\label{eq:capvalid}
+\widehat\delta\ <\ \frac{1+y}2,
+\qquad
+\widehat\delta+\widehat k\ <\ \frac{1-y}2
+\end{equation}
+(equivalently $\sigma_1>\frac t2\log N$ and
+$\sigma_2>\frac t2\log N$: the differences
+$\sigma_i-\frac t2\log N$ are independent of $N$). Then for every
+$N\ge N_*$, $t\in I_t$, $0<y\le1$ and $x$ in the window of index
+$N$,
+\[
+\bigl|M_\lambda(s_*)f_t(x+iy)-1\bigr|\ \le\ D .
+\]
+Consequently, if $D<1$ then
+\begin{equation}\label{eq:flowlower}
+|f_t(x+iy)|\ \ge\ \frac{1-D}{M_{\max}} .
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+Write the two sums in \eqref{eq:ft} as $F_B$ and $F_A$
+($f_t=F_B+\gamma F_A$). Expanding
+$M_\lambda(s_*)F_B=\sum_{d\in\calS}\sum_{k\le N}
+\lambda_d\,b_t(k)\,(dk)^{-s_*}$ and partitioning the index pairs
+$(d,k)$ by $dk\le M$ versus $dk>M$ --- a disjoint and exhaustive
+partition --- gives the \emph{exact} identity
+\begin{equation}\label{eq:tailconv}
+M_\lambda(s_*)F_B-1
+=\sum_{m=2}^{M}c_m(t)\,m^{-s_*}
++\sum_{d\in\calS}\lambda_d\,d^{-s_*}
+\sum_{\lfloor M/d\rfloor<k\le N}b_t(k)\,k^{-s_*} .
+\end{equation}
+Here the first term groups the pairs with $dk\le M$ by $m=dk$: since
+$m\le M<N_*\le N$, the constraint $k=m/d\le N$ is automatic, so the
+coefficient of $m^{-s_*}$ is exactly $c_m(t)$, and the $m=1$ term
+$c_1=\lambda_1b_t(1)=1$ has been moved to the left side. In the
+second term, for fixed $d$ the condition $dk>M$ for integer $k$ is
+$k>\lfloor M/d\rfloor$. By $\Rea s_*\ge\sigma_1$
+(Lemma~\ref{lem:frozen}), the first term is bounded by $P$; and
+each inner sum of the second term is bounded, by
+Lemma~\ref{lem:cap} with $(a,c)=(\lfloor M/d\rfloor,N)$, by
+$\CapT_t(\lfloor M/d\rfloor,N;\sigma_1)$, so the second term is
+bounded by $\mathrm{TR}$; the application of Lemma~\ref{lem:cap} is
+legitimate because its hypothesis $\sigma_1>\frac t2\log N$ is the
+first condition of \eqref{eq:capvalid}. On the $A$-side,
+Lemma~\ref{lem:frozen} bounds each term of $|\gamma F_A|$ by
+$G\,b_t(k)k^{-\sigma_2}$; splitting at $k=M$ and applying
+Lemma~\ref{lem:cap} with $(a,c)=(M,N)$ at exponent $\sigma_2$
+(legitimate by the second condition of \eqref{eq:capvalid}) gives
+$|\gamma F_A|\le\mathrm{AB}$, while
+$|M_\lambda(s_*)|\le\sum_d|\lambda_d|d^{-\sigma_1}=M_{\max}$;
+hence $|M_\lambda(s_*)\gamma F_A|\le M_{\max}\mathrm{AB}$. Adding
+the nonnegative $\mathrm{OV}$ only weakens the bound, and the first
+claim follows. For the second claim: if $D<1$ then
+$|M_\lambda(s_*)f_t|\ge1-D>0$; in particular
+$M_\lambda(s_*)\neq0$, and dividing by
+$|M_\lambda(s_*)|\le M_{\max}$ gives
+$|f_t|\ge(1-D)/M_{\max}$.
+\end{proof}
+
+\begin{remark}
+The term $\mathrm{OV}$ plays no role in the mathematics --- the
+identity \eqref{eq:tailconv} is fully covered by $P+\mathrm{TR}$ ---
+but the program of Proposition~\ref{prop:tailcutoff} below includes
+it in $D$, so it is included in \eqref{eq:D} in order that the
+numerical bound on $D$ majorizes the same quantity the program
+computes.
+\end{remark}
+
+\subsection{Reduction to the cutoff}\label{sec:tailmono}
+
+The interval computation of Section~\ref{sec:tailcert} evaluates
+$D$, and the error majorants, only at the cutoff $N=N_*$, over the
+closed intervals
+\[
+I_{\rm box}=\Bigl[\tfrac{1872719}{10^7},\tfrac{23409}{125000}\Bigr],
+\qquad
+I_{\rm ext}=\Bigl[\tfrac{1872719}{10^7},\tfrac{8231039}{10^7}\Bigr],
+\]
+where $I_{\rm box}$ contains $y_0$ and the top of $I_{\rm ext}$ is
+at least $\sqrt{1-2t}$ for every $t\in I_t$. The reduction from
+this single evaluation to all $N\ge N_*$ and the full height range
+is carried out in Lemmas~\ref{lem:capdecay}--\ref{lem:errmaj}
+below. Throughout, the \emph{cutoff conditions} are the following
+inequalities, all evaluated at $N=N_*$, uniformly for $t\in I_t$ and
+$y\in I_{\rm ext}$:
+\begin{equation}\label{eq:prismconditions}
+\frac t2\log a\,(\log N_*-\log a)>1
+\quad\text{and}\quad
+(\sigma-1)(\log N_*-\log a)>1
+\end{equation}
+for each cap $\CapT_t(a,\,\cdot\,;\sigma)$ appearing in $D$ and in
+the error bounds (the left endpoints $a=\lfloor M/d\rfloor$ for
+$d\in\calS$, $a=M$, and $a=M_{\rm err}$, with $\sigma=\sigma_1$ or
+$\sigma_2$ as appropriate), together with the $A$-side slope
+condition
+\begin{equation}\label{eq:ym}
+0.02-\tfrac12\log\bigl(N_*^2-\tfrac t{16}\bigr)+\tfrac12\log N_*\ <\ 0 .
+\end{equation}
+
+\begin{lemma}[Decay of fixed-endpoint caps]\label{lem:capdecay}
+Let $t>0$, let $1<a<N_*$, let $\sigma(q)=\sigma_0+\frac t2q$ with
+$\sigma_0\in\R$, and write $q_*=\log N_*$. Assume the two
+conditions \eqref{eq:prismconditions} for this pair, that is,
+$\frac t2\log a\,(q_*-\log a)>1$ and
+$(\sigma(q_*)-1)(q_*-\log a)>1$. Then both conditions persist for
+all $q\ge q_*$, one has $\sigma(q)>1$ for all $q\ge q_*$, and
+\[
+q\ \longmapsto\ \CapT_t\bigl(a,e^q;\sigma(q)\bigr)
+\]
+is positive and decreasing on $[q_*,\infty)$.
+\end{lemma}
+
+\begin{proof}
+By definition
+$\CapT_t(a,e^q;\sigma(q))=\max\bigl(F_1(q),F_2(q)\bigr)$, where
+\[
+F_1(q)=E_{t,\sigma(q)}(a)\,(q-\log a),
+\qquad
+F_2(q)=E_{t,\sigma(q)}(e^q)\,(q-\log a).
+\]
+Since $\log E_{t,\sigma}(u)=(1-\sigma)\log u+\frac t4\log^2u$ and
+$\sigma'(q)=\frac t2$,
+\[
+\frac{d}{dq}\log F_1(q)
+=-\frac t2\log a+\frac1{q-\log a},
+\]
+which is negative exactly when
+$\frac t2\log a\,(q-\log a)>1$; both factors on the left of this
+condition are positive and nondecreasing in $q$, so the condition,
+true at $q_*$, persists for all $q\ge q_*$. Similarly,
+\[
+\frac{d}{dq}\log F_2(q)
+=\Bigl[(1-\sigma(q))-\frac t2\,q\Bigr]+\frac t2\,q
++\frac1{q-\log a}
+=1-\sigma(q)+\frac1{q-\log a},
+\]
+which is negative exactly when $(\sigma(q)-1)(q-\log a)>1$. At
+$q_*$ this condition forces $\sigma(q_*)>1$; then both factors
+$\sigma(q)-1$ and $q-\log a$ are positive and increasing in $q$,
+so the condition persists, and $\sigma(q)>1$ throughout. Hence
+$F_1$ and $F_2$ are positive and decreasing on $[q_*,\infty)$, and
+so is their maximum.
+\end{proof}
+
+\begin{lemma}[Componentwise decay in $N$]\label{lem:compdecay}
+Fix $t\in I_t$ and $y\in(0,1]$, and assume the cutoff conditions
+\eqref{eq:prismconditions}. Then each of the following is nonincreasing in
+$N$ on $[N_*,\infty)$ (throughout, $q=\log N$ and the frozen
+exponents $\sigma_i=\sigma_i(q)$ are increasing in $q$ with slope
+$\frac t2$):
+\begin{enumerate}
+\item[\textup{(i)}] $m^{-\sigma_i(q)}$ for every fixed integer
+$m\ge2$ and $i\in\{1,2\}$; hence the head $P$, the mollifier
+bound $M_{\max}$, and the $A$-side head
+$\sum_{k\le M}b_t(k)k^{-\sigma_2}$ (whose $k=1$ term is constant)
+are nonincreasing;
+\item[\textup{(ii)}] $G=e^{0.02y}\bigl(e^{2q}-\frac t{16}\bigr)^{-y/2}$;
+\item[\textup{(iii)}] the moving-endpoint term $\mathrm{OV}$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(i) is immediate: $\sigma_i(q)$ is increasing and $\log m>0$,
+while the coefficients $|c_m(t)|$, $|\lambda_d|$ and $b_t(k)$ do
+not depend on $N$. For (ii),
+\[
+\frac{d}{dq}\log G
+=-\frac y2\cdot\frac{2e^{2q}}{e^{2q}-t/16}
+=-\,y\,\frac{N^2}{N^2-t/16}\ <\ 0 .
+\]
+For (iii), each summand of $\mathrm{OV}$ is
+$|\lambda_d|\,d^{-\sigma_1(q)}\,
+\CapT_t(e^q/(d+1),e^q;\sigma_1(q))$, a product of the
+nonincreasing factor $d^{-\sigma_1(q)}$ ($d\ge2$) with a cap whose
+endpoints both scale with $N$ and whose length $\log(d+1)$ is
+constant. For $r\in\{1,d+1\}$,
+\[
+\frac{d}{dq}\Bigl[(1-\sigma(q))(q-\log r)
++\frac t4(q-\log r)^2\Bigr]
+=(1-\sigma(q))-\frac t2(q-\log r)+\frac t2(q-\log r)
+=1-\sigma(q)\ <\ 0,
+\]
+using $\sigma_1(q)>1$ from Lemma~\ref{lem:capdecay}. Thus both endpoint
+expressions are positive and decreasing, so their maximum and the summand are
+decreasing as well.
+\end{proof}
+
+\begin{lemma}[Decay in $y$ at the cutoff]\label{lem:ydecay}
+Fix $t\in I_t$ and assume the $A$-side slope condition
+\eqref{eq:ym}. Then $y\mapsto D(N_*,t,y)$ and
+$y\mapsto M_{\max}(N_*,t,y)$ are nonincreasing on $(0,1]$.
+\end{lemma}
+
+\begin{proof}
+Recall $\partial\sigma_1/\partial y=\frac12$ and
+$\partial\sigma_2/\partial y=-\frac12$. On the $B$-side, every
+$y$-dependent factor has the form $u^{-\sigma_1(y)}$ or
+$E_{t,\sigma_1(y)}(u)$ with $u>1$ (the head terms $m\ge2$, the
+mollifier terms $d\ge2$, and the cap ingredients at
+$u=\lfloor M/d\rfloor$, $u=N_*$ or $u=N_*/r$, all exceeding $1$),
+and satisfies $\partial_y\log(\cdot)=-\frac12\log u<0$; the
+remaining factors ($|c_m(t)|$, $|\lambda_d|$, $b_t$, cap lengths)
+are independent of $y$, and maxima of nonincreasing functions are
+nonincreasing. Hence $P$, $\mathrm{TR}$, $\mathrm{OV}$ and
+$M_{\max}$ are nonincreasing in $y$. On the $A$-side, $\log G$ is
+linear in $y$ with slope
+$0.02-\frac12\log\bigl(N_*^2-\frac t{16}\bigr)$, so each head
+term and each cap ingredient of $\mathrm{AB}$, with $u\le N_*$,
+satisfies
+\[
+\partial_y\log\Bigl(G\,b_t(u)\,u^{-\sigma_2(y)}\Bigr)
+\ \text{resp.}\ \
+\partial_y\log\Bigl(G\,E_{t,\sigma_2(y)}(u)\Bigr)
+\ =\ 0.02-\tfrac12\log\Bigl(N_*^2-\tfrac t{16}\Bigr)
++\tfrac12\log u,
+\]
+which is at most the left side of \eqref{eq:ym}, hence negative.
+So $\mathrm{AB}$ is nonincreasing in $y$, and therefore so are
+$M_{\max}\mathrm{AB}$ and $D$.
+\end{proof}
+
+\begin{lemma}[Reduction to the cutoff]\label{lem:reduction}
+Assume the cutoff conditions \eqref{eq:prismconditions}--\eqref{eq:ym} hold.
+Then for every $N\ge N_*$, every $t\in I_t$ and every
+$y\in[y_0,\sqrt{1-2t}]$,
+\[
+D(N,t,y)\ \le\ \sup_{y'\in I_{\rm box}}D(N_*,t,y'),
+\qquad
+M_{\max}(N,t,y)\ \le\ \sup_{y'\in I_{\rm box}}M_{\max}(N_*,t,y').
+\]
+\end{lemma}
+
+\begin{proof}
+Fix $t$ and $y$. Every constituent of
+$D=P+\mathrm{TR}+\mathrm{OV}+M_{\max}\mathrm{AB}$ is a sum of
+products of nonnegative factors, each nonincreasing in $N$ on
+$[N_*,\infty)$: the heads, $M_{\max}$ and $G$ by
+Lemma~\ref{lem:compdecay}(i)--(ii); the fixed-endpoint caps in
+$\mathrm{TR}$ and $\mathrm{AB}$ by Lemma~\ref{lem:capdecay},
+applied with $a=\lfloor M/d\rfloor$ (at $\sigma_1$) and $a=M$ (at
+$\sigma_2$), whose conditions \eqref{eq:prismconditions} hold by hypothesis;
+and $\mathrm{OV}$ by Lemma~\ref{lem:compdecay}(iii). Sums and
+products of nonnegative nonincreasing functions are nonincreasing,
+so $D(N,t,y)\le D(N_*,t,y)$ and
+$M_{\max}(N,t,y)\le M_{\max}(N_*,t,y)$. If $y\in I_{\rm box}$
+the claims follow at once. Otherwise $y>\max I_{\rm box}$, since
+$y\ge y_0\ge\min I_{\rm box}$; as $y\le\sqrt{1-2t}<1$,
+Lemma~\ref{lem:ydecay} applies on $[\max I_{\rm box},y]$ and
+gives $D(N_*,t,y)\le D(N_*,t,\max I_{\rm box})
+\le\sup_{y'\in I_{\rm box}}D(N_*,t,y')$, and the same for
+$M_{\max}$.
+\end{proof}
+
+\subsection{Tail error terms}\label{sec:tailerrors}
+
+The error bounds use the exact definitions (71)--(72) of
+\cite{Polymath} rather than the coarser display (23): (23) applies
+the worst-case factor $N^{|\kappa|}$ to every term, whereas (71)
+carries the per-term factor $n^{-\Re\kappa}$, which
+Lemma~\ref{lem:frozen} bounds by $n^{\widehat k}$. Define, for
+$N\ge N_*$, $t\in I_t$ and $0<y\le1$,
+\[
+L_N(t)=\log\Bigl(N^2-\frac t{16}\Bigr),
+\qquad
+\Delta(N,t)=\frac{\frac{t^2}{16}L_N(t)^2+0.626}{X_N(t)-6.66},
+\]
+and the two majorants
+\begin{align*}
+\mathrm{E}_{AB}(N,t,y)&=
+\bigl(e^{\Delta(N,t)}-1\bigr)
+\bigl(S_1(N,t,y)+G\,S_2(N,t,y)\bigr),
+\\
+S_i(N,t,y)&=\sum_{n=1}^{M_{\rm err}}b_t(n)\,n^{-\sigma_i}
++\CapT_t\bigl(M_{\rm err},N;\sigma_i\bigr)
+\qquad(i=1,2),
+\\
+\mathrm{E}_{C}(N,t,y)&=
+\Bigl(N^2-\frac t{16}\Bigr)^{-(1+y)/4}\\
+&\quad\times\exp\biggl(
+-\frac t{16}L_N(t)^2
++\frac{1.24\,(3^y+3^{-y})}{N-0.125}
++\frac{3\sqrt{L_N(t)^2+\pi^2/4}+10.50}{X_N(t)-12}
+\biggr).
+\end{align*}
+
+\begin{lemma}[Error majorants]\label{lem:errmaj}
+Assume the cap-validity conditions \eqref{eq:capvalid} and the
+conditions \eqref{eq:prismconditions} for the caps with left endpoint
+$a=M_{\rm err}$. Then for every $N\ge N_*$, $t\in I_t$,
+$y\in[y_0,\sqrt{1-2t}]$ and $x$ in the window of index $N$,
+\[
+e_A+e_B\ \le\ \mathrm{E}_{AB}(N,t,y)\ \le\ \mathrm{E}_{AB}(N_*,t,y),
+\qquad
+e_{C,0}\ \le\ \mathrm{E}_{C}(N,t,y)\ \le\ \mathrm{E}_{C}(N_*,t,y).
+\]
+\end{lemma}
+
+\begin{proof}
+\emph{The per-term factor.} The quantity $\eps_{t,n}$ of
+\cite[(44)]{Polymath} is bounded, by the display in the proof of
+\cite[Proposition~6.6(iv),(v)]{Polymath},
+\[
+\eps_{t,n}\Bigl(\frac{1\pm y+ix}2\Bigr)
+\ \le\
+\exp\biggl(
+\frac{\frac{t^2}{32}\log^2\frac{x}{4\pi n^2}+0.313}
+{\frac x2-3.33}
+\biggr)-1
+\ =\
+\exp\biggl(
+\frac{\frac{t^2}{16}\log^2\frac{x}{4\pi n^2}+0.626}{x-6.66}
+\biggr)-1 ,
+\]
+the imaginary part of $\frac{1\pm y+ix}2$ being $\frac x2$. For
+$1\le n\le N$ and $x$ in the window of index $N$ one has
+$\frac{x}{4\pi n^2}\le\frac{x}{4\pi}$ and
+$\frac{x}{4\pi n^2}\ge\frac{X_N(t)}{4\pi N^2}
+=1-\frac t{16N^2}$, so
+\[
+\Bigl|\log\frac{x}{4\pi n^2}\Bigr|
+\ \le\ \max\Bigl(\log\frac x{4\pi},
+\,-\log\Bigl(1-\frac t{16N^2}\Bigr)\Bigr)
+\ =\ \log\frac x{4\pi},
+\]
+the last step because
+$\frac x{4\pi}\bigl(1-\frac t{16N^2}\bigr)
+\ge\frac{(N^2-t/16)^2}{N^2}\ge1$ (indeed
+$N^2-\frac t{16}\ge N$ as $N\ge N_*$). Hence the per-term
+exponent is at most
+$\varphi(x)
+=\bigl(\frac{t^2}{16}\log^2\frac x{4\pi}+0.626\bigr)/(x-6.66)$.
+Writing $L=\log\frac x{4\pi}$, which exceeds $2$ for $x\ge200$,
+\[
+\begin{aligned}
+(x-6.66)^2\,\varphi'(x)
+&=\frac{t^2}{8}\,L\,\frac{x-6.66}{x}
+-\Bigl(\frac{t^2}{16}L^2+0.626\Bigr)\\
+&<\frac{t^2}{8}L-\frac{t^2}{16}L^2-0.626\\
+&=-\frac{t^2}{16}L(L-2)-0.626<0,
+\end{aligned}
+\]
+so $\varphi$ is decreasing, and on the window
+$\varphi(x)\le\varphi(X_N(t))=\Delta(N,t)$: the per-term factor
+is at most $e^{\Delta(N,t)}-1$.
+
+\emph{Assembly of $\mathrm{E}_{AB}$.} By (71)--(72) of
+\cite{Polymath} and Lemma~\ref{lem:frozen}
+($\Rea s_*\ge\sigma_1$, $|\gamma|\le G$, and
+$n^{\,y-\Rea s_*-\Rea\kappa}\le n^{-\sigma_2}$),
+\[
+e_B\le\bigl(e^{\Delta(N,t)}-1\bigr)
+\sum_{n\le N}b_t(n)\,n^{-\sigma_1},
+\qquad
+e_A\le G\bigl(e^{\Delta(N,t)}-1\bigr)
+\sum_{n\le N}b_t(n)\,n^{-\sigma_2}.
+\]
+Splitting each sum at $M_{\rm err}$ and bounding the range
+$M_{\rm err}<n\le N$ by Lemma~\ref{lem:cap} (legitimate by
+\eqref{eq:capvalid}) gives
+$e_A+e_B\le\mathrm{E}_{AB}(N,t,y)$.
+
+\emph{Bound for $e_{C,0}$.} By the corollary \eqref{eq:ec0},
+$e_{C,0}$ is bounded by the product of
+$(\frac x{4\pi})^{-(1+y)/4}$,
+$\exp(-\frac t{16}\log^2\frac x{4\pi})$,
+$\exp\bigl(1.24(3^y+3^{-y})/(N-0.125)\bigr)$, and
+$\exp(\psi(x))$ with
+$\psi(x)=\bigl(3\sqrt{L^2+\pi^2/4}+10.50\bigr)/(x-12)$. The
+first two factors are decreasing in $x$, the third does not depend
+on $x$, and $\psi$ is decreasing: with
+$Q(L)=3\sqrt{L^2+\pi^2/4}+10.50$ one has
+$\frac{d}{dx}Q=\frac{3L}{\sqrt{L^2+\pi^2/4}}\cdot\frac1x
+<\frac3x$, whence
+$(x-12)^2\,\psi'(x)<3\,\frac{x-12}x-Q<3-10.50<0$. Evaluating
+all four factors at the left edge $x=X_N(t)$, where
+$\log\frac x{4\pi}=L_N(t)$, gives
+$e_{C,0}\le\mathrm{E}_{C}(N,t,y)$.
+
+\emph{Decay in $N$.} In $\mathrm{E}_{AB}$: the factor
+$e^{\Delta(N,t)}-1$ is nonincreasing because
+$\Delta(N,t)=\varphi(X_N(t))$ with $\varphi$ decreasing and
+$X_N(t)$ increasing in $N$; the heads of $S_1,S_2$ and the factor
+$G$ are nonincreasing by Lemma~\ref{lem:compdecay}; and the caps
+$\CapT_t(M_{\rm err},N;\sigma_i)$ are nonincreasing by
+Lemma~\ref{lem:capdecay} with $a=M_{\rm err}$, whose conditions
+\eqref{eq:prismconditions} hold by hypothesis. In $\mathrm{E}_{C}$: the
+factors $(N^2-t/16)^{-(1+y)/4}$, $e^{-\frac t{16}L_N(t)^2}$ and
+$e^{1.24(3^y+3^{-y})/(N-0.125)}$ are visibly nonincreasing in $N$,
+and $e^{\psi(X_N(t))}$ is nonincreasing because $\psi$ is
+decreasing and $X_N(t)$ increases. Products of nonnegative
+nonincreasing factors are nonincreasing.
+\end{proof}
+
+\subsection{The cutoff inequalities and the tail theorem}
+\label{sec:tailcert}
+
+The computational input of the tail argument is the following.
+
+\begin{proposition}[Cutoff inequalities]
+\label{prop:tailcutoff}
+The cap-validity conditions \eqref{eq:capvalid} and the cutoff
+conditions \eqref{eq:prismconditions}--\eqref{eq:ym} hold, uniformly for
+$t\in I_t$ and $y\in[y_0,\sqrt{1-2t}]$, and
+\[
+\sup_{t\in I_t,\ y\in I_{\rm box}}D(N_*,t,y)<0.999721,
+\qquad
+\sup_{t\in I_t,\ y\in I_{\rm box}}M_{\max}(N_*,t,y)<1.608290,
+\]
+\[
+\sup_{t\in I_t,\ y\in I_{\rm ext}}
+\bigl(\mathrm{E}_{AB}+\mathrm{E}_{C}\bigr)(N_*,t,y)
+<1.1672\times10^{-8},
+\]
+with $\mathrm{E}_{AB},\mathrm{E}_{C}$ the error majorants of
+Lemma~\ref{lem:errmaj}.  In addition, for every
+$N\ge N_*$, $t\in I_t$, $y\in[y_0,\sqrt{1-2t}]$, and
+$x\in[X_N(t),X_{N+1}(t))$, the inequality
+\[
+\frac{1-D(N,t,y)}{M_{\max}(N,t,y)}
+ -(e_A(x,y,t)+e_B(x,y,t)+e_{C,0}(x,y,t))
+ \ >\ 0.00017352\ >\ 0 .
+\]
+\end{proposition}
+
+\begin{proof}
+The \programlink{dan-reworking/code/prop510/prop510_proof.c}{tail program}
+evaluates the
+quantities below from the exact rational parameters and the eleven rational
+mollifier coefficients.  It uses outward-rounded FLINT/Arb balls and reports
+an unresolved comparison if an interval overlaps a required boundary.  The
+calculation was repeated at $256$ and $512$ bits.
+
+\emph{How the suprema are captured.} The intervals $I_t$,
+$I_{\rm box}$ and $I_{\rm ext}$ enter the computation as single
+balls whose endpoints are the exact rational interval endpoints;
+consequently every derived quantity is an enclosure valid
+simultaneously for all $(t,y)$ in the corresponding rectangle, and its
+directed upper (resp.\ lower) endpoint bounds the supremum (resp.\
+infimum) over that hull. More precisely, for each precision
+$p\in\{256,512\}$ let $\operatorname{Up}_p(E)$ denote the exact dyadic
+upper endpoint returned by Arb's directed upper-endpoint extraction for
+the $p$-bit ball evaluation of an expression $E$ over $I_t$.  That run
+uses
+\[
+\widehat\delta_p=\operatorname{Up}_p\bigl(\delta(N_*,I_t)\bigr),
+\qquad
+\widehat k_p=\operatorname{Up}_p\bigl(k(N_*,I_t)\bigr),
+\]
+which satisfy $\widehat\delta_p\ge\widehat\delta$ and
+$\widehat k_p\ge\widehat k$.  It substitutes these dyadic values for
+the exact maxima and extracts point lower bounds for
+$\sigma_1,\sigma_2$ over each rectangle. This is conservative throughout:
+increasing either frozen defect can only lower the exponents, and every
+subsequent occurrence of $\sigma_i$ is through $u^{-\sigma_i}$ or
+$E_{t,\sigma_i}(u)$ with $u\ge1$, both nonincreasing in $\sigma_i$.
+
+\emph{The remaining inequalities.} (1) The cap-validity conditions
+\eqref{eq:capvalid}, in the equivalent form
+$\sigma_i>\frac t2\log N_*$, on both rectangles. (2) The cutoff conditions
+\eqref{eq:prismconditions} for exactly the left endpoints listed there:
+$a=\lfloor M/d\rfloor$ for each $d\in\calS$ at $\sigma_1$
+, $a=M$ at $\sigma_2$, and
+$a=M_{\rm err}$ at both $\sigma_1$ and $\sigma_2$, each with the $t$-factor evaluated at
+$\min I_t$ and the $\sigma$-factor at its lower bound over
+$I_{\rm ext}$. (3) The $A$-side slope condition \eqref{eq:ym}.
+(4) The hypotheses of
+Lemmas~\ref{lem:capdecay}--\ref{lem:errmaj}: $\sigma_1,\sigma_2>1$
+on $I_{\rm ext}$, $N_*\bigl(1-\frac t{16N_*^2}\bigr)>1$,
+$X_{N_*}(t)>200$, $\log(N_*^2-\frac t{16})>2$, and the sign
+conditions making $\Delta(N,t)$ and the $e_{C,0}$ quotient
+decreasing. (5) The exact rational identities: the mollifier
+normalization $\sum_d|\lambda_d|=9.918746$, $\lambda_1=1$,
+$t_0+y_0^2/2=\frac{893927}{5\cdot10^6}$, and the interval inclusions
+$y_0\in I_{\rm box}$,
+$\max I_{\rm box}\le\sqrt{1-2t}$ for all $t\in I_t$, and
+$\max I_{\rm ext}\ge\sqrt{1-2t_0}$, all checked in exact integer
+arithmetic. (6) The quantity $D$ is assembled per \eqref{eq:D}
+from an exact Dirichlet convolution $c_m(t)$ computed by direct
+double summation over $(d,k)$, and the four displayed constants
+are established as strict ball comparisons against exact rationals:
+\[
+D<0.999721,\qquad M_{\max}<1.608290,\qquad
+\mathrm{E}_{AB}+\mathrm{E}_{C}<1.1672\times10^{-8},
+\]
+\[
+\frac{1-D}{M_{\max}}-(\mathrm{E}_{AB}+\mathrm{E}_{C})
+\ >\ 0.00017352 .
+\]
+The enclosures obtained at $512$ bits include
+$D\le0.9997209094$, $M_{\max}\le1.6082891450$,
+$\mathrm{E}_{AB}+\mathrm{E}_{C}\le1.16716035\times10^{-8}$, and
+margin $\ge0.0001735209$. Both precision runs prove all of the displayed
+inequalities. Since the intervals contain the entire stated domain, the positive lower bound proves the
+proposition.
+\end{proof}
+
+\begin{proposition}[Nonvanishing on the infinite tail]\label{thm:tail}
+For every $t\in I_t$, $y\in[y_0,\sqrt{1-2t}]$ and
+$x\ge X_{N_*}(t)$,
+\[
+|f_t(x+iy)|\ >\ e_A+e_B+e_{C,0},
+\]
+and consequently $H_t(x+iy)\ne0$ on this region.
+\end{proposition}
+
+\begin{proof}
+Let $N$ be the window index of $x$, so $N\ge N_*$. By
+Lemma~\ref{lem:contraction}, Lemma~\ref{lem:reduction} and
+Proposition~\ref{prop:tailcutoff},
+\[
+|f_t(x+iy)|\ \ge\ \frac{1-D(N,t,y)}{M_{\max}(N,t,y)}
+\ >\ e_A+e_B+e_{C,0},
+\]
+where the strict final comparison is precisely the direct interval
+inequality in Proposition~\ref{prop:tailcutoff}, after applying both clauses
+of Lemma~\ref{lem:reduction} and Lemma~\ref{lem:errmaj}. Here
+$[y_0,\sqrt{1-2t}]\subseteq I_{\rm ext}$. The point $(x,y,t)$
+lies in the region \eqref{eq:region}, so
+\cite[Corollary~1.4]{Polymath} gives $H_t(x+iy)\neq0$.
+\end{proof}
+
+% ===============================================================
+\section{Hypothesis (iii): the barrier}\label{sec:barrier}
+% ===============================================================
+
+\subsection{Statement, and reduction to a closed rectangle}
+
+Throughout this section let
+\[
+R=[X,\,X+1]+i\Bigl[\tfrac{1809}{10000},\,1\Bigr].
+\]
+The goal of this section is the following proposition, proved after the
+boundary calculation in Section~\ref{sec:prisms}.
+
+\begin{proposition}[Nonvanishing on the barrier rectangle]\label{thm:barrier}
+$H_t(z)\ne0$ for all $z\in R$ and $0\le t\le t_0$.
+\end{proposition}
+
+Proposition~\ref{thm:barrier} implies hypothesis (iii) of
+Theorem~\ref{thm:criterion}: the curved barrier region of that
+hypothesis satisfies, horizontally,
+$X\le x\le X+\sqrt{1-y_0^2}\le X+1$; and vertically,
+$y\ge\sqrt{y_0^2+2(t_0-t)}\ge y_0>\frac{1809}{10000}$ (indeed
+$y_0^2-\bigl(\frac{1809}{10000}\bigr)^2=\frac{234599}{10^8}>0$) and
+$y\le\sqrt{1-2t}\le1$; hence it is contained in $R\times[0,t_0]$.
+
+\subsection{Uniform effective error on the box, including
+\texorpdfstring{$t=0$}{t=0}}
+\label{sec:barriererr}
+
+\begin{proposition}[Uniform error bound on the barrier box]\label{prop:barriererr}
+For all $x\in[X,X+1]$ and $0\le t\le t_0$, the window index satisfies
+$N=\bigl\lfloor\sqrt{\frac{x}{4\pi}+\frac t{16}}\bigr\rfloor=690988$
+and $N^2<x/(4\pi)$. Moreover, for all $z\in R$ and $0<t\le t_0$, the
+error terms of Theorem~1.3, bounded with the constants of
+Section~\ref{sec:weld}, satisfy
+\begin{equation}\label{eq:barriererror}
+e_A+e_B+e_{C,0}\ <\ 0.000356523011600040\ <\ 0.00125 .
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+The
+\programlink{independent/prop62/prop62_proof.c}{barrier-error program}
+encloses every quantity below with outward-rounded FLINT/Arb balls at
+$256$ bits, starting from the exact inputs $X$,
+$t_0=\frac{129}{800}$, $y_{\min}=\frac{1809}{10000}$, and
+$N=690988$.
+
+\emph{Window-index constancy.} The quantity
+$q(x,t)=\frac{x}{4\pi}+\frac t{16}$ is strictly increasing in each
+of $x$ and $t$, and $N=\lfloor\sqrt{q}\,\rfloor$ is nondecreasing
+in $q$; so it suffices to evaluate $N$ at the two extreme corners
+$(X,0)$ and $(X+1,t_0)$ of the box. At both corners the outward enclosure of
+$\sqrt q$ lies in $[690988,690989)$, so the floor is $690988$ throughout
+the box. The same calculation proves
+$N^2<X/(4\pi)\le x/(4\pi)$, and the equivalent inequality
+$2\log N<L_{\min}:=\log\frac X{4\pi}$; write also
+$L_{\max}:=\log\frac{X+1}{4\pi}$.
+
+\emph{Error bound.} With $N$ constant, for $0<t\le t_0$ the error
+terms are bounded by equation (23) of \cite{Polymath} and by
+\eqref{eq:ec0}; the program encloses the following majorants, each
+uniform on the box because every $t$- and $y$-dependent factor is
+evaluated at its worst endpoint:
+(i) by \eqref{eq:resbound}, using $(\,\cdot\,)_+\le1+8/X^2$ and
+$y\ge y_{\min}$,
+$\Rea s_*\ge a+\frac t4L_{\min}-\delta$ with
+$a=\frac{1+y_{\min}}2$ and
+$\delta=\frac{t_0(1+8/X^2)}{2X^2}$; since
+$\log n\le\log N<\frac12L_{\min}$, this gives
+$b_t(n)\,n^{-\Rea s_*}\le n^{-a_{\mathrm{eff}}}$ with
+$a_{\mathrm{eff}}=a-\delta$, uniformly in $t\in[0,t_0]$ (the
+$t$-dependent parts cancel against $\frac t4\log^2n$, and
+$0<a_{\mathrm{eff}}<1$);
+(ii) hence, by comparison with $\int_1^Nu^{-a_{\mathrm{eff}}}\,du$,
+$\sum_{n=1}^{N}b_t(n)\,n^{-\Rea s_*}\le
+1+\frac{N^{1-a_{\mathrm{eff}}}-1}{1-a_{\mathrm{eff}}}$;
+(iii) since $n^2\le N^2<x/(4\pi)$, the bounds \eqref{eq:gammabound}
+and \eqref{eq:kappabound} give
+$|\gamma|n^y\le e^{0.02y}\bigl(\frac{4\pi n^2}x\bigr)^{y/2}\le
+e^{0.02}$ and
+$N^{|\kappa|}\le\exp\bigl(\frac{t_0\log N}{2(X-6)}\bigr)$, so the
+prefactor of (23) is at most
+$1+e^{0.02}\exp\bigl(\frac{t_0\log N}{2(X-6)}\bigr)$;
+(iv) since $0<\log\frac x{4\pi n^2}\le L_{\max}$, the last factor
+of (23) is at most
+$\exp\bigl(\frac{(t_0^2/16)L_{\max}^2+0.626}{X-6.66}\bigr)-1$;
+(v) in \eqref{eq:ec0}, the prefactor is maximized at
+$(x,y)=(X,y_{\min})$, the factor $e^{-\frac t{16}\log^2\frac x{4\pi}}$
+is at most $1$, $3^y+3^{-y}\le3+\frac13=\frac{10}3$ (increasing in
+$y$, and $y\le1$), and the final quotient is bounded by maximizing
+its numerator ($L\le L_{\max}$) and minimizing its denominator
+($x\ge X$) separately.
+The program multiplies and sums these enclosures --- yielding
+$e_A+e_B\le3.64\times10^{-10}$ and
+$e_{C,0}\le0.000356522648$ --- and establishes the two strict
+inequalities of \eqref{eq:barriererror}, the sharp constant being
+compared as the exact rational $356523011600040\times10^{-18}$.
+This proves the proposition uniformly on the box.
+\end{proof}
+
+The constancy of $N$ makes $f_t$ a single analytic
+expression on $R$. The round number $0.00125=\frac1{800}$ is the
+\emph{approximation allowance} used by the prism criterion below;
+\eqref{eq:barriererror} says it is safely conservative.
+
+Theorem~1.3 is stated in \cite{Polymath} for $t>0$; the following
+lemma extends its conclusion to the closed endpoint $t=0$ on the
+compact box.
+
+\begin{lemma}[Extension to $t=0$]\label{lem:tzero}
+For all $z\in R$ and all $0\le t\le t_0$ (including $t=0$),
+$B_t(z)\neq0$ and
+\[
+\bigl|g_t(z)-f_t(z)\bigr|\ \le\ 0.00125,
+\]
+where $g_t=H_t/B_t$ and $f_t$ is the sum \eqref{eq:ft} with the
+constant window index $N=690988$.
+\end{lemma}
+
+\begin{proof}
+For $0<t\le t_0$ this is Theorem~1.3 together with
+Proposition~\ref{prop:barriererr}. For the endpoint, fix $z\in R$
+and argue by a limit $t_j\downarrow0$: (1)~by dominated convergence
+in \eqref{eq:Ht} (majorant $e^{t_0u^2+u}|\Phi(u)|$, integrable by
+the super-exponential decay of $\Phi$), $H_t(z)$ is jointly
+continuous down to $t=0$ on $R$; (2)~$B_t^{\pm1}$ is continuous and
+$B_t\neq0$ on $R\times[0,t_0]$, because the argument
+$\frac{1+y-ix}{2}$ of $M_0$ stays away from the branch cut
+(Section~\ref{sec:thm13}) and the deforming exponential never
+vanishes; (3)~since the window index is constant, $f_t$ is a fixed
+finite sum of functions continuous in $t$; (4)~the error majorant is
+continuous in $t$ and bounded by $0.00125$ on $(0,t_0]$ by
+\eqref{eq:barriererror}. Passing to the limit in
+$|g_{t_j}-f_{t_j}|\le0.00125$ gives the claim at $t=0$.
+\end{proof}
+
+\subsection{Uniform derivative bounds on the box}\label{sec:derivbox}
+
+The moving-mesh argument below needs uniform bounds for
+$|\partial_zf_t|$ and $|\partial_tf_t|$ on $R$. The pointwise input
+is the following result; recall that by
+Proposition~\ref{prop:barriererr} the window index is constantly
+$N=690988$ on the box, so that $f_t$ is the fixed finite sum
+\eqref{eq:ft} with this $N$, jointly smooth in $(z,t)$, and the
+lemma applies to it verbatim.
+
+\begin{lemma}[{\cite[Lemma~8.4]{Polymath}}]\label{lem:polyderiv}
+In the region \eqref{eq:region}, and away from the jump
+discontinuities of $N$,
+\begin{align*}
+\Bigl|\frac{\partial f_t}{\partial z}\Bigr|
+&\le\sum_{n=1}^{N}\frac{b_t(n)}{n^{\Rea s_*}}
+\Bigl(\frac{\log n}2+\frac{t\log n}{4(x-6)}\Bigr)\\
+&\quad+|\gamma|N^{|\kappa|}\sum_{n=1}^{N}
+\frac{b_t(n)\,n^y}{n^{\Rea s_*}}
+\Bigl(\frac{t\log n}{4(x-6)}
++\Bigl(\log\frac{|1+y+ix|}{4\pi}+\pi+\frac3x\Bigr)
+\Bigl(\frac12+\frac t{4(x-6)}\Bigr)\Bigr),
+\end{align*}
+and
+\begin{align*}
+\Bigl|\frac{\partial f_t}{\partial t}\Bigr|
+&\le\sum_{n=1}^{N}\frac{b_t(n)}{n^{\Rea s_*}}
+\Bigl(\frac14\log n\log\frac x{4\pi n}
++\frac\pi8\log n+\frac{2\log n}{x-6}\Bigr)\\
+&\quad+|\gamma|N^{|\kappa|}\sum_{n=1}^{N}
+\frac{b_t(n)\,n^y}{n^{\Rea s_*}}
+\left(\begin{aligned}
+&\frac14\log n\log\frac x{4\pi n}
++\frac\pi8\log n+\frac{2\log n}{x-6}\\
+&\quad+\frac14\Bigl(\frac\pi2+\frac8{x-6}\Bigr)
+\Bigl(\log\frac x{4\pi}+\frac8{x-6}\Bigr)
+\end{aligned}\right).
+\end{align*}
+\end{lemma}
+
+To convert these pointwise bounds into uniform ones we introduce the
+following frozen quantities. Write $y_{\min}=\frac{1809}{10000}$
+(the bottom of $R$), $q(x)=\frac x{4\pi}$, and, as in
+\eqref{eq:resbound},
+\[
+h(x,y)=1-3y+\frac{4y(1+y)}{x^2},
+\qquad
+c(x,y)=\frac14\log q(x)-\frac{h(x,y)_+}{2x^2},
+\qquad
+c_0=c(X,y_{\min}),
+\]
+so that \eqref{eq:resbound} reads
+$\Rea s_*\ge\frac{1+y}2+t\,c(x,y)$. Define further
+\begin{align*}
+a(t) &= e^{0.02y_{\min}}\,q(X)^{-y_{\min}/2}\,
+N^{\,t\,y_{\min}/(2(X-6))},
+\\
+P_t(u) &= u^{-\frac{1+y_{\min}}2+t(\frac14\log u-c_0)},
+\\
+\theta(t) &= \frac12+\frac t{4(X-6)},
+\\
+\Lambda_z(t) &= \Bigl(\log\frac{|2+i(X+1)|}{4\pi}+\pi+\frac3X\Bigr)
+\theta(t),
+\\
+\Lambda_t &= \frac14\Bigl(\frac\pi2+\frac8{X-6}\Bigr)
+\Bigl(\log\frac{X+1}{4\pi}+\frac8{X-6}\Bigr),
+\\
+C_2 &= \frac14\log\frac{X+1}{4\pi}+\frac\pi8+\frac2{X-6},
+\end{align*}
+and the two summand majorants
+\begin{align*}
+F_z(u;t)&=P_t(u)\Bigl[\theta(t)\log u
++a(t)\,u^{y_{\min}}\Bigl(\frac{t\log u}{4(X-6)}
++\Lambda_z(t)\Bigr)\Bigr],\\
+F_t(u;t)&=P_t(u)\Bigl[\bigl(1+a(t)\,u^{y_{\min}}\bigr)
+\log u\,\Bigl(C_2-\frac{\log u}4\Bigr)
++a(t)\,u^{y_{\min}}\Lambda_t\Bigr],
+\end{align*}
+and finally
+\[
+D_z(t)=\sum_{n=1}^{16}F_z(n;t)+\int_{16}^{N}F_z(u;t)\,du,
+\qquad
+D_t(t)=\sum_{n=1}^{16}F_t(n;t)+\int_{16}^{N}F_t(u;t)\,du .
+\]
+
+Two tight inequalities at the exact barrier parameters are needed
+below. The first, $N^2<q(X)$, is part of
+Proposition~\ref{prop:barriererr}. The second we record as a
+standalone statement.
+
+\begin{proposition}[Tail-exponent inequality]\label{prop:tailexp}
+At $X=6000000185827$, $N=690988$, $y_{\min}=\frac{1809}{10000}$,
+\[
+\frac14\log\frac{q(X)}{N^2}\ >\ \frac{h(X,y_{\min})_+}{2X^2} .
+\]
+\end{proposition}
+
+\begin{proof}
+The \programlink{dan-reworking/code/prop65/prop65_proof.c}{tail-exponent
+program} encloses both sides with outward-rounded Arb balls at $256$ bits,
+starting from the exact rational parameters. The
+computed enclosures are
+\[
+\begin{aligned}
+\tfrac14\log\tfrac{q(X)}{N^2}
+&=2.2405813008\ldots\times10^{-7}\pm10^{-31},\\
+\frac{h(X,y_{\min})_+}{2X^2}
+&=6.3513884954\ldots\times10^{-27}\pm10^{-51}.
+\end{aligned}
+\]
+These intervals are disjoint, with the first lying above the second, and hence
+prove the strict inequality.
+\end{proof}
+
+We shall use the following strict inequalities at the exact barrier
+parameters.
+
+\begin{proposition}[Derivative-bound conditions]\label{prop:derivgates}
+At $X=6000000185827$, $N=690988$, $y_{\min}=\frac{1809}{10000}$,
+$t_0=\frac{129}{800}$:
+\begin{enumerate}
+\item[\textup{(C1)}] $X^2>8$ and
+$\frac1{4(X+1)}-\frac2{X^3}>0$;
+\item[\textup{(C2)}] $0.02-\frac12\log q(X)
++\frac{t_0\log N}{2(X-6)}+\frac12\log N<0$;
+\item[\textup{(C3)}] $2\log N<\log q(X)$;
+\item[\textup{(C4)}] $\frac{12}{X^2}<3$;
+\item[\textup{(C5)}] $c_0>\frac12\log N$;
+\item[\textup{(C6)}] $\frac{1-y_{\min}}2>\frac1{\log16}$;
+\item[\textup{(C7)}] $C_2>\frac14\log N$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(C1), (C4) and (C6) are immediate by inspection
+($X\approx6\times10^{12}$;
+$\frac1{\log16}=0.3607\ldots<0.40955=\frac{1-y_{\min}}2$). For
+(C2), rewrite the left side as
+$0.02+\frac12\log\frac{4\pi N}{X}
++\frac{t_0\log N}{2(X-6)}$: here
+$\frac{4\pi N}{X}<\frac{8.8\times10^6}{6\times10^{12}}
+<2\times10^{-6}<e^{-13}$, so the middle term is less than
+$-\frac{13}2$, while the last term is less than $10^{-12}$; hence
+the left side is less than $0.02-6.5+10^{-12}<0$. (C7) follows
+from (C3): $C_2-\frac14\log N\ge\frac14\log q(X)-\frac14\log N
+>\frac14\log N>0$.
+
+The remaining two conditions are exactly the statements
+established earlier: (C3) is the inequality $N^2<q(X)$ of
+Proposition~\ref{prop:barriererr}, and (C5) is
+Proposition~\ref{prop:tailexp}, since
+$c_0-\frac12\log N
+=\frac14\log\frac{q(X)}{N^2}-\frac{h(X,y_{\min})_+}{2X^2}$.
+\end{proof}
+
+\begin{lemma}[Pointwise domination on the box]\label{lem:dompoint}
+Assume (C1), (C2), (C4). Then for all $x\in[X,X+1]$,
+$y\in[y_{\min},1]$, $0\le t\le t_0$ and $1\le n\le N$, the $n$-th
+summand of the first (resp.\ second) bound of
+Lemma~\ref{lem:polyderiv} is at most $F_z(n;t)$ (resp.\
+$F_t(n;t)$). Consequently, for $0\le t\le t_0$,
+\[
+\sup_{z\in R}\Bigl|\frac{\partial f_t}{\partial z}(z)\Bigr|
+\le\sum_{n=1}^{N}F_z(n;t),
+\qquad
+\sup_{z\in R}\Bigl|\frac{\partial f_t}{\partial t}(z)\Bigr|
+\le\sum_{n=1}^{N}F_t(n;t).
+\]
+\end{lemma}
+
+\begin{proof}
+\emph{Step 1: $c$ is minimized at $(X,y_{\min})$.} In $y$:
+$\partial_yh=-3+\frac{4(1+2y)}{x^2}\le-3+\frac{12}{X^2}<0$ by (C4),
+so $h$, hence $h_+$, is nonincreasing in $y$ and $c$ is
+nondecreasing in $y$. In $x$: where $h>0$,
+\[
+\Bigl|\partial_x\frac{h}{2x^2}\Bigr|
+=\Bigl|-\frac{4y(1+y)}{x^5}-\frac{h}{x^3}\Bigr|
+\le\frac{8}{x^5}+\frac{h_+}{x^3}\le\frac2{x^3},
+\]
+using $4y(1+y)\le8$, $8/x^2\le1$ and $h_+\le1$ (both from
+$X^2>8$; for $y>0$, $h\le1$ reduces to $4(1+y)\le3x^2$, and at
+$y=0$, $h=1$). Where $h<0$ the positive part is locally constant,
+and $h_+/(2x^2)$ is locally Lipschitz across the kink with the same
+bound. Hence for $x\in[X,X+1]$,
+$\partial_xc\ge\frac1{4x}-\frac2{X^3}
+\ge\frac1{4(X+1)}-\frac2{X^3}>0$ almost everywhere by (C1), so $c$
+is increasing in $x$. Therefore $c(x,y)\ge c(X,y_{\min})=c_0$ on
+the box.
+
+\emph{Step 2: the $B$-side.} By \eqref{eq:resbound} and Step 1,
+$\Rea s_*\ge\frac{1+y}2+t\,c(x,y)\ge\frac{1+y_{\min}}2+t\,c_0$, so
+\[
+b_t(n)\,n^{-\Rea s_*}
+\le n^{\frac t4\log n-\frac{1+y_{\min}}2-t\,c_0}=P_t(n),
+\]
+while the $B$-side brackets obey
+$\log n\bigl(\frac12+\frac t{4(x-6)}\bigr)\le\theta(t)\log n$ and
+\[
+\log n\Bigl(\frac14\log\frac x{4\pi n}+\frac\pi8+\frac2{x-6}\Bigr)
+=\log n\Bigl(\frac14\log q(x)-\frac{\log n}4+\frac\pi8
++\frac2{x-6}\Bigr)
+\le\log n\Bigl(C_2-\frac{\log n}4\Bigr),
+\]
+since $q$ is increasing and $\frac1{x-6}$ decreasing on $[X,X+1]$.
+
+\emph{Step 3: the $A$-core.} By
+\eqref{eq:gammabound}--\eqref{eq:kappabound},
+$|\gamma|N^{|\kappa|}n^y\,b_t(n)\,n^{-\Rea s_*}\le
+b_t(n)\,\mathcal A(x,y,t;n)$ with
+\[
+\mathcal A(x,y,t;n)
+=e^{0.02y}q(x)^{-y/2}N^{\frac{ty}{2(x-6)}}\,
+n^{\,y-\frac{1+y}2-t\,c(x,y)} .
+\]
+Using $\partial_yc\ge0$ (Step 1) and $\log n\ge0$,
+\[
+\begin{aligned}
+\partial_y\log\mathcal A
+&=0.02-\frac12\log q(x)+\frac{t\log N}{2(x-6)}
++\frac{\log n}2-t\,(\partial_yc)\log n\\
+&\le0.02-\frac12\log q(X)
++\frac{t_0\log N}{2(X-6)}+\frac{\log N}2,
+\end{aligned}
+\]
+which is negative by (C2); so $\mathcal A$ is maximized at
+$y=y_{\min}$. At $y=y_{\min}$, freezing $x$ conservatively
+($q(x)^{-y_{\min}/2}\le q(X)^{-y_{\min}/2}$,
+$N^{\frac{ty_{\min}}{2(x-6)}}\le N^{\frac{ty_{\min}}{2(X-6)}}$,
+$c(x,y_{\min})\ge c_0$) gives
+$b_t(n)\,\mathcal A\le a(t)\,n^{y_{\min}}P_t(n)$.
+
+\emph{Step 4: the $A$-side brackets.} On $[X,X+1]\times[y_{\min},1]$, we have
+\begin{align*}
+\frac{t\log n}{4(x-6)} &\le \frac{t\log n}{4(X-6)},
+\\
+\Bigl(\log\frac{|1+y+ix|}{4\pi}+\pi+\frac3x\Bigr)
+\Bigl(\frac12+\frac t{4(x-6)}\Bigr)
+&\le \Bigl(\log\frac{|2+i(X+1)|}{4\pi}+\pi+\frac3X\Bigr)
+\theta(t)=\Lambda_z(t),
+\end{align*}
+since $|1+y+ix|\le|2+i(X+1)|$ (both coordinates increase) and
+$\frac3x\le\frac3X$; and
+\[
+\frac14\Bigl(\frac\pi2+\frac8{x-6}\Bigr)
+\Bigl(\log q(x)+\frac8{x-6}\Bigr)\le\Lambda_t,
+\]
+each factor being bounded by its value at the appropriate endpoint.
+
+Combining Steps 2--4 termwise bounds the two summands of
+Lemma~\ref{lem:polyderiv} by $F_z(n;t)$ and $F_t(n;t)$. For
+$0<t\le t_0$ the displayed conclusions are then
+Lemma~\ref{lem:polyderiv}; at $t=0$ they follow by continuity, as
+both sides of each inequality are continuous in $t$ on the compact
+box ($f_t$ being the fixed finite sum).
+\end{proof}
+
+\begin{lemma}[Head-and-tail evaluation]\label{lem:headtail}
+Assume (C5), (C6), (C7). Then for each fixed $t\in[0,t_0]$ the
+functions $u\mapsto F_z(u;t)$ and $u\mapsto F_t(u;t)$ are positive
+and nonincreasing on $[16,N]$, and consequently
+\[
+\sum_{n=1}^{N}F_z(n;t)\ \le\ D_z(t),
+\qquad
+\sum_{n=1}^{N}F_t(n;t)\ \le\ D_t(t).
+\]
+\end{lemma}
+
+\begin{proof}
+Write $r=\log u\in[\log16,\log N]$. The logarithmic derivative of
+$P_t$ with respect to $r$ is
+$p(r)=-\frac{1+y_{\min}}2+t\bigl(\frac r2-c_0\bigr)
+\le-\frac{1+y_{\min}}2$, since $t\ge0$ and
+$\frac r2\le\frac12\log N\le c_0$ by (C5). Each of $F_z$, $F_t$ is
+a nonnegative linear combination (with $u$-independent
+coefficients $\theta(t)$, $\frac t{4(X-6)}$, $a(t)$,
+$\Lambda_z(t)$, $\Lambda_t$, all $\ge0$) of the five component
+functions
+\[
+P_t(u)\,r,\quad P_t(u)\,u^{y_{\min}}r,\quad
+P_t(u)\,u^{y_{\min}},\quad
+P_t(u)\,B(r),\quad P_t(u)\,u^{y_{\min}}B(r),
+\]
+with $B(r)=r\,(C_2-\frac r4)$, which is positive on
+$[\log16,\log N]$ by (C7). Their logarithmic $r$-derivatives are,
+respectively, at most
+\[
+p+\frac1r,\quad p+y_{\min}+\frac1r,\quad p+y_{\min},\quad
+p+\frac{B'}B,\quad p+y_{\min}+\frac{B'}B,
+\]
+and $\frac{B'}B=\frac1r-\frac1{4(C_2-r/4)}\le\frac1r$. Hence every
+component has logarithmic derivative at most
+\[
+p+y_{\min}+\frac1{\log16}
+\le-\frac{1+y_{\min}}2+y_{\min}+\frac1{\log16}
+=-\frac{1-y_{\min}}2+\frac1{\log16}\ <\ 0
+\]
+by (C6), so each component, and therefore each of $F_z,F_t$, is
+positive and decreasing on $[16,N]$. Finally, for decreasing
+positive $F$,
+$\sum_{n=17}^{N}F(n)\le\int_{16}^{N}F(u)\,du$ (compare each term
+with the integral over $[n-1,n]$), which gives the displayed
+bounds.
+\end{proof}
+
+\begin{lemma}[Uniform derivative bounds]\label{lem:derivbox}
+Assume (C1)--(C7). Then for every $t\in[0,t_0]$,
+\[
+\sup_{z\in R}\Bigl|\frac{\partial f_t}{\partial z}(z)\Bigr|
+\ \le\ D_z(t),
+\qquad
+\sup_{z\in R}\Bigl|\frac{\partial f_t}{\partial t}(z)\Bigr|
+\ \le\ D_t(t),
+\]
+and hence, for every closed interval
+$[t_i,t_{i+1}]\subseteq[0,t_0]$, the relation
+$$\sup_{z\in R,\ \tau\in[t_i,t_{i+1}]}|\partial_\tau f_\tau(z)|
+\le\sup_{\tau\in[t_i,t_{i+1}]}D_t(\tau)$$
+holds.
+\end{lemma}
+
+\begin{proof}
+Combine Lemmas~\ref{lem:dompoint} and~\ref{lem:headtail}.
+\end{proof}
+
+\begin{remark}\label{rem:quadrature}
+The program of Proposition~\ref{prop:prisms} evaluates $D_z(t)$
+and $D_t(t)$ with $t$ an
+interval enclosure --- for the prism bound, an enclosure of the
+whole interval $[t_i,t_{i+1}]$, which by inclusion isotonicity
+encloses $\sup_\tau D_t(\tau)$ --- and computes the integrals
+$\int_{16}^NF(u)\,du$ by Arb's rigorous Gauss--Legendre
+integrator~\cite{JohanssonIntegration}. The integrands extend
+holomorphically in $u$ away from the branch cut of the logarithm, and the
+calculation uses analytic logarithm and power operations on complex balls
+contained in this domain.  The first sixteen summands are evaluated
+separately because Lemma~\ref{lem:headtail} gives monotonicity only for
+$n\ge16$; the remaining terms are bounded by the integral exactly as in that
+lemma.
+\end{remark}
+
+\subsection{The prism criterion}\label{sec:prism}
+
+The time interval $[0,t_0]$ will be covered by finitely many closed
+``prisms'' $R\times[t_i,t_{i+1}]$. The following lemma reduces
+nonvanishing of $H$ on a prism to finitely many verifiable
+conditions at its initial time $t_i$.
+
+\begin{lemma}[Prism criterion]\label{lem:prism}
+Let $0\le t_i<t_{i+1}\le t_0$, and let $z_1,\dots,z_m$
+(cyclically ordered, $z_{m+1}=z_1$) be a mesh on $\partial R$ with
+consecutive spacing at most $h$. Let $D_z\ge\sup_{z\in R}|\partial_zf_{t_i}(z)|$ and
+$D_t\ge\sup_{z\in R,\ \tau\in[t_i,t_{i+1}]}
+|\partial_\tau f_\tau(z)|$ (as supplied by
+Lemma~\ref{lem:derivbox}), and suppose:
+\begin{enumerate}
+\item[\textup{(a)}] $\bigl|f_{t_i}(z_j)\bigr|\ge M_i$ for all $j$,
+where
+\begin{equation}\label{eq:prismcondition}
+M_i\ >\ \frac{D_{z}h}{2}
++D_{t}\,(t_{i+1}-t_i)+0.00125\,;
+\end{equation}
+\item[\textup{(b)}] using the clockwise convention in the computation, every
+argument increment satisfies
+\[
+\arg\bigl(f_{t_i}(z_j)/f_{t_i}(z_{j+1})\bigr)\in(-\pi,\pi),
+\]
+and their sum gives winding number~$0$ for the polygon
+$\bigl(f_{t_i}(z_j)\bigr)_j$ about $0$.
+\end{enumerate}
+Then $H_\tau(z)\neq0$ for all $z\in R$ and
+$\tau\in[t_i,t_{i+1}]$.
+\end{lemma}
+
+\begin{proof}
+On each half of a mesh subedge, both the true image curve
+$F(s)=f_{t_i}(\text{subedge}(s))$ and its endpoint chord lie in the
+closed disk of radius $D_{z}h/2$ about the nearer endpoint value
+(this is the factor $\frac12$ in \eqref{eq:prismcondition}); each disk is
+convex, so the straight-line homotopy from the true boundary curve
+to the mesh polygon stays inside these disks. Moving to time
+$\tau\in[t_i,t_{i+1}]$ displaces values by at most
+$D_{t}(\tau-t_i)$, and passing from $f_\tau$ to
+$g_\tau=H_\tau/B_\tau$ by at most $0.00125$
+(Lemma~\ref{lem:tzero}). Condition \eqref{eq:prismcondition} says every
+resulting disk, centered at a mesh value of modulus $\ge M_i$,
+excludes the origin; hence the entire three-stage homotopy (polygon
+$\to$ true $f_{t_i}$-boundary image $\to$ $f_\tau(\partial R)$ $\to$
+$g_\tau(\partial R)$) avoids zero. In particular each chord avoids
+the origin, so its argument variation in the implemented clockwise
+orientation is the principal argument of the stated endpoint ratio. The
+winding number of the polygon about the origin is a well-defined integer;
+by (b) it is
+$0$, and the zero-avoiding homotopy gives winding number $0$ for
+$g_\tau(\partial R)$ as well, for every $\tau\in[t_i,t_{i+1}]$.
+Since $B_\tau\neq0$ and $B_\tau$ is holomorphic on a neighborhood
+of $R$ (Lemma~\ref{lem:tzero} and Section~\ref{sec:thm13}),
+$g_\tau$ is holomorphic there and has the same zeros as $H_\tau$,
+and $g_\tau$ is zero-free on $\partial R$; the argument principle
+then gives $H_\tau\neq0$ on $R$.
+\end{proof}
+
+\subsection{The prism decomposition}\label{sec:prisms}
+
+The computational input of the barrier argument is the following.
+
+\begin{proposition}[Prism decomposition]\label{prop:prisms}
+There exist times $0=\tau_0<\tau_1<\dots<\tau_{883}$ with
+$\tau_{882}<t_0\le\tau_{883}$ such that for each $0\le i<883$, the
+hypotheses (a)--(b) of Lemma~\ref{lem:prism} hold for the prism
+$R\times[\tau_i,\min(\tau_{i+1},t_0)]$, with margin in
+\eqref{eq:prismcondition} at least $0.5198498946$ in every prism.
+\end{proposition}
+
+\begin{proof}
+The \programlink{dan-reworking/code/prop612/prop612_proof.c}{barrier program}
+carries out the following three phases.  It uses outward-rounded Arb balls,
+and every decisive inequality is strict.
+
+\emph{(1) Domain hypotheses and truncation.} At $192$-bit precision the
+calculation proves the uniform
+expansion-parameter
+bound $|w|\le0.6480<0.66$ on the whole slab (via the shift bounds
+$|\Rea(\log n_0-\alpha)|<0.694$ and $|\Ima(\log n_0-\alpha)|<0.7855$
+for both $\alpha$-arguments used below, where $n_0=N/2$); the bound
+$0.0882<0.089$ for the modulus of the $\gamma$-type factor, both
+for its exact expression (on a $256\times128$ subdivision of the
+box) and for the implemented majorant; and, by a rigorous direct
+sum over $n\le N$ with geometric tail factors, the complete
+two-variable $62$-term Taylor truncation bound
+$1.9543\times10^{-22}<10^{-20}$ --- the allowance that is attached
+as an error ball to every boundary mesh value in phase (3).
+
+\emph{(2) Coefficient calculation.} Define the $62\times62$ complex matrix
+\[
+a_{e,k}
+=\sum_{n=1}^{N}n^{\frac{i(X+\frac12)-1}{2}}
+\,\frac{\bigl(\log\frac n{n_0}\bigr)^e}{e!}
+\,\frac{\bigl(\frac14\log^2\frac n{n_0}\bigr)^k}{k!}
+\]
+and enclose each entry by direct summation. A calculation with the two Taylor
+directions shows that the polynomial evaluation in phase~(3)
+reproduces, exactly up to the truncation bound of phase (1),
+the two sums of \eqref{eq:ft} at the evaluation point, with the
+heat factor $b_t(n)$ emerging from the algebra of the two Taylor
+directions.
+
+\emph{(3) Covering the time interval.} Starting at $\tau_0=0$, at each
+prism start $\tau_i$ the calculation evaluates the
+derivative bounds $D_z(\tau_i)$ and (for the proposed next prism, with
+the time parameter interval-valued over the entire closed prism)
+$D_t$, by the head-plus-integral quadratures of
+Section~\ref{sec:derivbox}, rounding both up to exact integers.  It then
+meshes $\partial R$ with $4\lceil D_z\rceil-4$ points (spacing at
+most $h=1/(\lceil D_z\rceil-1)$), proves every mesh enclosure of
+$f_{\tau_i}$ to exclude zero, every argument increment to lie
+strictly in $(-\pi,\pi)$, and the per-rectangle winding enclosure
+to lie strictly in $(-\frac14,\frac14)$, establishing winding number $0$.
+It chooses $\tau_{i+1}$ adaptively at half the established slack of
+\eqref{eq:prismcondition}, as an exact dyadic number, and proves the inequality
+$\min_j|f_{\tau_i}(z_j)|>\frac{D_zh}2+D_t(\tau_{i+1}-\tau_i)
++0.00125$. Adjacent intervals have identical exact dyadic endpoints, the
+first time is exactly $0$, the final endpoint satisfies
+$\tau_{883}\ge\frac{129}{800}=t_0$, and the aggregate winding enclosure
+lies strictly in $(-\frac14,\frac14)$. (The final prism may
+extend slightly beyond $t_0$; restricting it to its intersection
+with $[0,t_0]$ only shrinks the displacement terms in
+\eqref{eq:prismcondition}, so the conclusion for the full final prism covers
+the truncated one, as required by the statement.)
+
+The calculation produces $883$ prisms, with aggregate winding enclosure
+$[\pm1.18\times10^{-14}]$ and worst margin
+$0.51984989461387254365\pm2\times10^{-20}$, which lies above the
+exact rational threshold $5198498946\times10^{-10}$. The first time is
+exactly $0$, consecutive intervals share exact dyadic endpoints, and the last
+endpoint is at least $t_0$; hence the $883$ closed prisms cover the whole time
+interval. This proves the proposition.
+\end{proof}
+
+\begin{proof}[Proof of Proposition~\ref{thm:barrier}]
+By Proposition~\ref{prop:prisms} and Lemma~\ref{lem:prism},
+$H_\tau(z)\neq0$ for $z\in R$ and
+$\tau\in[\tau_i,\min(\tau_{i+1},t_0)]$, for each $i$. The union of
+these intervals is $[0,t_0]$.
+\end{proof}
+
+% ===============================================================
+\section{Completion of the proof}\label{sec:assembly}
+% ===============================================================
+
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+The parameters \eqref{eq:params} satisfy $0<t_0<\frac12$ and
+$0<y_0^2<1-2t_0$. Hypothesis (i) of Theorem~\ref{thm:criterion}
+holds by Section~\ref{sec:hypi}, since $X/2<T_{\rm PT}$. Hypothesis
+(ii) holds by combining Proposition~\ref{prop:finitelane}
+(nonvanishing of $H_{t_0}$ for $x_*\le x<x_{3840001}$,
+$y_0\le y\le\sqrt{1-2t_0}$) with Proposition~\ref{thm:tail} applied at
+$t=t_0\in I_t$ (nonvanishing for $x\ge x_{3840000}=X_{N_*}(t_0)$):
+the two ranges overlap on the full window $W_{3840000}$, so together
+they cover all $x\ge x_*$. Hypothesis (iii) holds by
+Proposition~\ref{thm:barrier}, since the curved barrier region is
+contained in $R\times[0,t_0]$
+(Section~\ref{sec:barrier}). Theorem~\ref{thm:criterion} then gives
+\[
+\LB\ \le\ t_0+\frac{y_0^2}{2}\ =\ \frac{893927}{5000000}
+\ =\ 0.1787854 . \qedhere
+\]
+\end{proof}
+
+\appendix
+\section{Programs used in the proof}\label{sec:programs}
+
+The calculations in Propositions~\ref{prop:finitewindows}, \ref{prop:dinicells},
+\ref{prop:finiteerr}, \ref{prop:tailcutoff}, \ref{prop:barriererr},
+\ref{prop:tailexp}, and \ref{prop:prisms} use exact integer or rational
+inputs and outward-rounded FLINT/Arb arithmetic.  The source links in
+Table~\ref{tab:programs} point to Git commit
+\texttt{\seqsplit{6222740efae58d773a70ff929cf12a34932d2af0}}.  Each program
+returns a mathematical inequality only when the relevant intervals are
+disjoint; an overlapping interval is reported as unresolved.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{@{}p{0.15\linewidth}p{0.22\linewidth}@{\hspace{1em}}p{0.52\linewidth}@{}}
+\toprule
+Result & Source & Calculation\\
+\midrule
+Prop.~\ref{prop:finitewindows} &
+\programlink{independent/prop43/prop43_proof.c}{Program P4.3} &
+Evaluates $L_N$ for every $690988\le N\le3840000$ and proves
+$L_N\ge791366\times10^{-12}$.\\
+Prop.~\ref{prop:dinicells} &
+\programlink{dan-reworking/code/prop49/prop49_proof.c}{Program P4.9} &
+Covers the four $(L,y)$ domains by closed rectangles and proves
+$Gh_+<\frac L2|C_0|$ on every rectangle.\\
+Prop.~\ref{prop:finiteerr} &
+\programlink{verifiers/verify_prop410_arb.c}{Program P4.10} &
+Computes the five finite-region error majorants at $256$ and $512$ bits and
+proves $e_A+e_B+e_{C,0}<E_{\max}<234\times10^{-9}$.\\
+Prop.~\ref{prop:tailcutoff} &
+\programlink{dan-reworking/code/prop510/prop510_proof.c}{Program P5.10} &
+Evaluates the cutoff contraction and error terms on
+$I_t\times I_{\rm box}$ and
+proves a post-error margin greater than $0.00017352$.\\
+Prop.~\ref{prop:barriererr} &
+\programlink{independent/prop62/prop62_proof.c}{Program P6.2} &
+Proves that the window index is constant on the barrier box and that the
+effective-approximation error is less than $0.00125$.\\
+Prop.~\ref{prop:tailexp} &
+\programlink{dan-reworking/code/prop65/prop65_proof.c}{Program P6.5} &
+Encloses both sides of the tail-exponent inequality and proves that their
+difference is positive.\\
+Prop.~\ref{prop:prisms} &
+\programlink{dan-reworking/code/prop612/prop612_proof.c}{Program P6.12} &
+Builds the Taylor coefficients, covers $[0,t_0]$ by $883$ closed prisms, and proves
+zero winding with a minimum margin greater than $0.5198498946$.\\
+\bottomrule
+\end{tabular}
+\caption{Programs used for the finite calculations.  The displayed labels are
+direct links to the corresponding source files in the
+\projectlink{project repository}.}
+\label{tab:programs}
+\end{table}
+
+The $256$- and $512$-bit outputs for Program P4.10 are available as
+\programlink{logs/prop410_arb_256.log}{the 256-bit output} and
+\programlink{logs/prop410_arb_512.log}{the 512-bit output}.
+
+\FloatBarrier
+
+% ===============================================================
+\begin{thebibliography}{99}
+
+\bibitem{deBruijn}
+N.~G. de Bruijn,
+\emph{The roots of trigonometric integrals},
+Duke Math.\ J.\ \textbf{17} (1950), 197--226.
+\href{https://doi.org/10.1215/S0012-7094-50-01720-0}{doi:10.1215/S0012-7094-50-01720-0}.
+
+\bibitem{JohanssonIntegration}
+F.~Johansson,
+\emph{Numerical integration in arbitrary-precision ball arithmetic},
+in \emph{Mathematical Software -- ICMS 2018}, Lecture Notes in Comput.\ Sci.\
+\textbf{10931}, Springer (2018), 255--263.
+\href{https://doi.org/10.1007/978-3-319-96418-8_30}{doi:10.1007/978-3-319-96418-8\_30};
+\href{https://arxiv.org/abs/1802.07942}{arXiv:1802.07942}.
+
+\bibitem{JohanssonArb}
+F.~Johansson,
+\emph{Arb: efficient arbitrary-precision midpoint-radius interval arithmetic},
+IEEE Trans.\ Comput.\ \textbf{66} (2017), 1281--1292.
+\href{https://doi.org/10.1109/TC.2017.2690633}{doi:10.1109/TC.2017.2690633}.
+
+\bibitem{KKL}
+H.~Ki, Y.-O. Kim and J.~Lee,
+\emph{On the de Bruijn--Newman constant},
+Adv.\ Math.\ \textbf{222} (2009), 281--306.
+\href{https://doi.org/10.1016/j.aim.2009.04.003}{doi:10.1016/j.aim.2009.04.003}.
+
+\bibitem{Mosaic}
+Mosaic Intelligence,
+\emph{A certified unconditional upper bound $\Lambda\le0.1875$ for the
+de Bruijn--Newman constant}, Zenodo preprint (3 July 2026).
+\href{https://doi.org/10.5281/zenodo.21175533}{doi:10.5281/zenodo.21175533}.
+
+\bibitem{Newman}
+C.~M. Newman,
+\emph{Fourier transforms with only real zeros},
+Proc.\ Amer.\ Math.\ Soc.\ \textbf{61} (1976), 245--251.
+\href{https://doi.org/10.1090/S0002-9939-1976-0434982-5}{doi:10.1090/S0002-9939-1976-0434982-5}.
+
+\bibitem{PlattTrudgian}
+D.~Platt and T.~Trudgian,
+\emph{The Riemann hypothesis is true up to $3\cdot10^{12}$},
+Bull.\ Lond.\ Math.\ Soc.\ \textbf{53} (2021), 792--797.
+\href{https://doi.org/10.1112/blms.12460}{doi:10.1112/blms.12460};
+\href{https://arxiv.org/abs/2004.09765}{arXiv:2004.09765}.
+
+\bibitem{Polymath}
+D.~H.~J. Polymath,
+\emph{Effective approximation of heat flow evolution of the Riemann
+$\xi$ function, and a new upper bound for the de Bruijn--Newman constant},
+Res.\ Math.\ Sci.\ \textbf{6} (2019), article 31.
+\href{https://doi.org/10.1007/s40687-019-0193-1}{doi:10.1007/s40687-019-0193-1};
+\href{https://arxiv.org/abs/1904.12438}{arXiv:1904.12438v2}.
+
+\bibitem{RodgersTao}
+B.~Rodgers and T.~Tao,
+\emph{The de Bruijn--Newman constant is non-negative},
+Forum Math.\ Pi \textbf{8} (2020), e6.
+\href{https://doi.org/10.1017/fmp.2020.6}{doi:10.1017/fmp.2020.6};
+\href{https://arxiv.org/abs/1801.05914}{arXiv:1801.05914}.
+
+\end{thebibliography}
+
+\section*{Acknowledgments}
+
+Special thanks to Dan Romik and Max Atkin.  Dan Romik gave an extensive
+critical reading, reorganized substantial parts of the argument, and developed
+separate programs reproducing several of the computations.  I am grateful to
+Max Atkin for discussions and feedback.
+
+\end{document}
