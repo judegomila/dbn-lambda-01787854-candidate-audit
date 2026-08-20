@@ -66,14 +66,9 @@ $\Lambda\le 0.1787854$ for the de Bruijn--Newman constant}
 \]
 by applying the Polymath~15 barrier criterion at the exact parameters
 $X=6000000185827$, $t_0=129/800$, and
-$y_0^2=87677/2500000$.  The verified-height hypothesis follows from
-the theorem of Platt and Trudgian.  We establish the required nonvanishing of
-$H_{t_0}$ by a finite interval computation followed by analytic estimates for
-the remaining range.  For the barrier, a further interval computation follows
-the boundary of a rectangle through $883$ time intervals and proves that its winding number
-remains zero.  The programs used for the finite calculations are linked where
-they enter the proof and described in Appendix~\ref{sec:programs}.  Since the
-resulting upper bound is positive, it does not imply the Riemann hypothesis.
+$y_0^2=87677/2500000$. We show that the assumptions needed to apply the
+criterion with these parameters hold by combining results of Platt and
+Trudgian with new computer-assisted calculations.
 \end{abstract}
 
 \begin{center}
@@ -218,7 +213,7 @@ The logical skeleton of the proof is the following criterion.
 \begin{theorem}[{Polymath criterion, specialized from
 \cite[Theorem~1.2]{Polymath}}]\label{thm:criterion}
 Let $X>0$, $0<t_0<\tfrac12$ and
-$0<y_0<\sqrt{1-2t_0}$. Suppose that:
+$0<y_0<\sqrt{1-2t_0}$. Suppose that the following three conditions hold:
 \begin{enumerate}
 \item[\textup{(i)}] \textbf{(Verified height.)} There are no zeros
 $\zeta(\sigma+iT)=0$ with
@@ -244,11 +239,12 @@ Then
 \]
 \end{theorem}
 
-Sections~\ref{sec:hypi}, \ref{sec:finite}--\ref{sec:tail}, and
-\ref{sec:barrier} establish hypotheses (i), (ii), and (iii), respectively,
-at the parameters \eqref{eq:params}.
+Section~\ref{sec:hypi} verifies condition (i) using the theorem of Platt and
+Trudgian. Sections~\ref{sec:finite}--\ref{sec:tail} prove condition (ii), and
+Section~\ref{sec:barrier} proves condition (iii), at the parameters
+\eqref{eq:params}.
 
-For hypothesis (i) one uses the normalization connecting $H_0$ to
+For condition (i) one uses the normalization connecting $H_0$ to
 $\zeta$: a zero $H_0(x+iy)=0$ gives
 $\xi\bigl(\frac{1-y+ix}{2}\bigr)=0$; the functional equation
 $\xi(s)=\xi(1-s)$ followed by complex conjugation produces the
@@ -392,7 +388,7 @@ $x\approx6\times10^{12}$.)
 \end{remark}
 
 % ===============================================================
-\section{Hypothesis (i): the verified height}\label{sec:hypi}
+\section{The verified-height condition}\label{sec:hypi}
 % ===============================================================
 
 Platt and Trudgian \cite[Theorem~1]{PlattTrudgian} proved that every
@@ -404,7 +400,7 @@ lies on the critical line; their computation accounts for the lowest
 $12\,363\,153\,437\,138$ nontrivial zeros. Counting sign changes of the
 completed zeta function on the critical line and using Turing's method to
 confirm completeness yields the off-line exclusion form used here.
-Hypothesis (i) of
+Condition (i) of
 Theorem~\ref{thm:criterion} requires the absence of zeros with
 $\frac{1+y_0}{2}\le\sigma\le1$ and $0\le T\le X/2$. Since
 \[
@@ -419,15 +415,15 @@ $\eta(\sigma)=\sum_{n\ge1}(-1)^{n-1}n^{-\sigma}>0$ for
 $0<\sigma<1$ (group consecutive terms), while
 $\eta(\sigma)=(1-2^{1-\sigma})\zeta(\sigma)$ with
 $1-2^{1-\sigma}<0$; hence $\zeta(\sigma)<0\ne0$ there. At $\sigma=1$,
-$\zeta$ has a pole. This supplies hypothesis (i).
+$\zeta$ has a pole. This verifies condition (i).
 
 We use the published Platt--Trudgian theorem as an input.
 
 % ===============================================================
-\section{Hypothesis (ii), finite range: the window scan}\label{sec:finite}
+\section{The final-time right region: finite range}\label{sec:finite}
 % ===============================================================
 
-Hypothesis (ii) concerns nonvanishing of $H_{t_0}$ on
+Condition (ii) requires nonvanishing of $H_{t_0}$ on
 \begin{equation}\label{eq:hypiiregion}
 x\ge x_*:=X+\sqrt{1-y_0^2},
 \qquad
@@ -662,7 +658,7 @@ proposition.
 \subsection{Transfer to the full height range}\label{sec:dini}
 
 Proposition~\ref{prop:finitewindows} concerns the single height $y=y_0$,
-while hypothesis (ii) requires nonvanishing for all
+while condition (ii) requires nonvanishing for all
 $y\in[y_0,\sqrt{1-2t_0}]$. For fixed $N$ write $L_N(y)$ for the
 quantity \eqref{eq:LN} with its explicit $y$-dependence restored
 (the constants $g_N,k_N,\sigma_N$ frozen in $x$ as before, but
@@ -1145,7 +1141,7 @@ $H_{t_0}(x+iy)\neq0$.
 \end{proof}
 
 % ===============================================================
-\section{Hypothesis (ii), infinite tail}\label{sec:tail}
+\section{The final-time right region: infinite tail}\label{sec:tail}
 % ===============================================================
 
 This section proves nonvanishing of $H_t$ for \emph{all} windows
@@ -1155,7 +1151,7 @@ closed interval whose left endpoint is exactly $t_0$), and all
 $y\in[y_0,\sqrt{1-2t}]$, by a single interval computation at the
 cutoff $N_*$ combined with monotonicity arguments in $N$ and $y$.
 Since $t_0\in I_t$, this in particular covers the case $t=t_0$
-needed for hypothesis (ii); the last window $W_{3840000}$ of the
+needed for condition (ii); the last window $W_{3840000}$ of the
 finite range overlaps the tail's starting abscissa $x_{3840000}$, so
 the two ranges jointly cover all $x\ge x_*$.
 
@@ -1366,8 +1362,8 @@ each inner sum of the second term is bounded, by
 Lemma~\ref{lem:cap} with $(a,c)=(\lfloor M/d\rfloor,N)$, by
 $\CapT_t(\lfloor M/d\rfloor,N;\sigma_1)$, so the second term is
 bounded by $\mathrm{TR}$; the application of Lemma~\ref{lem:cap} is
-legitimate because its hypothesis $\sigma_1>\frac t2\log N$ is the
-first condition of \eqref{eq:capvalid}. On the $A$-side,
+legitimate because the required inequality $\sigma_1>\frac t2\log N$,
+the first condition in \eqref{eq:capvalid}, holds. On the $A$-side,
 Lemma~\ref{lem:frozen} bounds each term of $|\gamma F_A|$ by
 $G\,b_t(k)k^{-\sigma_2}$; splitting at $k=M$ and applying
 Lemma~\ref{lem:cap} with $(a,c)=(M,N)$ at exponent $\sigma_2$
@@ -1564,7 +1560,8 @@ $[N_*,\infty)$: the heads, $M_{\max}$ and $G$ by
 Lemma~\ref{lem:compdecay}(i)--(ii); the fixed-endpoint caps in
 $\mathrm{TR}$ and $\mathrm{AB}$ by Lemma~\ref{lem:capdecay},
 applied with $a=\lfloor M/d\rfloor$ (at $\sigma_1$) and $a=M$ (at
-$\sigma_2$), whose conditions \eqref{eq:prismconditions} hold by hypothesis;
+$\sigma_2$), for which \eqref{eq:prismconditions} holds by the assumptions
+of the lemma;
 and $\mathrm{OV}$ by Lemma~\ref{lem:compdecay}(iii). Sums and
 products of nonnegative nonincreasing functions are nonincreasing,
 so $D(N,t,y)\le D(N_*,t,y)$ and
@@ -1709,7 +1706,8 @@ $X_N(t)$ increasing in $N$; the heads of $S_1,S_2$ and the factor
 $G$ are nonincreasing by Lemma~\ref{lem:compdecay}; and the caps
 $\CapT_t(M_{\rm err},N;\sigma_i)$ are nonincreasing by
 Lemma~\ref{lem:capdecay} with $a=M_{\rm err}$, whose conditions
-\eqref{eq:prismconditions} hold by hypothesis. In $\mathrm{E}_{C}$: the
+\eqref{eq:prismconditions} hold by the assumptions of the lemma. In
+$\mathrm{E}_{C}$: the
 factors $(N^2-t/16)^{-(1+y)/4}$, $e^{-\frac t{16}L_N(t)^2}$ and
 $e^{1.24(3^y+3^{-y})/(N-0.125)}$ are visibly nonincreasing in $N$,
 and $e^{\psi(X_N(t))}$ is nonincreasing because $\psi$ is
@@ -1789,7 +1787,7 @@ $a=\lfloor M/d\rfloor$ for each $d\in\calS$ at $\sigma_1$
 $a=M_{\rm err}$ at both $\sigma_1$ and $\sigma_2$, each with the $t$-factor evaluated at
 $\min I_t$ and the $\sigma$-factor at its lower bound over
 $I_{\rm ext}$. (3) The $A$-side slope condition \eqref{eq:ym}.
-(4) The hypotheses of
+(4) The conditions required by
 Lemmas~\ref{lem:capdecay}--\ref{lem:errmaj}: $\sigma_1,\sigma_2>1$
 on $I_{\rm ext}$, $N_*\bigl(1-\frac t{16N_*^2}\bigr)>1$,
 $X_{N_*}(t)>200$, $\log(N_*^2-\frac t{16})>2$, and the sign
@@ -1846,7 +1844,7 @@ lies in the region \eqref{eq:region}, so
 \end{proof}
 
 % ===============================================================
-\section{Hypothesis (iii): the barrier}\label{sec:barrier}
+\section{The intermediate-time barrier}\label{sec:barrier}
 % ===============================================================
 
 \subsection{Statement, and reduction to a closed rectangle}
@@ -1862,9 +1860,9 @@ boundary calculation in Section~\ref{sec:prisms}.
 $H_t(z)\ne0$ for all $z\in R$ and $0\le t\le t_0$.
 \end{proposition}
 
-Proposition~\ref{thm:barrier} implies hypothesis (iii) of
+Proposition~\ref{thm:barrier} proves condition (iii) of
 Theorem~\ref{thm:criterion}: the curved barrier region of that
-hypothesis satisfies, horizontally,
+condition satisfies, horizontally,
 $X\le x\le X+\sqrt{1-y_0^2}\le X+1$; and vertically,
 $y\ge\sqrt{y_0^2+2(t_0-t)}\ge y_0>\frac{1809}{10000}$ (indeed
 $y_0^2-\bigl(\frac{1809}{10000}\bigr)^2=\frac{234599}{10^8}>0$) and
@@ -2391,7 +2389,7 @@ The computational input of the barrier argument is the following.
 \begin{proposition}[Prism decomposition]\label{prop:prisms}
 There exist times $0=\tau_0<\tau_1<\dots<\tau_{883}$ with
 $\tau_{882}<t_0\le\tau_{883}$ such that for each $0\le i<883$, the
-hypotheses (a)--(b) of Lemma~\ref{lem:prism} hold for the prism
+conditions (a)--(b) of Lemma~\ref{lem:prism} hold for the prism
 $R\times[\tau_i,\min(\tau_{i+1},t_0)]$, with margin in
 \eqref{eq:prismcondition} at least $0.5198498946$ in every prism.
 \end{proposition}
@@ -2401,7 +2399,7 @@ The \programlink{dan-reworking/code/prop612/prop612_proof.c}{barrier program}
 carries out the following three phases.  It uses outward-rounded Arb balls,
 and every decisive inequality is strict.
 
-\emph{(1) Domain hypotheses and truncation.} At $192$-bit precision the
+\emph{(1) Domain conditions and truncation.} At $192$-bit precision the
 calculation proves the uniform
 expansion-parameter
 bound $|w|\le0.6480<0.66$ on the whole slab (via the shift bounds
@@ -2474,14 +2472,14 @@ these intervals is $[0,t_0]$.
 
 \begin{proof}[Proof of Theorem~\ref{thm:main}]
 The parameters \eqref{eq:params} satisfy $0<t_0<\frac12$ and
-$0<y_0^2<1-2t_0$. Hypothesis (i) of Theorem~\ref{thm:criterion}
-holds by Section~\ref{sec:hypi}, since $X/2<T_{\rm PT}$. Hypothesis
+$0<y_0^2<1-2t_0$. Condition (i) of Theorem~\ref{thm:criterion}
+holds by Section~\ref{sec:hypi}, since $X/2<T_{\rm PT}$. Condition
 (ii) holds by combining Proposition~\ref{prop:finitelane}
 (nonvanishing of $H_{t_0}$ for $x_*\le x<x_{3840001}$,
 $y_0\le y\le\sqrt{1-2t_0}$) with Proposition~\ref{thm:tail} applied at
 $t=t_0\in I_t$ (nonvanishing for $x\ge x_{3840000}=X_{N_*}(t_0)$):
 the two ranges overlap on the full window $W_{3840000}$, so together
-they cover all $x\ge x_*$. Hypothesis (iii) holds by
+they cover all $x\ge x_*$. Condition (iii) holds by
 Proposition~\ref{thm:barrier}, since the curved barrier region is
 contained in $R\times[0,t_0]$
 (Section~\ref{sec:barrier}). Theorem~\ref{thm:criterion} then gives
