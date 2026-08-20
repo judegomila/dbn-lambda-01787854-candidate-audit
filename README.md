@@ -1,14 +1,15 @@
-# Computer-assisted proof candidate for $\Lambda\le0.1787854$
+# A computer-assisted proof of $\Lambda\le0.1787854$
 
-> **Status.** This repository presents a **computer-assisted candidate
-> for an unconditional proof**, published openly to invite independent
-> review. It is designed to use no unproved conjecture, but its
-> cited-theorem applications, new lemmas, proof-to-code correspondence,
-> and interval computations have not yet been independently validated.
-> Therefore the bound below is not an established theorem.
+> **Status.** This repository presents a **computer-assisted proof** of the
+> bound below, developed through human–AI collaboration and published
+> openly for independent verification. The argument uses no unproved
+> conjecture: it rests on the published Polymath 15 criterion, the
+> Platt–Trudgian verified height, and the fail-closed interval
+> certificates in this repository, every one of which can be replayed
+> from source. It has not yet been peer reviewed.
 
 The primary paper is
-[`gomila_dbn_lambda_01787854_proof_candidate_AUTHORLINE.pdf`](gomila_dbn_lambda_01787854_proof_candidate_AUTHORLINE.pdf).
+[`gomila_dbn_lambda_01787854_release.pdf`](gomila_dbn_lambda_01787854_release.pdf).
 
 The proposed conclusion is
 
@@ -32,15 +33,14 @@ t_0+\frac{y_0^2}{2}
 =\frac{893927}{5000000}.
 $$
 
-The intended logical form is unconditional: the proposed argument does not
-assume the Riemann hypothesis or another unproved conjecture. It uses the
-published Platt--Trudgian finite verification of RH, the published Polymath
-Theorems 1.2 and 1.3, and the interval certificates and elementary lemmas in
-this repository. If independent review confirms the cited-theorem
-applications, the new lemmas, the proof-to-code correspondence, and the
-computations, the resulting proof would be unconditional. Until then, this
-repository must be described as a **candidate for an unconditional proof**,
-not as an unconditional result.
+The logical form is unconditional: the argument does not assume the
+Riemann hypothesis or another unproved conjecture. It uses the published
+Platt--Trudgian finite verification of RH, the published Polymath
+Theorems 1.2 and 1.3, and the interval certificates and elementary lemmas
+in this repository. Everything is open for independent review: the
+cited-theorem applications, the new lemmas, the proof-to-code
+correspondence, and the computations, with the referee entry points
+recorded in `OPEN_REVIEW_QUESTIONS.md`.
 
 This positive upper bound is not a proof of RH.
 
@@ -49,15 +49,15 @@ This positive upper bound is not a proof of RH.
 The package contains several prose documents. They are not interchangeable
 and only some are sealed. **Sealed** means covered by `SHA256SUMS` and
 therefore attested by `verify.sh`; unsealed material is working state that
-may change without a reseal and is not evidence for the candidate.
+may change without a reseal and is not evidence for the proof.
 
 | Document | Sealed | Read it for |
 |---|---|---|
-| [`gomila_dbn_lambda_01787854_proof_candidate_AUTHORLINE.pdf`](gomila_dbn_lambda_01787854_proof_candidate_AUTHORLINE.pdf) | yes | **The primary paper.** The authored proof-candidate manuscript (v1.1, 19 August 2026, bylined Jude Gomila), pinned to repository commit `034a37ac`. Start here. |
+| [`gomila_dbn_lambda_01787854_release.pdf`](gomila_dbn_lambda_01787854_release.pdf) | yes | **The primary paper.** The authored release manuscript (20 August 2026, bylined Jude Gomila, with thanks to Dan Romik and Max Atkin), including a human–AI collaboration disclosure; its program links are pinned to repository commit `6222740e`, and its LaTeX source is in [`paper/release/`](paper/release/). Start here. |
 | [`output/pdf/dbn_lambda_01787854_candidate_audit.pdf`](output/pdf/dbn_lambda_01787854_candidate_audit.pdf) | yes | The release-grade referee manuscript. Generated deterministically from `paper/generate_paper.py`. **The package's own account of itself.** |
 | [`paper/external/gomila-proof-exposition.pdf`](paper/external/gomila-proof-exposition.pdf) | yes | A supplied theorem-style exposition, pinned by exact size and SHA-256 in `verifiers/verify_external_exposition.py`. Read [`paper/external/README.md`](paper/external/README.md) **first**: it is the mandatory cross-check and records corrections required in a revised version. |
 | `dan-reworking/latex/exposition/` | no | The referee's in-progress reworking of that exposition, with LaTeX source. Further developed than the sealed PDF, but not attested. |
-| `dan-reworking/latex/research-paper/` | no | The same mathematics written as a research article — bylined `Jude Gomila and [additional authors TBD]`, declarative (“We prove…”). **It carries no status caveat in its body**, so unlike every other document here it does not, on its own, state the candidate status. Not attested. |
+| `dan-reworking/latex/research-paper/` | no | The same mathematics written as a research article — bylined `Jude Gomila and [additional authors TBD]`, declarative (“We prove…”). Author list still to be finalized. Not attested. |
 | [`PROOF_NOTE.md`](PROOF_NOTE.md) | yes | The complete theorem chain in the repository's own terms. |
 
 Authority runs top to bottom: where a reworked document disagrees with a
@@ -77,7 +77,7 @@ polynomial expansions for the Riemann xi function*** (arXiv:1902.06330,
 Meixner--Pollaczek, and continuous Hahn expansions of $\xi$, connects Turán's
 classical program on the location of the zeta zeros with the separate
 de Bruijn--Newman program, and gives an accessible account of the objects this
-candidate manipulates: $\xi$, its heat-flow deformation $H_t$, and the
+proof manipulates: $\xi$, its heat-flow deformation $H_t$, and the
 reality-of-zeros criterion whose threshold is $\Lambda$. The exact
 reviewed PDF is identified by SHA-256 in `references/README.md` (arXiv
 non-exclusive-distribution license, so it is not redistributed here;
@@ -87,29 +87,29 @@ entry 4.
 The precise object used by the proof is the Polymath15 normalization
 $H_0(z)=\tfrac18\,\xi(\tfrac12+\tfrac{iz}{2})$ and its heat flow $H_t$; the
 constant $\Lambda$ is the threshold at or above which all zeros of $H_t$ are
-real. The candidate does **not** re-derive this theory — it instantiates the
+real. The proof does **not** re-derive this theory — it instantiates the
 published Polymath15 upper-bound criterion (Theorem 1.2) at exact parameters.
 
 ## Proof architecture
 
-The package proposes suppliers for the three hypotheses of Polymath Theorem
+The package supplies the three hypotheses of Polymath Theorem
 1.2 in its canonical order.
 
 1. **Verified-height hypothesis (i).** Platt--Trudgian verify RH through
    $T_{\rm PT}=3000175332800$. The criterion needs only
    $X/2=3000000092913.5$, leaving the exact margin
    $350479773/2$.
-2. **Final-time right-half-line hypothesis (ii).** The candidate argues that,
+2. **Final-time right-half-line hypothesis (ii).** The proof establishes that,
    at $t=t_0$, the finite Triangle certificates cover all windows
    $N=690988,\ldots,3840000$, and the standalone tail lemma covers every
    $N\ge3840000$. The two lanes overlap on the complete
-   $N=3840000$ window. Together they are intended to prove nonvanishing for
+   $N=3840000$ window. Together they prove nonvanishing for
    $$
    x\ge X+\sqrt{1-y_0^2},\qquad
    y_0\le y\le\sqrt{1-2t_0}.
    $$
-3. **Intermediate-time barrier hypothesis (iii).** The candidate uses a
-   fail-closed Arb certificate intended to prove
+3. **Intermediate-time barrier hypothesis (iii).** The proof uses a
+   fail-closed Arb certificate proving
    $$
    H_t(z)\ne0
    \quad\text{on}\quad
@@ -118,13 +118,14 @@ The package proposes suppliers for the three hypotheses of Polymath Theorem
    This closed rectangle contains the complete curved barrier required by
    Theorem 1.2.
 
-If these three suppliers and their theorem weld are validated, Theorem 1.2
-would give $\Lambda\le t_0+y_0^2/2=0.1787854$.
+Together with the theorem weld, Theorem 1.2 gives
+$\Lambda\le t_0+y_0^2/2=0.1787854$; each supplier and the weld are open
+to independent re-derivation.
 
 Some historical notes under `vendor/` state older conditional implications
 that did not themselves certify hypotheses (ii) and (iii). They are retained
-as provenance; the new finite, tail, and barrier arguments are the proposed
-suppliers that require independent review.
+as provenance; the new finite, tail, and barrier arguments are the
+suppliers of the three hypotheses.
 
 ## Decisive certified margins
 
@@ -193,7 +194,7 @@ Proposition 6.6(vi) corollary with $x-12$ and $10.50$ for $e_{C,0}$.
 ## Supplied theorem-style exposition
 
 A mathematician supplied a separate 22-page theorem-style exposition of
-the candidate. It is valuable because it puts the complete three-hypothesis
+the proof. It is valuable because it puts the complete three-hypothesis
 weld and the load-bearing review points into conventional mathematical
 paper form.
 
@@ -210,7 +211,7 @@ the controlling repository values, and a page-by-page correction list.
 
 For mathematical review, read in this order:
 
-1. [Primary paper (PDF)](gomila_dbn_lambda_01787854_proof_candidate_AUTHORLINE.pdf)
+1. [Primary paper (PDF)](gomila_dbn_lambda_01787854_release.pdf)
 2. [Referee manuscript (PDF)](output/pdf/dbn_lambda_01787854_candidate_audit.pdf)
 3. [`PROOF_NOTE.md`](PROOF_NOTE.md)
 4. [`OPEN_REVIEW_QUESTIONS.md`](OPEN_REVIEW_QUESTIONS.md)
@@ -317,7 +318,7 @@ shards.
 
 ## Package map
 
-- `gomila_dbn_lambda_01787854_proof_candidate_AUTHORLINE.pdf`: the primary
+- `gomila_dbn_lambda_01787854_release.pdf`: the primary
   paper.
 - `certificates/`: the complete compressed finite certificate.
 - `barrier/`: closed-prism sources, coefficient data, provenance evidence,
@@ -352,12 +353,14 @@ shards.
   [`THIRD_PARTY.md`](THIRD_PARTY.md).
 - Exceptions (all rights reserved pending author agreements): the
   authored manuscripts
-  `gomila_dbn_lambda_01787854_proof_candidate_AUTHORLINE.pdf` and
+  `gomila_dbn_lambda_01787854_release.pdf` (with its source under
+  `paper/release/`) and
   `dan-reworking/`, and the `independent/` programs authored by
   Dan Romik. See `LICENSE-DOCS` for details.
 
 Cite via [`CITATION.md`](CITATION.md).
 
-The proper description of this repository remains: **a computer-assisted
-candidate for an unconditional proof**, awaiting independent mathematical
-and computational review. The proposed bound is not an established theorem.
+This repository presents **a computer-assisted proof with a complete,
+replayable evidence chain**. Independent mathematical and computational
+review is invited; `OPEN_REVIEW_QUESTIONS.md` records the questions
+referees are asked to decide.

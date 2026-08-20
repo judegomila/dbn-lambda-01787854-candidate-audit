@@ -18,7 +18,8 @@ Exceptions (not covered by this license):
 - third-party material under vendor/, references/, and paper/external/,
   which remains under its own recorded terms (see THIRD_PARTY.md);
 - the authored manuscripts
-  gomila_dbn_lambda_01787854_proof_candidate_AUTHORLINE.pdf and the
+  gomila_dbn_lambda_01787854_release.pdf (with its LaTeX source under
+  paper/release/) and the
   in-progress co-authored manuscripts under dan-reworking/, for which all
   rights are reserved pending finalization of the author list and venue;
 - the recomputation programs under independent/, authored by Dan Romik,
