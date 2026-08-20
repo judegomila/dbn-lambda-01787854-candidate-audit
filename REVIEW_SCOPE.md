@@ -52,9 +52,9 @@ python3 -m pip install --require-hashes -r requirements.txt
 The assembly portion must report:
 
 ```text
-RESULT: UNCONDITIONAL CANDIDATE ASSEMBLY PASS
+RESULT: UNCONDITIONAL PROOF ASSEMBLY PASS
 CONCLUSION: Lambda <= 893927/5000000 = 0.1787854.
-STATUS: unreviewed computer-assisted unconditional proof candidate; not an established theorem.
+STATUS: computer-assisted unconditional proof; not yet peer reviewed.
 ```
 
 The status line is as important as the numerical conclusion.

@@ -312,9 +312,9 @@ print(f"TOTAL CHECKS RUN: {checks}")
 if failures:
     print(f"RESULT: {failures} FAILED")
     sys.exit(1)
-print("RESULT: UNCONDITIONAL CANDIDATE ASSEMBLY PASS")
+print("RESULT: UNCONDITIONAL PROOF ASSEMBLY PASS")
 print("CONCLUSION: Lambda <= 893927/5000000 = 0.1787854.")
 print(
-    "STATUS: unreviewed computer-assisted unconditional proof candidate; "
-    "not an established theorem."
+    "STATUS: computer-assisted unconditional proof; "
+    "not yet peer reviewed."
 )

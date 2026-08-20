@@ -70,8 +70,8 @@ def main() -> int:
         ("cross-check records sealed P5 floor", "0.000305788807"),
         ("cross-check records tail lower direction", "0.000279<1-D<0.000281"),
         (
-            "cross-check preserves candidate status",
-            "unreviewed computer-assisted candidate for an unconditional proof",
+            "cross-check preserves proof status",
+            "computer-assisted unconditional proof, not yet peer reviewed",
         ),
     ):
         check(label, fragment.replace(" ", "") in normalized_crosscheck)

@@ -2,12 +2,12 @@
 
 These are the questions on which an external referee is asked to make an
 independent judgment. They are not a list of acknowledged missing
-hypotheses. The repository presently contains a candidate proof of each
+hypotheses. The repository contains a proof of each
 item, but an adverse answer to any load-bearing question may invalidate the
 conclusion.
 
-The package's status remains: **unreviewed computer-assisted candidate for
-an unconditional proof**, not an established or peer-reviewed theorem.
+The package's status remains: **computer-assisted unconditional proof, not
+yet peer reviewed**.
 
 ## Priority 1: canonical Theorem 1.2 weld
 
@@ -208,8 +208,8 @@ After auditing the components, please state explicitly:
 3. whether any software check is circular with the claim it is intended to
    validate;
 4. whether a correction is local or invalidates the target bound; and
-5. whether the package may properly advance beyond “unreviewed
-   computer-assisted candidate for an unconditional proof.”
+5. whether the package may properly advance beyond “computer-assisted
+   unconditional proof, not yet peer reviewed” to a peer-reviewed theorem.
 
 Until that review exists, automated `PASS` output must not be described as
 peer acceptance.

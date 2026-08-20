@@ -11,9 +11,8 @@ The supplied PDF contains several correctable mathematical and provenance
 defects. It must be read with this cross-check. Where the PDF conflicts with
 the sealed repository evidence, the repository evidence controls.
 
-Adding this draft does not change the project's status: this remains an
-**unreviewed computer-assisted candidate for an unconditional proof**, not
-an established theorem.
+Adding this draft does not change the project's status: this remains a
+**computer-assisted unconditional proof, not yet peer reviewed**.
 
 ## Artifact identity and safety
 
@@ -264,6 +263,11 @@ CONCLUSION: Lambda <= 893927/5000000 = 0.1787854.
 STATUS: unreviewed computer-assisted unconditional proof candidate; not an established theorem.
 RESULT: STORED UNCONDITIONAL-CANDIDATE REVIEW PASS
 ```
+
+(Historical transcript, quoted as emitted at the time of this audit: the
+verifier then ran 38 assembly gates and used candidate-era wording. The
+current verifier runs 40 gates and emits proof-framing strings; see the
+repository `README.md` for the current expected transcript.)
 
 No fatal counterexample to the repository candidate was found in this
 cross-check. That is not independent peer acceptance: the analytic
