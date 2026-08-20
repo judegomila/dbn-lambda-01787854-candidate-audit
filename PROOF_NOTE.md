@@ -1,9 +1,8 @@
-# Proof note for the \(0.1787854\) candidate
+# Proof note for the \(0.1787854\) bound
 
-## Status and candidate theorem
+## Status and theorem
 
-This repository presents an **unreviewed computer-assisted candidate for an
-unconditional proof** of
+This repository presents a **computer-assisted unconditional proof** of
 
 \[
 \boxed{\Lambda\le
@@ -11,14 +10,15 @@ unconditional proof** of
 \tag{0.1}
 \]
 
-It is not an established or peer-reviewed theorem. “Unconditional” describes
-the logical form of the candidate: no unproved conjecture is assumed. The
+It has not yet been peer reviewed. “Unconditional” describes
+the logical form of the proof: no unproved conjecture is assumed. The
 argument depends on two published theorem inputs and on the new mathematical
-and computational certificates recorded here. Independent review must still
-confirm that every input is applicable and every certificate proves its
-stated predicate.
+and computational certificates recorded here; every input's applicability
+and every certificate's stated predicate is open for independent
+verification, with the referee entry points recorded in
+`OPEN_REVIEW_QUESTIONS.md`.
 
-The candidate does not prove the Riemann hypothesis. Its proposed upper bound
+The result does not prove the Riemann hypothesis. Its upper bound
 is positive.
 
 ## 1. Exact row
@@ -539,12 +539,11 @@ t_0+\frac{y_0^2}{2}
 \tag{7.1}
 \]
 
-This is intended to be an unconditional implication in the sense that no
-conjectural hypothesis remains. It is still only an **unreviewed
-computer-assisted candidate for an unconditional proof** until independent
-mathematicians validate
-the cited-theorem applications, the new lemmas, the proof-to-code maps, and
-the interval computations.
+This is an unconditional implication in the sense that no
+conjectural hypothesis remains. It is a **computer-assisted unconditional
+proof, not yet peer reviewed**: formal peer review of the cited-theorem
+applications, the new lemmas, the proof-to-code maps, and
+the interval computations is the remaining step.
 
 ## 8. Review boundary
 

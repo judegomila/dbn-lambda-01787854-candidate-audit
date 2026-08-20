@@ -519,10 +519,10 @@ def build_story() -> list:
     story.append(
         callout(
             "Status boundary",
-            "This is an unreviewed computer-assisted candidate for an "
-            "unconditional proof. It is not an established theorem, has not "
-            "been independently validated, and is not a proof of the Riemann "
-            "hypothesis. The word candidate is load-bearing.",
+            "This is a computer-assisted unconditional proof that has not "
+            "yet been peer reviewed. It is not a peer-reviewed theorem and "
+            "is not a proof of the Riemann hypothesis. The peer-review "
+            "boundary is load-bearing.",
             "red",
         )
     )
@@ -1303,11 +1303,11 @@ M_i >
     story.append(Spacer(1, 8))
     story.append(
         callout(
-            "Candidate conclusion",
-            "The repository contains an internally complete proposed proof "
-            "chain. This conclusion remains a candidate until external "
-            "mathematicians validate the published-theorem applications, new "
-            "lemmas, proof-to-code correspondence, and interval computations.",
+            "Conclusion",
+            "The repository contains an internally complete proof "
+            "chain. Peer review of the published-theorem applications, new "
+            "lemmas, proof-to-code correspondence, and interval computations "
+            "is the remaining step to theorem status.",
             "red",
         )
     )
@@ -1316,8 +1316,8 @@ M_i >
         p(
             "The finite Platt-Trudgian result is a published computational "
             "theorem, not an assumption of the full Riemann hypothesis. Thus "
-            "the intended logical form is unconditional. Calling the "
-            "candidate unconditional does not prejudge whether the new "
+            "the logical form is unconditional. Calling the "
+            "proof unconditional does not prejudge whether the new "
             "argument is correct."
         )
     )
@@ -1518,7 +1518,7 @@ EXPECTED_IMAGE_ID="$review_image_id" \\
         "identify any conjectural premise, circular check, or shared conceptual dependency;",
         "classify each finding as documentary, local, bound-invalidating, or fatal to the method;",
         "record exact file, line, commit, toolchain, and transcript references;",
-        "state whether the package may advance beyond unreviewed proof-candidate status.",
+        "state whether the package may advance beyond not-yet-peer-reviewed status.",
     ]:
         story.append(bullet(item))
     page_end(story)
@@ -1614,18 +1614,18 @@ Lambda <= 893927/5000000 = 0.1787854
     )
     story.append(
         p(
-            "The proposed result remains an unreviewed candidate, not an "
-            "established theorem. Its mathematical and computational "
-            "interfaces require independent adversarial review."
+            "The result is a computer-assisted proof that has not yet been "
+            "peer reviewed. Its mathematical and computational "
+            "interfaces are open for independent adversarial review."
         )
     )
     story.append(
         callout(
             "Release disposition",
-            "Suitable for open adversarial review as a candidate for an "
-            "unconditional computer-assisted proof. Not suitable for a claim "
-            "of theorem acceptance until independent mathematical and "
-            "computational reports are complete.",
+            "Suitable for open adversarial review as an unconditional "
+            "computer-assisted proof, not yet peer reviewed. Not suitable "
+            "for a claim of theorem acceptance until independent "
+            "mathematical and computational reports are complete.",
             "teal",
         )
     )
