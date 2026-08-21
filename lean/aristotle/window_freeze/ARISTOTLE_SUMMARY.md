@@ -1,0 +1,14 @@
+# Summary of changes for run 6e1c7f84-cd90-4686-9f7e-0cbad78ff644
+I formalized `job3_window_freeze.tex` in Lean 4 (Mathlib), in two new files, both building `sorry`-free and using only the standard axioms.
+
+`RequestProject/WindowFreeze.lean` — definitions and Theorem 1:
+- In-file definitions of `t0 = 129/800`, `y0sq = 87677/2500000`, `ymaxsq = 271/400`, `y0`, `ymax`, the grid `qq N = N² - t0/16`, the site `xx N = 4π qq N`, the half-open window `W N = [x_N, x_{N+1})`, and the majorants/minorant `G`, `K`, the bracket `hh`, and `Sig` (with the positive part written as `max 0 (hh x y)`).
+- (a) `window_freeze`: for every integer `690988 ≤ N ≤ 3840000`, every `x ∈ W N` and every `y ∈ [y0, ymax]`, `G x y ≤ G (xx N) y`, `K x y ≤ K (xx N) y` and `Sig (xx N) y ≤ Sig x y`. The statement carries the full stated domain as requested; the docstring records that the proof needs only `690988 ≤ N` and `y0 ≤ y` (this produces two "unused variable" linter warnings, which are intentional).
+- (b) the three monotonicity facts: `hasDerivAt_G` (`∂ₓG = -(y/2x)G`) with `deriv_G_neg` and `G_strictAntiOn`; `hasDerivAt_K` (`∂ₓK = -t₀y/(2(x-6)²)`) with `deriv_K_neg` and `K_strictAntiOn`; and `Sig_strictMonoOn`, proved exactly along the sketch via `inv_sq_mul_hplus_antitone`, the statement that the nonnegative product `x⁻² h₊` is nonincreasing (so the argument is valid across the kink `h = 0`).
+- Nondegeneracy checks `ymaxsq_eq : ymaxsq = 1 - 2*t0` and `y0_lt_ymax`, so the `y`-domain is a genuine nonempty interval.
+
+`RequestProject/SiteBracket.lean` — Lemma 2 and Theorem 3:
+- (c) `site_margin_left : 5377393.9878 < xstar - xx 690988`, `site_margin_right : 11989041.1746 < xx 690989 - xstar`, and `site_bracket : xx 690988 < xstar ∧ xstar < xx 690989`, where `xstar = 6000000185827 + √(1 - y0sq)`. These are proved unconditionally — no interval-evaluation hypothesis is assumed: the π-bounds come from Mathlib's 20-digit `pi_gt_d20`/`pi_lt_d20`, and the bounds `0.982308098 < √(1-y₀²) < 0.982308099` are proved by squaring. (The margins are tight: the true gap exceeds the stated bound by about `6·10⁻⁵`, so 20-digit π-bounds are needed and suffice.)
+- (d) `window_cover`: `[x_*, x_690989) ∪ ⋃_{N=690989}^{3840000} [x_N, x_{N+1}) = [x_*, x_3840001)`, proved from strict monotonicity of `N ↦ x_N` and an induction on the range; plus `window_pairwise_disjoint` (distinct windows are disjoint, the right endpoint belonging to the next window) and `first_piece_disjoint` (the initial piece is disjoint from every later window), and `window_nonempty`.
+
+`RequestProject/Main.lean` now imports both files. The original `.tex` source is untouched.

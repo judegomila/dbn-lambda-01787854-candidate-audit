@@ -1,0 +1,14 @@
+# Summary of changes for run 00fca5a5-72be-4d50-93ff-f53b2e568b18
+`job2_tail_lemma.tex` is now fully formalized in Lean 4 / Mathlib, with every statement proved and no `sorry` anywhere (`lake build` succeeds; `Job2.tail_theorem` depends only on `propext`, `Classical.choice`, `Quot.sound`).
+
+Files (all in namespace `Job2`, all built by the default target via `RequestProject/Main.lean`):
+
+- `RequestProject/Basic.lean` — the mollifier support 𝒮 and the exact rational weights λ_d; the parameters (N_* = 3 840 000, M = 153 814, M_err = 3000, t₀, t₁, y₀², the y-box and its extension); the window-freezing data b_t(u), X_N(t), L_N(t), N(x,t), δ(N,t), k(N,t), σ₁, σ₂, G, M_λ, M_max; the cap quantities E_{t,σ} and Cap; and the contraction quantities P, TR, OV, AB, D. Contains **Lemma 0** (λ₁ = 1, ∑|λ_d| = 9918746/10⁶, the two-sided y₀ bounds, and 1 − 2t₀ ≤ y_ext²).
+- `RequestProject/Cap.lean` — **Lemma 1**, the endpoint cap: for t ≥ 0 and σ > (t/2)log c, ∑_{J<n≤K} b_t(n)n^{-σ} ≤ Cap_t(a,c;σ), via monotonicity of u ↦ b_t(u)u^{-σ} and a max-endpoint × log-width bound.
+- `RequestProject/Convolution.lean` — **Lemma 2**, the exact convolution identity for M_λ(s)F_B − 1 with the head coefficients c_m(t) and the tail sums over ⌊M/d⌋ < k ≤ N.
+- `RequestProject/Contraction.lean` — **Lemma 3**, the contraction bound ‖M_λ(s_*)f − 1‖ ≤ D under the H1 structure.
+- `RequestProject/Monotone.lean` — cap monotonicity and the piecewise monotonicity in N and in y, giving **Lemma 4** (all N ≥ N_* reduce to the cutoff, under the two gates) and **Lemma 5** (D is antitone in y under the YM gate).
+- `RequestProject/Errors.lean` — **Lemma 6**: on the domain log(x/4π) > 2, both (t²/16·L² + 0.626)/(x − 6.66) and (3√(L² + π²/4) + 10.50)/(x − 12) are strictly decreasing in x, so the e_{C,0} exponent is maximal at the left edge of the window.
+- `RequestProject/Tail.lean` — the error majorant of H2 and the **Tail theorem**: with H1, H2, the cap gates, the YM gate and the five numerical items of H3 as explicit hypotheses, for every t ∈ I_t, y ∈ [y₀, √(1−2t)] and x ≥ X_{N_*}(t) one gets e_A + e_B + e_{C,0} < |f_t(x+iy)| and hence H_t(x+iy) ≠ 0.
+
+All constants are exact rationals (0.02 = 1/50, 0.626 = 313/500, 6.66 = 333/50, 1.24 = 31/25, 0.125 = 1/8, 10.50 = 21/2, etc.); no floating point is used. Three hypotheses of the source statement — H2, the `M_max < 1.608290` item and the final margin item of H3 — turned out not to be needed by the formal chain (Lemma 3 → 4 → 5 together with D < 0.999721, (1 − D)/M_max > 0.0001735 and the certified error bound suffice); they are retained as hypotheses because the source lists them, with a docstring note explaining this.
