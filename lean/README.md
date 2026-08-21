@@ -1,5 +1,13 @@
 # Lean 4 formalization — barrier analytic skeletons
 
+**See also [`aristotle/`](aristotle/README.md)**: seven Aristotle-generated,
+locally kernel-verified projects (2026-08-20) that machine-check the complete
+lemma layer — concrete-$\Phi$ continuity (discharging this directory's open
+hypothesis (a)), the tail lemma, window freeze, native binding, error-constant
+weld, derivative box, and the Theorem 1.2 weld concluding
+$\Lambda\le893927/5000000$ — with the published theorems and the Arb-certified
+numerics as explicit hypotheses.
+
 ## Files
 
 - `BarrierAnalyticSkeleton.lean` — reduction logic of the two prose-only

@@ -1,0 +1,12 @@
+# Summary of changes for run 77ebe346-4276-4394-bd84-1acac148eec2
+I formalized `job4_native_binding.tex` in Lean 4 (Mathlib) in the new file `RequestProject/NativeBinding.lean`. The file builds with no `sorry`, and the main theorem depends only on the standard axioms (`propext`, `Classical.choice`, `Quot.sound`).
+
+**Definitions** (following the source setup): `bt t m = exp((t/4) log² m)`; `lam t d = ∏_{p ∣ d} (-b_t(p))`; the mollifier `eulerFactorProd t P z = ∏_{p ∈ P} (1 - b_t(p) p^{-z})` and its Dirichlet form `dirichletSum t D z = ∑_{d ∣ D} λ_d d^{-z}`; the convolution coefficients `Bcoef`, `Acoef` (through a generic `coeff` with weight `w`); the Dirichlet polynomials `Asum` (= A) and `Csum` (= C_κ); and `MN`, `CN`, `QN`, `LN`.
+
+**Theorems proved:**
+- Target (a): `eulerFactorProd_mul_Asum` : `E(s) A = ∑_{n ≤ DN} B_{N,n} n^{-s}`, and `conj_eulerFactorProd_mul_Csum` : `conj(E(s)) C_0 = ∑_{n ≤ DN} A_{N,n} n^{-conj s}` — both for the concrete `λ_d`, `b_t`; together with `Bcoef_one` and `Acoef_one` (`B_{N,1} = A_{N,1} = 1`). These rest on a general convolution lemma `dirichletSum_mul_sum` and on the Euler expansion `eulerFactorProd_eq_dirichletSum` (`∏_{p ∈ P}(1 - b_t(p)p^{-z}) = ∑_{d ∣ D} λ_d d^{-z}` for `D = ∏_{p ∈ P} p`), which I proved via multiplicativity and squarefreeness of `D`.
+- Target (b): `norm_cpow_neg_sub_one_le` : `|m^{-κ} - 1| ≤ m^{k} - 1` for complex `κ` with `|κ| ≤ k` and integer `m ≥ 1`; this needed the auxiliary bound `‖exp z - 1‖ ≤ exp‖z‖ - 1` (`norm_cexp_sub_one_le`), proved from the exponential series.
+- Target (c): `native_triangle` : for every `γ, s, κ` subject to `|γ| ≤ g_N`, `Re s ≥ σ_N`, `|κ| ≤ k_N`, if `f = A + γ C_κ` and `L_N > 0`, then `|f| ≥ L_N`. The proof follows the source argument: the two convolution identities give `|E(s) A| ≥ 1 - ∑_{n≥2}|B_{N,n}| n^{-σ_N}` and `|conj(E(s)) C_0| ≤ 1 + ∑_{n≥2}|A_{N,n}| n^{-σ_N}` (using `|conj E| = |E|`), the κ-perturbation is bounded by `|E| C_N`, giving `|E| |f| ≥ Q_N - g_N |E| C_N`; then `Q_N > 0`, `E(s) ≠ 0`, and `|E| ≤ M_N` yield `|f| ≥ Q_N/M_N - g_N C_N = L_N`.
+- The remark's numeric margin: `sealed_margin_pos` (`T_min - E_max ≥ 0.000000557871094787 > 0`).
+
+Two notes on the formalization. First, the window condition `x_N ≤ x < x_{N+1}` does not enter the estimate — it only delimits where Hypothesis H is assumed — so the lemma is stated for any `f` admitting the representation `f = A + γ C_κ` under the three conservative bounds. Second, I added a small worked instance showing the hypothesis `L_N > 0` is satisfiable, so the main theorem is not vacuous.
