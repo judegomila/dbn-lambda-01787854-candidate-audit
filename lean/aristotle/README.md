@@ -74,3 +74,30 @@ above) but still warrants referee eyes, exactly as for
 Each project directory is self-contained: `lake exe cache get && lake build`
 with the pinned toolchain. `ARISTOTLE_SUMMARY.md` in each directory is
 Aristotle's own change summary, preserved verbatim.
+
+## Additions (2026-08-27): a kernel-checked certificate value and the argument principle
+
+Two further Aristotle projects, verified with the same record (lake build
+green on v4.28.0; no `sorry`/`axiom`/`native_decide`; all 61 theorems on
+`[propext, Classical.choice, Quot.sound]`; statements faithfulness-checked):
+
+- `ec0_certificate/` — **an Arb certificate value moved inside the kernel.**
+  `EC0.eC0_le_sharp` proves, in Lean, the sharp Proposition 4.10 budget bound
+  $e_{C,0}(t,y)\le 233492848188649183/10^{24}$ over the exact closed boxes
+  $t\in[129/800,\,161250001/10^9]$, $y\in[\sqrt{87677/2500000},\sqrt{271/400}]$
+  at $N_0=690988$, from rational enclosures of $\log$, $\exp$, $\sqrt{\cdot}$
+  and $\pi$ alone (no floating point, no external oracle); `EC0.eC0_le_weak`
+  and `EC0.box_nonempty` accompany it. This is the pilot showing the
+  certificate class can be re-verified in-kernel; the corresponding Arb value
+  appears in (4.15) of `PROOF_NOTE.md`.
+- `argument_principle/` — **the mathlib gap behind `hAP` is closed.**
+  `ArgumentPrinciple.windingRect_eq_sum_analyticOrder`: for entire $H$
+  nonvanishing on the boundary of a nondegenerate rectangle, the winding
+  integral equals $\sum_{p}\mathrm{analyticOrderNatAt}\,H\,p$ over the
+  interior zero set — proved from scratch, including the rectangle residue
+  integral $\oint (\zeta-a)^{-1}=2\pi i$ that mathlib lacks. Factored and
+  $H/B$ consumer forms (`windingRect_factored`, `windingRect_factored_div`)
+  match the `Rect`/`windingRect`/`RectFrontier` definitions of
+  `lean/DeBruijnNewman_BaseCase.aristotle.lean` shape-for-shape, so the
+  base-case hypothesis `hAP` in `windingRect_div_eq_zeroCount` is now
+  dischargeable rather than assumed.
